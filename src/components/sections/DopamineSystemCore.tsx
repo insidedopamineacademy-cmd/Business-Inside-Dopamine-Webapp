@@ -25,7 +25,7 @@ export default function DopamineSystemCore() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 block opacity-50 md:opacity-100"
+      className="pointer-events-none absolute inset-0 block overflow-hidden opacity-50 md:opacity-100"
     >
       {/* soft fade edges so it blends with hero */}
       <div className="absolute inset-0 [mask-image:radial-gradient(circle_at_center,black_50%,transparent_72%)]" />

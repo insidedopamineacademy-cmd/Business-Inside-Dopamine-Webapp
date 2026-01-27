@@ -117,11 +117,11 @@ export default function HomePage() {
           </div>
 
           {/* Desktop: dedicated right-column hero graphic */}
-          <div className="relative z-10 hidden min-h-[420px] md:block">
+          <div className="pointer-events-none select-none relative z-10 hidden min-h-[420px] md:block">
             <DopamineSystemCore />
 
             {/* Small legend (desktop only) */}
-            <div className="pointer-events-none absolute bottom-6 left-6 z-10 flex flex-wrap gap-2 text-[11px] text-muted">
+            <div className="absolute bottom-6 left-6 z-10 flex flex-wrap gap-2 text-[11px] text-muted">
               <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
                 BI Dashboards
               </span>
