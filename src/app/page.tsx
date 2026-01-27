@@ -64,8 +64,7 @@ export default function HomePage() {
               custom={1}
               className="mt-5 text-base text-muted md:text-lg"
             >
-              We craft Power BI dashboards, AI copilots, and high-performance web platforms that
-              turn raw data into decisions.
+              We craft BI dashboards, AI copilots, and high-performance web platforms that turn raw data into decisions.
             </motion.p>
 
             <motion.div
@@ -124,7 +123,7 @@ export default function HomePage() {
             {/* Small legend (desktop only) */}
             <div className="pointer-events-none absolute bottom-6 left-6 z-10 flex flex-wrap gap-2 text-[11px] text-muted">
               <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
-                Power BI
+                BI Dashboards
               </span>
               <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
                 RAG
@@ -149,9 +148,9 @@ export default function HomePage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <Card
-            title="Data Analytics & Power BI"
+            title="Data Analytics & BI Dashboards"
             desc="Dashboards that leaders trust. Models that teams can scale."
-            href="/services/data-analytics-power-bi"
+            href="/services/data-analytics-bi-dashboards"
           />
           <Card
             title="Web Platforms"
