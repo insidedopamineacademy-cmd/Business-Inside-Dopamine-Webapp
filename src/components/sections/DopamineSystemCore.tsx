@@ -4,6 +4,8 @@ import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const ORBIT_DURATION = 64; // seconds (outer orbit + counter-rotation)
+const EASE_IN_OUT: [number, number, number, number] = [0.42, 0, 0.58, 1];
+const EASE_LINEAR: [number, number, number, number] = [0, 0, 1, 1];
 
 type Node = {
   label: string;
@@ -25,7 +27,7 @@ export default function DopamineSystemCore() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 block overflow-hidden opacity-50 md:opacity-100"
+      className="pointer-events-none select-none absolute inset-0 block overflow-hidden isolate opacity-50 md:opacity-100"
     >
       {/* soft fade edges so it blends with hero */}
       <div className="absolute inset-0 [mask-image:radial-gradient(circle_at_center,black_50%,transparent_72%)]" />
@@ -36,7 +38,7 @@ export default function DopamineSystemCore() {
         transition={
           reduce
             ? { duration: 0 }
-            : { duration: 6.5, ease: [0.42, 0, 0.58, 1], repeat: Infinity }
+            : { duration: 6.5, ease: EASE_IN_OUT, repeat: Infinity }
         }
       >
         {/* Ambient base glow */}
@@ -74,7 +76,7 @@ export default function DopamineSystemCore() {
             transition={
               reduce
                 ? { duration: 0 }
-                : { duration: 28, ease: [0, 0, 1, 1], repeat: Infinity }
+                : { duration: 28, ease: EASE_LINEAR, repeat: Infinity }
             }
             style={{
               background:
@@ -100,7 +102,7 @@ export default function DopamineSystemCore() {
             transition={
               reduce
                 ? { duration: 0 }
-                : { duration: 3.8, ease: [0.42, 0, 0.58, 1], repeat: Infinity }
+                : { duration: 3.8, ease: EASE_IN_OUT, repeat: Infinity }
             }
             style={{
               background:
@@ -141,7 +143,7 @@ export default function DopamineSystemCore() {
                 ? { duration: 0 }
                 : {
                     duration: 7.2,
-                    ease: [0, 0, 1, 1],
+                    ease: EASE_LINEAR,
                     repeat: Infinity,
                     repeatType: "loop",
                   }
@@ -181,7 +183,7 @@ export default function DopamineSystemCore() {
           transition={
             reduce
               ? { duration: 0 }
-              : { duration: 46, ease: [0, 0, 1, 1], repeat: Infinity }
+              : { duration: 46, ease: EASE_LINEAR, repeat: Infinity }
           }
         >
           <div className="absolute left-1/2 top-0 -translate-x-1/2">
@@ -206,7 +208,7 @@ export default function DopamineSystemCore() {
           transition={
             reduce
               ? { duration: 0 }
-              : { duration: 62, ease: [0, 0, 1, 1], repeat: Infinity }
+              : { duration: 62, ease: EASE_LINEAR, repeat: Infinity }
           }
         >
           <div className="absolute left-1/2 top-0 -translate-x-1/2">
@@ -231,7 +233,7 @@ export default function DopamineSystemCore() {
           transition={
             reduce
               ? { duration: 0 }
-              : { duration: 78, ease: [0, 0, 1, 1], repeat: Infinity }
+              : { duration: 78, ease: EASE_LINEAR, repeat: Infinity }
           }
         >
           <div className="absolute left-1/2 top-0 -translate-x-1/2 opacity-80">
@@ -256,7 +258,7 @@ export default function DopamineSystemCore() {
           transition={
             reduce
               ? { duration: 0 }
-              : { duration: ORBIT_DURATION, ease: [0, 0, 1, 1], repeat: Infinity }
+              : { duration: ORBIT_DURATION, ease: EASE_LINEAR, repeat: Infinity }
           }
         >
           {NODES.map((n, i) => (
@@ -356,7 +358,7 @@ function PeripheralNode({
             ? { duration: 0 }
             : {
                 duration: orbitDuration,
-                ease: [0, 0, 1, 1],
+                ease: EASE_LINEAR,
                 repeat: Infinity,
               }
         }
