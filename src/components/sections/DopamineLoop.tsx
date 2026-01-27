@@ -58,7 +58,7 @@ function stepAccent(key: StepKey) {
 }
 
 export default function DopamineLoop() {
-  const [active, setActive] = useState<StepKey>("insight");
+  const [active, setActive] = useState<StepKey>("data");
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const inView = useInView(sectionRef, { amount: 0.2, once: true });
@@ -125,7 +125,7 @@ export default function DopamineLoop() {
 
       {/* Loop Row */}
       <motion.div
-        className="relative mt-10 rounded-3xl border border-border bg-card p-6 shadow-sm"
+        className="relative mt-10 touch-pan-y rounded-3xl border border-border bg-card p-6 shadow-sm"
         onMouseEnter={clearResetTimer}
         onMouseLeave={scheduleResetToData}
         initial={reduce ? false : { opacity: 0, y: 14 }}
@@ -164,7 +164,7 @@ export default function DopamineLoop() {
                 whileHover={reduce ? undefined : { y: -2 }}
                 whileTap={reduce ? undefined : { scale: 0.98 }}
                 className={[
-                  "group relative w-full rounded-3xl border border-border bg-muted p-5 text-left transition",
+                  "group relative w-full touch-pan-y rounded-3xl border border-border bg-muted p-5 text-left transition",
                   "hover:shadow-sm focus:outline-none",
                   isActive ? "bg-card shadow-sm" : "opacity-90 hover:opacity-100",
                 ].join(" ")}
