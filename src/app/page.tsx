@@ -40,7 +40,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="overflow-x-hidden">
+    <main className="overflow-x-hidden touch-pan-y [scroll-snap-type:none] [scroll-behavior:auto]">
       <section className="hero-gradient relative overflow-hidden">
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 sm:px-6 md:grid-cols-2 md:py-24">
           {/* Left */}
