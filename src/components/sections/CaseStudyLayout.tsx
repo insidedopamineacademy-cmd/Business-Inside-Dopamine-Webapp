@@ -76,26 +76,28 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
               Capability Focus
             </h3>
             <div className="mt-4 space-y-5">
-              {study.solution.pillars.map((p: { title: string; description: string; highlights: string[] }) => (
-                <div key={p.title}>
-                  <div className="text-base font-semibold text-black dark:text-white">
-                    {p.title}
+              {study.solution.pillars.map(
+                (p: { title: string; description: string; highlights: string[] }) => (
+                  <div key={p.title}>
+                    <div className="text-base font-semibold text-black dark:text-white">
+                      {p.title}
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-black/70 dark:text-white/70">
+                      {p.description}
+                    </p>
+                    <ul className="mt-2 flex flex-wrap gap-2">
+                      {p.highlights.map((h: string) => (
+                        <li
+                          key={h}
+                          className="rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs text-black/70 dark:border-white/10 dark:bg-white/5 dark:text-white/70"
+                        >
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-black/70 dark:text-white/70">
-                    {p.description}
-                  </p>
-                  <ul className="mt-2 flex flex-wrap gap-2">
-                    {p.highlights.map((h: string) => (
-                      <li
-                        key={h}
-                        className="rounded-full border border-black/10 bg-white/70 px-3 py-1 text-xs text-black/70 dark:border-white/10 dark:bg-white/5 dark:text-white/70"
-                      >
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </div>
