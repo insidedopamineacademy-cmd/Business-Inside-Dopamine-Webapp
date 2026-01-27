@@ -14,18 +14,33 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://insidedopamine.com"),
   title: {
-    default: "Inside Dopamine — Data Analytics, AI, Web Platforms",
+    default: "Inside Dopamine — BI Dashboards, AI & Web Platforms",
     template: "%s — Inside Dopamine",
   },
   description:
-    "We build Power BI dashboards, AI solutions, and high-performance web platforms that turn data into decisions.",
+    "We build BI dashboards, AI solutions, and high-performance web platforms that turn data into decisions.",
   openGraph: {
     type: "website",
     url: "https://insidedopamine.com",
     title: "Inside Dopamine",
     description:
-      "Power BI dashboards, AI integrations, and modern web platforms for teams that move fast.",
+      "BI dashboards, AI integrations, and modern web platforms for teams that move fast.",
     siteName: "Inside Dopamine",
+    images: [
+      {
+        url: "/og-insidedopamine.PNG",
+        width: 1200,
+        height: 630,
+        alt: "Inside Dopamine — BI Dashboards, AI & Web Platforms",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inside Dopamine",
+    description:
+      "BI dashboards, AI integrations, and modern web platforms for teams that move fast.",
+    images: ["/og-insidedopamine.PNG"],
   },
   robots: { index: true, follow: true },
 };

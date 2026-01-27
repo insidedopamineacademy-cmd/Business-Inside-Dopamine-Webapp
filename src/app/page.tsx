@@ -25,6 +25,20 @@ export default function HomePage() {
     }),
   };
 
+  const cardIn: Variants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: reduce ? 0 : 0.75,
+        delay: reduce ? 0 : 0.25,
+        ease: easing,
+      },
+    },
+  };
+
   return (
     <main className="min-h-dvh overflow-x-clip">
       <section className="hero-gradient relative overflow-hidden">
@@ -50,8 +64,7 @@ export default function HomePage() {
               custom={1}
               className="mt-5 text-base text-muted md:text-lg"
             >
-              We craft BI dashboards, AI copilots, and high-performance web platforms that turn raw
-              data into decisions.
+              We craft BI dashboards, AI copilots, and high-performance web platforms that turn raw data into decisions.
             </motion.p>
 
             <motion.div
@@ -69,6 +82,7 @@ export default function HomePage() {
               </Link>
             </motion.div>
 
+            {/* Subtle “trust line” */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -79,20 +93,26 @@ export default function HomePage() {
               <span className="rounded-full border border-border bg-card px-3 py-1">
                 Enterprise-ready
               </span>
-              <span className="rounded-full border border-border bg-card px-3 py-1">Fast delivery</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1">
+                Fast delivery
+              </span>
               <span className="rounded-full border border-border bg-card px-3 py-1">
                 Measurable outcomes
               </span>
             </motion.div>
           </div>
 
-          {/* Mobile: background graphic behind the hero copy */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 z-0 md:hidden">
+          {/* Mobile: background graphic behind the hero copy (no overlap issues) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-0 md:hidden"
+          >
             <div className="absolute -right-24 top-12 h-[420px] w-[420px] opacity-60 blur-[0.2px]">
               <div className="h-full w-full scale-[0.92]">
                 <DopamineSystemCore />
               </div>
             </div>
+            {/* soft vignette to keep text readable */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgb(var(--bg))]/30" />
           </div>
 
@@ -100,6 +120,7 @@ export default function HomePage() {
           <div className="pointer-events-none select-none relative z-10 hidden min-h-[420px] md:block">
             <DopamineSystemCore />
 
+            {/* Small legend (desktop only) */}
             <div className="absolute bottom-6 left-6 z-10 flex flex-wrap gap-2 text-[11px] text-muted">
               <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
                 BI Dashboards
@@ -118,6 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Services cards */}
       <section className="mx-auto max-w-6xl px-5 py-14 sm:px-6">
         <h2 className="text-2xl font-semibold md:text-3xl">Three ways we build impact</h2>
         <p className="mt-3 text-muted">
