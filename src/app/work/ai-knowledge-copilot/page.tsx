@@ -1,7 +1,18 @@
-export default function Page() {
-  return (
-    <main className="mx-auto max-w-6xl px-4 py-16">
-      AI Knowledge Copilot — Case Study (coming next)
-    </main>
-  );
-}
+import type { Metadata } from "next";
+import { caseStudies } from "@/app/content/work/caseStudies";
+
+export { default } from "../[slug]/page";
+
+const study = caseStudies["ai-knowledge-copilot"];
+
+export const metadata: Metadata = {
+  title: study.seo.title,
+  description: study.seo.description,
+  alternates: { canonical: `/work/${study.slug}` },
+  openGraph: {
+    title: study.seo.title,
+    description: study.seo.description,
+    url: `/work/${study.slug}`,
+    type: "article",
+  },
+};

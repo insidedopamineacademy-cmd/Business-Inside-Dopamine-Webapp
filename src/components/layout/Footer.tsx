@@ -17,7 +17,7 @@ export default function Footer() {
             </Link>
 
             <p className="mt-3 max-w-md text-sm text-muted">
-              Power BI dashboards, AI copilots, and high-performance web platforms built for
+              BI dashboards, AI copilots, and high-performance web platforms built for
               clarity, speed, and measurable outcomes.
             </p>
 
@@ -61,7 +61,7 @@ export default function Footer() {
             </div>
             <div className="mt-4 grid gap-2">
               <Link href="/services/data-analytics-power-bi" className="nav-link">
-                Data Analytics & Power BI
+                Data Analytics & BI Dashboards
               </Link>
               <Link href="/services/web-platforms" className="nav-link">
                 Web Platforms
