@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Talk to Inside Dopamine about Power BI, AI copilots, and high-performance web platforms.",
+  description: "Talk to Inside Dopamine about BI dashboards, AI copilots, and high-performance web platforms.",
 };
 
 export default function ContactPage() {
@@ -45,7 +45,7 @@ export default function ContactPage() {
         </div>
 
         <div className="mt-10 text-xs text-muted">
-          Typical projects: Power BI dashboards • AI copilots (RAG) • Web platforms • Predictive models
+          Typical projects: BI dashboards • AI copilots (RAG) • Web platforms • Predictive models
         </div>
       </section>
     </main>

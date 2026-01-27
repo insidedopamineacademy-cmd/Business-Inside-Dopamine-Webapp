@@ -14,7 +14,7 @@ type CaseItem = {
 const cases: CaseItem[] = [
   {
     title: "Executive Sales Dashboard",
-    category: "Data Analytics · Power BI",
+    category: "Data Analytics · BI Dashboards",
     description:
       "Designed a unified executive dashboard combining sales, churn, and regional performance metrics across multiple data sources.",
     outcomes: [

@@ -3,15 +3,15 @@ import Link from "next/link";
 export const metadata = {
   title: "Services — Analytics, AI, Web Platforms",
   description:
-    "Explore Inside Dopamine services: Power BI dashboards, AI solutions, and high-performance web platforms built for teams that move fast.",
+    "Explore Inside Dopamine services: BI dashboards, AI solutions, and high-performance web platforms built for teams that move fast.",
 };
 
 const services = [
   {
-    title: "Data Analytics & Power BI",
+    title: "Data Analytics & BI Dashboards",
     desc: "Dashboards leaders trust. Models teams can scale. Visibility that drives action.",
     href: "/services/data-analytics-power-bi",
-    tags: ["Power BI", "KPI model", "Governance"],
+    tags: ["BI Dashboards", "KPI model", "Governance"],
   },
   {
     title: "Web Platforms",

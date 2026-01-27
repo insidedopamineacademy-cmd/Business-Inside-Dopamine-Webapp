@@ -1,15 +1,13 @@
-
-
 import Link from "next/link";
 
 export const metadata = {
-  title: "Data Analytics & Power BI Dashboards",
+  title: "Data Analytics & BI Dashboards",
   description:
-    "Power BI dashboards and data analytics solutions that turn complex data into clear, actionable decisions for leadership and teams.",
+    "BI dashboards and data analytics solutions that turn complex data into clear, actionable decisions for leadership and teams.",
 };
 
 const capabilities = [
-  "Power BI dashboard design",
+  "BI dashboard design",
   "Data modeling & semantic layers",
   "KPI frameworks & governance",
   "Automated refresh & alerting",
@@ -43,11 +41,11 @@ export default function DataAnalyticsPowerBIPage() {
               Service
             </div>
             <h1 className="mt-3 text-4xl font-semibold tracking-tight md:text-6xl">
-              Data analytics & Power BI dashboards
+              Data analytics & BI dashboards
             </h1>
             <p className="mt-5 text-base text-muted md:text-lg">
               We design dashboards leaders trust — built on clean data models, clear KPIs, and
-              performance-optimized Power BI architecture.
+              performance-optimized BI architecture.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -90,7 +88,7 @@ export default function DataAnalyticsPowerBIPage() {
                 Use cases
               </div>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                Where Power BI creates impact
+                Where BI dashboards create impact
               </h2>
               <p className="mt-3 text-muted">
                 Dashboards designed for real operational and strategic decisions.
@@ -145,7 +143,7 @@ export default function DataAnalyticsPowerBIPage() {
             Ready to turn data into decisions?
           </h2>
           <p className="mt-3 text-muted">
-            Tell us about your data and reporting needs. We’ll design the right Power BI foundation.
+            Tell us about your data and reporting needs. We’ll design the right BI foundation.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/contact" className="btn-primary">

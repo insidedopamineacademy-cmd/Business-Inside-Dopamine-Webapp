@@ -107,7 +107,7 @@ export default function CTA() {
                 <div className="rounded-2xl border border-border bg-card p-4">
                   <div className="text-sm font-semibold">Dashboard MVP</div>
                   <div className="mt-1 text-xs text-muted">
-                    KPI model + executive Power BI view
+                    KPI model + executive BI dashboard view
                   </div>
                 </div>
                 <div className="rounded-2xl border border-border bg-card p-4">

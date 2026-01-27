@@ -30,7 +30,7 @@ const steps: Array<{
   {
     key: "insight",
     title: "Insight",
-    subtitle: "Power BI dashboards built for clarity and decision speed.",
+    subtitle: "BI dashboards built for clarity and decision speed.",
     bullets: [
       "Executive dashboards and operational views",
       "Drilldowns, segmentation, and filters",
@@ -248,11 +248,6 @@ export default function DopamineLoop() {
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Bottom hint */}
-              <div className="mt-6 text-xs text-muted">
-                Tip: On mobile, tap a stage. On desktop, hover to switch quickly.
               </div>
             </motion.div>
           </AnimatePresence>

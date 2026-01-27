@@ -4,10 +4,11 @@ import Link from "next/link";
 import DopamineLoop from "@/components/sections/DopamineLoop";
 import FeaturedWork from "@/components/sections/FeaturedWork";
 import CTA from "@/components/sections/CTA";
+import DopamineSystemCore from "@/components/sections/DopamineSystemCore";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 export default function HomePage() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() ?? false;
 
   const easing: [number, number, number, number] = [0.21, 0.47, 0.22, 0.9];
 
@@ -39,11 +40,11 @@ export default function HomePage() {
   };
 
   return (
-    <main>
-      <section className="hero-gradient">
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
+    <main className="overflow-x-hidden">
+      <section className="hero-gradient relative overflow-hidden">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 sm:px-6 md:grid-cols-2 md:py-24">
           {/* Left */}
-          <div>
+          <div className="relative z-10">
             <motion.h1
               variants={fadeUp}
               initial="hidden"
@@ -88,7 +89,7 @@ export default function HomePage() {
               initial="hidden"
               animate="show"
               custom={3}
-              className="mt-8 flex flex-wrap items-center gap-2 text-xs text-muted"
+              className="mt-7 flex flex-wrap items-center gap-2 text-xs text-muted"
             >
               <span className="rounded-full border border-border bg-card px-3 py-1">
                 Enterprise-ready
@@ -102,48 +103,45 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* Right “Ask the system” */}
-          <motion.div
-            variants={cardIn}
-            initial="hidden"
-            animate="show"
-            whileHover={reduce ? undefined : { y: -3 }}
-            transition={reduce ? { duration: 0 } : { duration: 0.2 }}
-            className="relative rounded-3xl border border-border bg-card p-6 shadow-sm"
+          {/* Mobile: background graphic behind the hero copy (no overlap issues) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-0 md:hidden"
           >
-            {/* animated border glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/5 dark:ring-white/10" />
-            <div className="pointer-events-none absolute -inset-[1px] rounded-3xl opacity-60 blur-xl hero-card-glow" />
-
-            <div className="relative">
-              <div className="text-xs text-muted">Ask the system</div>
-
-              <div className="mt-3 rounded-2xl border border-border bg-muted p-4">
-                <p className="text-sm">
-                  Create a dashboard that tracks revenue, churn, and operational KPIs across regions —
-                  with AI summaries for executives.
-                </p>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs text-muted">+ Add metrics • + Add data sources</span>
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-black">
-                    →
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-5 grid grid-cols-3 gap-2 text-xs">
-                <span className="rounded-full bg-muted px-3 py-2 text-center">Power BI</span>
-                <span className="rounded-full bg-muted px-3 py-2 text-center">RAG</span>
-                <span className="rounded-full bg-muted px-3 py-2 text-center">Web Apps</span>
+            <div className="absolute -right-24 top-12 h-[420px] w-[420px] opacity-60 blur-[0.2px]">
+              <div className="h-full w-full scale-[0.92]">
+                <DopamineSystemCore />
               </div>
             </div>
-          </motion.div>
+            {/* soft vignette to keep text readable */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgb(var(--bg))]/30" />
+          </div>
+
+          {/* Desktop: dedicated right-column hero graphic */}
+          <div className="relative z-10 hidden min-h-[420px] md:block">
+            <DopamineSystemCore />
+
+            {/* Small legend (desktop only) */}
+            <div className="pointer-events-none absolute bottom-6 left-6 z-10 flex flex-wrap gap-2 text-[11px] text-muted">
+              <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
+                Power BI
+              </span>
+              <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
+                RAG
+              </span>
+              <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
+                Web Apps
+              </span>
+              <span className="rounded-full border border-border bg-card/70 px-3 py-1 backdrop-blur">
+                Automations
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Services cards */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
+      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-6">
         <h2 className="text-2xl font-semibold md:text-3xl">Three ways we build impact</h2>
         <p className="mt-3 text-muted">
           Data becomes insight. Insight becomes action. Action becomes systems people rely on.
