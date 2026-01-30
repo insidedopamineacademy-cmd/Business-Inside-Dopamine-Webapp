@@ -27,13 +27,10 @@ export default function DopamineSystemCore() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none select-none absolute inset-0 block overflow-hidden isolate opacity-50 md:opacity-100"
+      className="pointer-events-none select-none absolute inset-0 block overflow-visible opacity-60 md:opacity-100"
     >
-      {/* soft fade edges so it blends with hero */}
-      <div className="absolute inset-0 [mask-image:radial-gradient(circle_at_center,black_50%,transparent_72%)]" />
-
       <motion.div
-        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%]"
+        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%] [mask-image:radial-gradient(circle at center,black_58%,transparent_82%)]"
         animate={reduce ? undefined : { y: [0, -6, 0] }}
         transition={
           reduce
@@ -43,7 +40,7 @@ export default function DopamineSystemCore() {
       >
         {/* Ambient base glow */}
         <div
-          className="absolute inset-0 rounded-full blur-3xl opacity-40 dark:opacity-55"
+          className="absolute inset-0 rounded-full blur-[72px] opacity-35 mix-blend-screen will-change-transform dark:opacity-55"
           style={{
             background:
               "radial-gradient(circle at 35% 30%, rgba(139,92,246,.55), transparent 55%), radial-gradient(circle at 70% 55%, rgba(56,189,248,.38), transparent 60%), radial-gradient(circle at 45% 75%, rgba(99,102,241,.42), transparent 60%)",
@@ -178,7 +175,7 @@ export default function DopamineSystemCore() {
 
         {/* Ring 1 */}
         <motion.div
-          className="absolute left-1/2 top-1/2 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute left-1/2 top-1/2 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-90"
           animate={reduce ? undefined : { rotate: -360 }}
           transition={
             reduce
@@ -203,7 +200,7 @@ export default function DopamineSystemCore() {
 
         {/* Ring 2 */}
         <motion.div
-          className="absolute left-1/2 top-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute left-1/2 top-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-90"
           animate={reduce ? undefined : { rotate: -360 }}
           transition={
             reduce
@@ -228,7 +225,7 @@ export default function DopamineSystemCore() {
 
         {/* Ring 3 */}
         <motion.div
-          className="absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute left-1/2 top-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-90"
           animate={reduce ? undefined : { rotate: 360 }}
           transition={
             reduce
@@ -280,12 +277,11 @@ function Ring({ strokeOpacity, dashed }: { strokeOpacity: number; dashed?: boole
   return (
     <div
       className={
-        "absolute inset-0 rounded-full border border-border/70 " +
+        "absolute inset-0 rounded-full border border-white/20 " +
         (dashed ? "[border-style:dashed] [border-width:1px]" : "")
       }
       style={{
         opacity: strokeOpacity,
-        boxShadow: "0 0 0 1px rgba(139,92,246,.06) inset",
       }}
     />
   );

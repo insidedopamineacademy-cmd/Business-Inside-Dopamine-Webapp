@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { caseStudies } from "@/app/content/work/caseStudies";
 
-export const metadata = {
-  title: "Our Work & Case Studies",
+export const metadata: Metadata = {
+  title: "Work — Case Studies | Inside Dopamine",
   description:
-    "Selected analytics, AI, and web platform projects showing how we turn data into decisions and systems into results.",
+    "Representative case studies across BI Dashboards, AI systems, and high-performance web platforms—built for enterprise-grade clarity and scale.",
+  alternates: {
+    canonical: "/work",
+  },
+  openGraph: {
+    title: "Work — Case Studies | Inside Dopamine",
+    description:
+      "Representative case studies across BI Dashboards, AI systems, and high-performance web platforms—built for enterprise-grade clarity and scale.",
+    url: "/work",
+    type: "website",
+  },
 };
 
 

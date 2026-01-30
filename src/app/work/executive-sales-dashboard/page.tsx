@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { caseStudies } from "@/app/content/work/caseStudies";
-
-export { default } from "../[slug]/page";
+import WorkCaseStudyPage from "../[slug]/page";
 
 const study = caseStudies["executive-sales-dashboard"];
 
@@ -16,3 +15,7 @@ export const metadata: Metadata = {
     type: "article",
   },
 };
+
+export default function Page() {
+  return <WorkCaseStudyPage params={{ slug: "executive-sales-dashboard" }} />;
+}

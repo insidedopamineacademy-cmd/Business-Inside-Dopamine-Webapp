@@ -1,4 +1,4 @@
-// src/content/work/caseStudies.ts
+// src/app/content/work/caseStudies.ts
 export type WorkSlug =
   | "ai-knowledge-copilot"
   | "executive-sales-dashboard"
@@ -162,10 +162,22 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
     },
     tech: {
       groups: [
-        { title: "AI & Retrieval", items: ["LLM inference (provider-agnostic)", "RAG pipeline", "Reranking"] },
-        { title: "Data & Pipelines", items: ["Document processing", "ETL/ELT workflows", "Governance metadata"] },
-        { title: "Security", items: ["RBAC patterns", "Audit hooks", "Safe retrieval constraints"] },
-        { title: "Delivery", items: ["Web interface", "Admin console", "Secure APIs"] },
+        {
+          title: "AI & Retrieval",
+          items: ["LLM inference (provider-agnostic)", "RAG pipeline", "Reranking"],
+        },
+        {
+          title: "Data & Pipelines",
+          items: ["Document processing", "ETL/ELT workflows", "Governance metadata"],
+        },
+        {
+          title: "Security",
+          items: ["RBAC patterns", "Audit hooks", "Safe retrieval constraints"],
+        },
+        {
+          title: "Delivery",
+          items: ["Web interface", "Admin console", "Secure APIs"],
+        },
       ],
       note:
         "Tool choices depend on the environment and security posture. The design remains portable across cloud vendors.",
@@ -236,13 +248,24 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
     },
     architecture: {
       lanes: [
-        { title: "Ingestion", items: ["CRM signals", "Finance systems", "Sales ops datasets", "Governed manual overrides"] },
-        { title: "Transformation", items: ["Normalization of regions/stages", "Metric contracts", "Quality checks"] },
-        { title: "Intelligence Layer", items: ["Forecasting inputs", "Risk flags (rule-based + ML-ready)", "Narrative summaries"] },
-        { title: "Delivery", items: ["BI Dashboards (exec + ops)", "Secure sharing", "Mobile-friendly views"] },
+        {
+          title: "Ingestion",
+          items: ["CRM signals", "Finance systems", "Sales ops datasets", "Governed manual overrides"],
+        },
+        {
+          title: "Transformation",
+          items: ["Normalization of regions/stages", "Metric contracts", "Quality checks"],
+        },
+        {
+          title: "Intelligence Layer",
+          items: ["Forecasting inputs", "Risk flags (rule-based + ML-ready)", "Narrative summaries"],
+        },
+        {
+          title: "Delivery",
+          items: ["BI Dashboards (exec + ops)", "Secure sharing", "Mobile-friendly views"],
+        },
       ],
-      note:
-        "The core objective was trust: every KPI is defined, testable, and consistent across layers.",
+      note: "The core objective was trust: every KPI is defined, testable, and consistent across layers.",
     },
     impact: {
       bullets: [
@@ -254,13 +277,24 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
     },
     tech: {
       groups: [
-        { title: "BI & Reporting", items: ["BI dashboard tooling (client-selected)", "Semantic layer patterns", "KPI governance"] },
-        { title: "Data Platform", items: ["ELT pipelines", "Warehouse/lakehouse patterns", "Data quality checks"] },
-        { title: "Intelligence", items: ["Rule-based signals", "ML-ready inputs", "Explainable KPI logic"] },
-        { title: "Delivery", items: ["Secure access patterns", "Performance-first dashboards", "Reusable view system"] },
+        {
+          title: "BI & Reporting",
+          items: ["BI dashboard tooling (client-selected)", "Semantic layer patterns", "KPI governance"],
+        },
+        {
+          title: "Data Platform",
+          items: ["ELT pipelines", "Warehouse/lakehouse patterns", "Data quality checks"],
+        },
+        {
+          title: "Intelligence",
+          items: ["Rule-based signals", "ML-ready inputs", "Explainable KPI logic"],
+        },
+        {
+          title: "Delivery",
+          items: ["Secure access patterns", "Performance-first dashboards", "Reusable view system"],
+        },
       ],
-      note:
-        "We focus on durable patterns—definitions, governance, and UX—regardless of BI vendor.",
+      note: "We focus on durable patterns—definitions, governance, and UX—regardless of BI vendor.",
     },
     confidentialityNote:
       "Client datasets, deal values, and pipeline structure are intentionally abstracted. The reporting system and UX patterns remain representative.",

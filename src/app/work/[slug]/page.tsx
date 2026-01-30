@@ -41,7 +41,7 @@ export default function WorkCaseStudyPage({ params }: { params: Params }) {
   const study = caseStudies[slug];
 
   return (
-    <div className="relative">
+    <div className="relative text-slate-900 dark:text-white">
       <WorkHeroBackdrop />
       <CaseStudyLayout study={study} />
     </div>

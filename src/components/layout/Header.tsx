@@ -14,16 +14,6 @@ export default function Header() {
     setOpen(false);
   }, [pathname]);
 
-  // Prevent background scroll when the mobile menu is open
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
@@ -150,7 +140,7 @@ export default function Header() {
 
       {/* Mobile dropdown (full-width) */}
       {open && (
-        <div className="md:hidden border-t border-border bg-card/45 backdrop-blur-xl supports-[backdrop-filter]:bg-card/35 shadow-[0_18px_60px_-30px_rgba(0,0,0,0.55)]">
+        <div className="md:hidden border-t border-border bg-card/60 text-fg backdrop-blur-xl supports-[backdrop-filter]:bg-card/55 shadow-[0_18px_60px_-30px_rgba(0,0,0,0.35)] dark:shadow-[0_18px_60px_-30px_rgba(0,0,0,0.55)]">
           <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-sm">
             {[
               { href: "/", label: "Home" },
