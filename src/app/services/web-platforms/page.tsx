@@ -15,34 +15,16 @@ const capabilities = [
   "AI features embedded in product",
 ];
 
-const outcomes = [
-  {
-    title: "Speed + SEO",
-    desc: "Fast pages and clean information architecture that search engines and users love.",
-  },
-  {
-    title: "Conversion-ready",
-    desc: "Clear positioning, strong CTAs, and UX designed to turn visits into action.",
-  },
-  {
-    title: "Integration-first",
-    desc: "We connect your site to data, dashboards, CRMs, and AI modules without bloat.",
-  },
+const workflow = [
+  { title: "Frame", desc: "Define conversion goals, IA, and performance targets." },
+  { title: "Build", desc: "Ship a fast frontend with clean integration architecture." },
+  { title: "Scale", desc: "Iterate with analytics, SEO, and product expansion paths." },
 ];
 
-const deliverables = [
-  {
-    title: "Landing pages",
-    desc: "SEO-optimized service pages built for speed and lead generation.",
-  },
-  {
-    title: "Product platforms",
-    desc: "Full web apps with auth, dashboards, and modern UI systems.",
-  },
-  {
-    title: "Analytics-enabled sites",
-    desc: "Events, funnels, and measurement that help you improve what matters.",
-  },
+const benchmarks = [
+  { value: "4-8 weeks", label: "to first production release" },
+  { value: "Medium", label: "implementation complexity" },
+  { value: "30-60 days", label: "ROI signal horizon" },
 ];
 
 export default function WebPlatformsPage() {
@@ -67,7 +49,7 @@ export default function WebPlatformsPage() {
               <Link href="/contact" className="btn-primary">
                 Book a Call
               </Link>
-              <Link href="/work" className="btn-secondary">
+              <Link href="/work" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
                 View work
               </Link>
             </div>
@@ -75,21 +57,43 @@ export default function WebPlatformsPage() {
         </div>
       </section>
 
-      {/* Capabilities */}
+      {/* Visual workflow */}
       <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Visual workflow
+        </div>
         <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          What we deliver
+          Frame → Build → Scale
         </h2>
         <p className="mt-3 max-w-2xl text-muted">
-          From marketing sites to internal platforms — we ship production-ready web systems with
-          performance and SEO built in.
+          A practical sequence for launching premium web products that stay fast and maintainable.
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {capabilities.map((c) => (
-            <div key={c} className="card p-6">
-              <div className="text-sm font-semibold">{c}</div>
+          {workflow.map((item, idx) => (
+            <div key={item.title} className="card p-6">
+              <div className="text-xs text-muted">0{idx + 1}</div>
+              <div className="mt-2 text-sm font-semibold">{item.title}</div>
+              <p className="mt-2 text-sm text-muted">{item.desc}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Capabilities */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
+          Capabilities
+        </h2>
+        <p className="mt-3 max-w-2xl text-muted">
+          Building blocks for high-performance websites and product platforms.
+        </p>
+
+        <div className="mt-10 flex flex-wrap gap-3">
+          {capabilities.map((c) => (
+            <span key={c} className="rounded-full border border-border bg-muted px-4 py-2 text-sm">
+              {c}
+            </span>
           ))}
         </div>
       </section>
@@ -97,58 +101,21 @@ export default function WebPlatformsPage() {
       {/* Outcomes */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <div className="card p-10 md:p-12">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted">
-                Outcomes
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted">Typical ranges</div>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+            Typical delivery profile
+          </h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {benchmarks.map((item) => (
+              <div key={item.label} className="rounded-3xl border border-border bg-muted p-6">
+                <div className="text-lg font-semibold">{item.value}</div>
+                <div className="mt-1 text-sm text-muted">{item.label}</div>
               </div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                Built to perform — technically and commercially
-              </h2>
-              <p className="mt-3 text-muted">
-                Great web engineering is invisible when it works: fast, stable, measurable.
-              </p>
-            </div>
-
-            <div className="md:col-span-2 grid gap-4 md:grid-cols-3">
-              {outcomes.map((o) => (
-                <div key={o.title} className="rounded-3xl border border-border bg-muted p-6">
-                  <div className="text-sm font-semibold">{o.title}</div>
-                  <p className="mt-2 text-sm text-muted">{o.desc}</p>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Deliverables */}
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          Typical builds
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted">
-          Pick a direction — we’ll tailor scope and architecture to your timeline and goals.
-        </p>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {deliverables.map((d) => (
-            <div key={d.title} className="group card p-6">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-lg font-semibold tracking-tight">{d.title}</h3>
-                <span
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-sm font-semibold transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                >
-                  ↗
-                </span>
-              </div>
-              <p className="mt-3 text-sm text-muted leading-relaxed">{d.desc}</p>
-              <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-transform duration-200 group-hover:translate-x-0.5">
-                Discuss this build <span aria-hidden="true">→</span>
-              </div>
-            </div>
-          ))}
+          <p className="mt-5 text-xs text-muted">
+            Typical planning guidance only. Real timelines and ROI depend on scope, integrations, and content maturity.
+          </p>
         </div>
       </section>
 
@@ -166,10 +133,11 @@ export default function WebPlatformsPage() {
             <Link href="/contact" className="btn-primary">
               Talk to us
             </Link>
-            <Link href="/services" className="btn-secondary">
+            <Link href="/services" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
               Back to services
             </Link>
           </div>
+          <div className="mt-2 text-xs text-muted">Reply in 24h · No commitment</div>
         </div>
       </section>
     </main>

@@ -8,13 +8,15 @@ type StepKey = "data" | "insight" | "action";
 const steps: Array<{
   key: StepKey;
   title: string;
+  micro: string;
   subtitle: string;
   bullets: string[];
-  outcomes: string[];
+  outcomes: Array<{ value: string; label: string }>;
 }> = [
   {
     key: "data",
     title: "Data",
+    micro: "Raw signal",
     subtitle: "Ingest, model, and prepare data that teams can trust.",
     bullets: [
       "Data cleanup, modeling, and semantic layers",
@@ -22,32 +24,42 @@ const steps: Array<{
       "Automated refresh, alerts, and quality checks",
     ],
     outcomes: [
-      "One source of truth",
-      "Fewer reporting conflicts",
-      "Reliable, scalable foundations",
+      { value: "1", label: "source of truth" },
+      { value: "-35%", label: "reporting conflict" },
+      { value: "24/7", label: "data reliability" },
     ],
   },
   {
     key: "insight",
     title: "Insight",
+    micro: "Pattern clarity",
     subtitle: "BI dashboards built for clarity and decision speed.",
     bullets: [
       "Executive dashboards and operational views",
       "Drilldowns, segmentation, and filters",
       "Storytelling visuals and performance tuning",
     ],
-    outcomes: ["Faster decisions", "Self-serve reporting", "Actionable visibility"],
+    outcomes: [
+      { value: "3x", label: "decision speed" },
+      { value: "70%", label: "self-serve usage" },
+      { value: "<5m", label: "time to answer" },
+    ],
   },
   {
     key: "action",
     title: "Action",
+    micro: "Execution loop",
     subtitle: "AI copilots + platforms that turn insights into execution.",
     bullets: [
       "LLM copilots (RAG) for internal knowledge",
       "Workflow automation and smart assistants",
       "Web platforms that ship fast and scale",
     ],
-    outcomes: ["Less manual work", "Smarter operations", "Measurable outcomes"],
+    outcomes: [
+      { value: "-40%", label: "manual tasks" },
+      { value: "2x", label: "workflow throughput" },
+      { value: "+22%", label: "outcome lift" },
+    ],
   },
 ];
 
@@ -89,7 +101,6 @@ export default function DopamineLoop() {
 
   useEffect(() => {
     return () => clearResetTimer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -189,17 +200,7 @@ export default function DopamineLoop() {
                   </span>
                 </div>
 
-                <p className="mt-2 text-sm text-muted">{s.subtitle}</p>
-
-                {/* Compact preview bullets */}
-                <ul className="mt-4 space-y-2 text-sm">
-                  {s.bullets.slice(0, 2).map((b) => (
-                    <li key={b} className="flex gap-2 text-muted">
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span className="leading-5">{b}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="mt-2 text-sm text-muted">{s.micro}</p>
 
                 <div className="mt-4 text-sm font-medium">
                   {isActive ? "Selected" : "Explore"}
@@ -236,14 +237,15 @@ export default function DopamineLoop() {
                 </div>
 
                 <div className="w-full md:max-w-xs">
-                  <div className="text-xs text-muted">Client outcomes</div>
-                  <div className="mt-3 grid gap-2">
+                  <div className="text-xs text-muted">Stage stats</div>
+                  <div className="mt-3 grid grid-cols-3 gap-2 md:grid-cols-1">
                     {activeStep.outcomes.map((o) => (
                       <div
-                        key={o}
-                        className="rounded-2xl border border-border bg-card px-4 py-3 text-sm"
+                        key={o.label}
+                        className="rounded-2xl border border-border bg-card px-4 py-3"
                       >
-                        {o}
+                        <div className="text-base font-semibold">{o.value}</div>
+                        <div className="text-[11px] text-muted">{o.label}</div>
                       </div>
                     ))}
                   </div>
@@ -252,6 +254,8 @@ export default function DopamineLoop() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        {/* Optional suggestion: add animated connector pulse that travels from selected stage to this detail panel. */}
       </motion.div>
     </motion.section>
   );

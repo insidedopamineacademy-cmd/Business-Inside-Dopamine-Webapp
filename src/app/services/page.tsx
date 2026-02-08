@@ -29,16 +29,37 @@ const services = [
 
 const pillars = [
   {
-    title: "Built for decision speed",
-    desc: "We optimize for clarity, governance, and the shortest path from insight to action.",
+    title: "Clarity-first architecture",
+    desc: "Signal over noise: information hierarchy, KPI discipline, and decision-ready interfaces.",
   },
   {
-    title: "Enterprise-ready foundations",
-    desc: "Repeatable patterns and systems your team can operate without dependency.",
+    title: "Workflow-native delivery",
+    desc: "Dashboards, AI, and platforms are embedded where teams already operate.",
   },
   {
-    title: "Performance-first delivery",
-    desc: "SEO, speed, and accessibility baked in — from architecture to UX.",
+    title: "Scale-safe engineering",
+    desc: "Performance, maintainability, and governance built in from the first release.",
+  },
+];
+
+const matrix = [
+  {
+    row: "Speed to first release",
+    bi: "2-4 weeks",
+    ai: "3-6 weeks",
+    platform: "4-8 weeks",
+  },
+  {
+    row: "Implementation complexity",
+    bi: "Low-Medium",
+    ai: "Medium-High",
+    platform: "Medium",
+  },
+  {
+    row: "ROI horizon",
+    bi: "Immediate clarity",
+    ai: "Compounding leverage",
+    platform: "Growth foundation",
   },
 ];
 
@@ -64,7 +85,7 @@ export default function ServicesPage() {
               <Link href="/contact" className="btn-primary">
                 Book a Call
               </Link>
-              <Link href="/work" className="btn-secondary">
+              <Link href="/work" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
                 View Work
               </Link>
             </div>
@@ -119,62 +140,73 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Why us */}
+      {/* Decision block */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <div className="card p-10 md:p-12">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div className="md:col-span-1">
+          <div className="grid gap-10 md:grid-cols-5">
+            <div className="md:col-span-2">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted">
-                Why Inside Dopamine
+                Decision support
               </div>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                Built for clarity, speed, and measurable outcomes.
+                Pick the right first move.
               </h2>
               <p className="mt-3 text-muted">
-                We design systems that make decisions easier — then help your team operationalize
-                them.
+                Use this matrix to choose based on speed, complexity, and value horizon. We can
+                start with one lane and expand into the rest.
               </p>
-            </div>
-
-            <div className="md:col-span-2">
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="mt-6 grid gap-3">
                 {pillars.map((p) => (
-                  <div key={p.title} className="rounded-3xl border border-border bg-muted p-6">
+                  <div key={p.title} className="rounded-2xl border border-border bg-muted p-4">
                     <div className="text-sm font-semibold">{p.title}</div>
-                    <p className="mt-2 text-sm text-muted">{p.desc}</p>
+                    <p className="mt-1 text-sm text-muted">{p.desc}</p>
                   </div>
                 ))}
               </div>
+            </div>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="md:col-span-3">
+              <div className="mb-2 flex items-center justify-between px-1 text-xs text-muted sm:hidden">
+                <span>Swipe to compare</span>
+                <span>BI / AI / Platform</span>
+              </div>
+              <div className="overflow-x-auto overscroll-x-contain rounded-3xl border border-border bg-muted [-webkit-overflow-scrolling:touch]">
+                <div className="min-w-[620px]">
+                  <div className="grid grid-cols-4 border-b border-border bg-card px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted">
+                    <div className="sticky left-0 z-10 bg-card pr-3">Decision factor</div>
+                    <div className="text-center">BI</div>
+                    <div className="text-center">AI</div>
+                    <div className="text-center">Platform</div>
+                  </div>
+                  {matrix.map((item) => (
+                    <div
+                      key={item.row}
+                      className="grid grid-cols-4 border-b border-border px-4 py-3 text-sm last:border-b-0"
+                    >
+                      <div className="sticky left-0 z-10 bg-muted pr-3 font-medium">{item.row}</div>
+                      <div className="text-center text-muted">{item.bi}</div>
+                      <div className="text-center text-muted">{item.ai}</div>
+                      <div className="text-center text-muted">{item.platform}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-muted">
+                Typical planning guidance only. Scope and timeline depend on data maturity, integrations,
+                and governance constraints.
+              </p>
+
+              <div className="mt-7 flex items-center gap-4">
                 <Link href="/contact" className="btn-primary">
-                  Talk to us
+                  Get a recommendation
                 </Link>
-                <Link href="/services/data-analytics-power-bi" className="btn-secondary">
-                  Start with dashboards
+                <Link href="/work" className="text-sm font-medium text-muted transition hover:text-fg">
+                  See examples
                 </Link>
               </div>
+              <div className="mt-2 text-xs text-muted">Reply in 24h · No commitment</div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="rounded-3xl border border-border bg-muted p-10 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Not sure where to start?
-          </h2>
-          <p className="mt-3 text-muted">
-            Describe your data and your goal. We’ll recommend the fastest path to value.
-          </p>
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/contact" className="btn-primary">
-              Get a recommendation
-            </Link>
-            <Link href="/work" className="btn-secondary">
-              See examples
-            </Link>
           </div>
         </div>
       </section>

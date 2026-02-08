@@ -15,19 +15,16 @@ const capabilities = [
   "Executive storytelling",
 ];
 
-const useCases = [
-  {
-    title: "Executive reporting",
-    desc: "High-level dashboards for leadership, focused on trends, risks, and performance signals.",
-  },
-  {
-    title: "Sales & revenue analytics",
-    desc: "Pipeline visibility, churn analysis, cohort tracking, and forecasting.",
-  },
-  {
-    title: "Operations & finance",
-    desc: "Cost tracking, efficiency metrics, and operational KPIs across departments.",
-  },
+const workflow = [
+  { title: "Signal", desc: "Map KPIs, stakeholders, and decision moments." },
+  { title: "Model", desc: "Build governed data models and semantic definitions." },
+  { title: "Activate", desc: "Ship dashboards with alerts and iteration loops." },
+];
+
+const benchmarks = [
+  { value: "2-4 weeks", label: "to first dashboard release" },
+  { value: "Weekly", label: "decision cadence support" },
+  { value: "Low-Medium", label: "implementation complexity" },
 ];
 
 export default function DataAnalyticsPowerBIPage() {
@@ -52,7 +49,7 @@ export default function DataAnalyticsPowerBIPage() {
               <Link href="/contact" className="btn-primary">
                 Book a Call
               </Link>
-              <Link href="/work" className="btn-secondary">
+              <Link href="/work" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
                 View dashboards
               </Link>
             </div>
@@ -60,79 +57,66 @@ export default function DataAnalyticsPowerBIPage() {
         </div>
       </section>
 
-      {/* What we do */}
+      {/* Visual workflow */}
       <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Visual workflow
+        </div>
         <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          What we deliver
+          Signal → Model → Activate
         </h2>
         <p className="mt-3 max-w-2xl text-muted">
-          From raw data to executive insight — we build analytics systems that scale with your
-          organization.
+          A compact delivery path designed to move from fragmented reporting to trusted executive
+          decisions.
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {capabilities.map((c) => (
-            <div key={c} className="card p-6">
-              <div className="text-sm font-semibold">{c}</div>
+          {workflow.map((item, idx) => (
+            <div key={item.title} className="card p-6">
+              <div className="text-xs text-muted">0{idx + 1}</div>
+              <div className="mt-2 text-sm font-semibold">{item.title}</div>
+              <p className="mt-2 text-sm text-muted">{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Use cases */}
+      {/* Capabilities */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="card p-10 md:p-12">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted">
-                Use cases
-              </div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                Where BI dashboards create impact
-              </h2>
-              <p className="mt-3 text-muted">
-                Dashboards designed for real operational and strategic decisions.
-              </p>
-            </div>
+        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
+          Capabilities
+        </h2>
+        <p className="mt-3 max-w-2xl text-muted">
+          Core building blocks we use to deliver decision-grade BI systems.
+        </p>
 
-            <div className="md:col-span-2 grid gap-4 md:grid-cols-3">
-              {useCases.map((u) => (
-                <div key={u.title} className="rounded-3xl border border-border bg-muted p-6">
-                  <div className="text-sm font-semibold">{u.title}</div>
-                  <p className="mt-2 text-sm text-muted">{u.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mt-10 flex flex-wrap gap-3">
+          {capabilities.map((c) => (
+            <span key={c} className="rounded-full border border-border bg-muted px-4 py-2 text-sm">
+              {c}
+            </span>
+          ))}
         </div>
       </section>
 
-      {/* Process */}
+      {/* Outcomes */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          Our approach
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted">
-          Analytics should reduce friction, not create it. Our process is simple and transparent.
-        </p>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-4">
-          <div className="card p-6">
-            <div className="text-sm font-semibold">1. Understand</div>
-            <p className="mt-2 text-sm text-muted">Business goals, metrics, and data sources.</p>
+        <div className="card p-10 md:p-12">
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted">Typical ranges</div>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+            Typical delivery profile
+          </h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {benchmarks.map((item) => (
+              <div key={item.label} className="rounded-3xl border border-border bg-muted p-6">
+                <div className="text-lg font-semibold">{item.value}</div>
+                <div className="mt-1 text-sm text-muted">{item.label}</div>
+              </div>
+            ))}
           </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">2. Model</div>
-            <p className="mt-2 text-sm text-muted">Clean data models and semantic layers.</p>
-          </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">3. Visualize</div>
-            <p className="mt-2 text-sm text-muted">Dashboards designed for clarity and speed.</p>
-          </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">4. Enable</div>
-            <p className="mt-2 text-sm text-muted">Documentation, training, and iteration.</p>
-          </div>
+          <p className="mt-5 text-xs text-muted">
+            Typical planning guidance only. Final scope depends on source quality, tooling, and governance.
+          </p>
         </div>
       </section>
 
@@ -149,10 +133,11 @@ export default function DataAnalyticsPowerBIPage() {
             <Link href="/contact" className="btn-primary">
               Talk to an expert
             </Link>
-            <Link href="/services" className="btn-secondary">
+            <Link href="/services" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
               Back to services
             </Link>
           </div>
+          <div className="mt-2 text-xs text-muted">Reply in 24h · No commitment</div>
         </div>
       </section>
     </main>

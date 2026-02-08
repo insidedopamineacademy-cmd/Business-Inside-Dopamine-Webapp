@@ -15,19 +15,16 @@ const capabilities = [
   "AI integration into web platforms",
 ];
 
-const useCases = [
-  {
-    title: "Internal knowledge copilots",
-    desc: "AI assistants trained on company documents, policies, and data — with access control.",
-  },
-  {
-    title: "Operational automation",
-    desc: "AI-driven workflows that reduce manual tasks and surface the next best action.",
-  },
-  {
-    title: "Decision support",
-    desc: "Predictive models and AI summaries that support leadership decisions.",
-  },
+const workflow = [
+  { title: "Map", desc: "Define tasks, trust boundaries, and source systems." },
+  { title: "Ground", desc: "Build retrieval, guardrails, and governance controls." },
+  { title: "Embed", desc: "Ship assistants directly into team workflows." },
+];
+
+const benchmarks = [
+  { value: "3-6 weeks", label: "to production pilot" },
+  { value: "Medium-High", label: "implementation complexity" },
+  { value: "30-90 days", label: "ROI signal horizon" },
 ];
 
 export default function AISolutionsPage() {
@@ -52,7 +49,7 @@ export default function AISolutionsPage() {
               <Link href="/contact" className="btn-primary">
                 Book a Call
               </Link>
-              <Link href="/work" className="btn-secondary">
+              <Link href="/work" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
                 View examples
               </Link>
             </div>
@@ -60,88 +57,65 @@ export default function AISolutionsPage() {
         </div>
       </section>
 
-      {/* Capabilities */}
+      {/* Visual workflow */}
       <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Visual workflow
+        </div>
         <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          What we build
+          Map → Ground → Embed
         </h2>
         <p className="mt-3 max-w-2xl text-muted">
-          From prototypes to production systems — our AI solutions are designed to integrate cleanly
-          with your existing data and platforms.
+          AI delivery focused on safe adoption: clear use cases, grounded answers, and measurable workflow lift.
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {capabilities.map((c) => (
-            <div key={c} className="card p-6">
-              <div className="text-sm font-semibold">{c}</div>
+          {workflow.map((item, idx) => (
+            <div key={item.title} className="card p-6">
+              <div className="text-xs text-muted">0{idx + 1}</div>
+              <div className="mt-2 text-sm font-semibold">{item.title}</div>
+              <p className="mt-2 text-sm text-muted">{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Use cases */}
+      {/* Capabilities */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="card p-10 md:p-12">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted">
-                Use cases
-              </div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                Where AI creates leverage
-              </h2>
-              <p className="mt-3 text-muted">
-                Practical AI use cases focused on speed, accuracy, and trust.
-              </p>
-            </div>
+        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
+          Capabilities
+        </h2>
+        <p className="mt-3 max-w-2xl text-muted">
+          Practical AI modules we assemble into governed production systems.
+        </p>
 
-            <div className="md:col-span-2 grid gap-4 md:grid-cols-3">
-              {useCases.map((u) => (
-                <div key={u.title} className="rounded-3xl border border-border bg-muted p-6">
-                  <div className="text-sm font-semibold">{u.title}</div>
-                  <p className="mt-2 text-sm text-muted">{u.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mt-10 flex flex-wrap gap-3">
+          {capabilities.map((c) => (
+            <span key={c} className="rounded-full border border-border bg-muted px-4 py-2 text-sm">
+              {c}
+            </span>
+          ))}
         </div>
       </section>
 
-      {/* Principles */}
+      {/* Outcomes */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
-          Our AI principles
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted">
-          We build AI systems that teams can trust, explain, and operate long-term.
-        </p>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-4">
-          <div className="card p-6">
-            <div className="text-sm font-semibold">Secure by design</div>
-            <p className="mt-2 text-sm text-muted">
-              Access controls, private data handling, and deployment choices that fit your risk
-              profile.
-            </p>
+        <div className="card p-10 md:p-12">
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted">Typical ranges</div>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+            Typical delivery profile
+          </h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {benchmarks.map((item) => (
+              <div key={item.label} className="rounded-3xl border border-border bg-muted p-6">
+                <div className="text-lg font-semibold">{item.value}</div>
+                <div className="mt-1 text-sm text-muted">{item.label}</div>
+              </div>
+            ))}
           </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">Explainable outputs</div>
-            <p className="mt-2 text-sm text-muted">
-              Transparent prompts, sources, and summaries — not black boxes.
-            </p>
-          </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">Workflow-first</div>
-            <p className="mt-2 text-sm text-muted">
-              AI embedded into tools people already use.
-            </p>
-          </div>
-          <div className="card p-6">
-            <div className="text-sm font-semibold">Measurable impact</div>
-            <p className="mt-2 text-sm text-muted">
-              Clear success metrics tied to time saved, accuracy, or cost reduction.
-            </p>
-          </div>
+          <p className="mt-5 text-xs text-muted">
+            Typical planning guidance only. Final outcomes vary by data quality, risk constraints, and integration depth.
+          </p>
         </div>
       </section>
 
@@ -158,10 +132,11 @@ export default function AISolutionsPage() {
             <Link href="/contact" className="btn-primary">
               Talk to an AI expert
             </Link>
-            <Link href="/services" className="btn-secondary">
+            <Link href="/services" className="inline-flex items-center text-sm font-medium text-muted transition hover:text-fg">
               Back to services
             </Link>
           </div>
+          <div className="mt-2 text-xs text-muted">Reply in 24h · No commitment</div>
         </div>
       </section>
     </main>
