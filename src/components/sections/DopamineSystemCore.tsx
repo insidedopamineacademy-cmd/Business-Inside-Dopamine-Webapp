@@ -30,12 +30,7 @@ export default function DopamineSystemCore() {
       className="pointer-events-none select-none absolute inset-0 block overflow-visible opacity-60 md:opacity-100"
     >
       <motion.div
-        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%]"
-        style={{
-          maskImage: "radial-gradient(circle at center, black 58%, transparent 82%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at center, black 58%, transparent 82%)",
-        }}
+        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%] [mask-image:radial-gradient(circle at center,black_58%,transparent_82%)]"
         animate={reduce ? undefined : { y: [0, -6, 0] }}
         transition={
           reduce
@@ -73,7 +68,7 @@ export default function DopamineSystemCore() {
         <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-border bg-card shadow-sm">
           {/* galaxy swirl */}
           <motion.div
-            className="absolute inset-[-40%]"
+            className="absolute inset-[-40%] rounded-full"
             animate={reduce ? undefined : { rotate: 360 }}
             transition={
               reduce
@@ -90,7 +85,7 @@ export default function DopamineSystemCore() {
 
           {/* starfield */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-full"
             style={{
               background:
                 "radial-gradient(circle at 20% 25%, rgba(255,255,255,.20) 0 1px, transparent 2px), radial-gradient(circle at 70% 35%, rgba(255,255,255,.16) 0 1px, transparent 2px), radial-gradient(circle at 45% 70%, rgba(255,255,255,.14) 0 1px, transparent 2px), radial-gradient(circle at 80% 75%, rgba(255,255,255,.12) 0 1px, transparent 2px)",
@@ -99,7 +94,7 @@ export default function DopamineSystemCore() {
           />
           {/* micro twinkles */}
           <motion.div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-full"
             animate={reduce ? undefined : { opacity: [0.55, 0.85, 0.55] }}
             transition={
               reduce
@@ -115,7 +110,7 @@ export default function DopamineSystemCore() {
 
           {/* subtle vignette */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-full"
             style={{
               background:
                 "radial-gradient(circle at 50% 45%, rgba(255,255,255,.10), rgba(0,0,0,.28) 70%)",
@@ -162,7 +157,7 @@ export default function DopamineSystemCore() {
             />
             {/* tiny trail */}
             <div
-              className="absolute -left-1 -top-1 h-6 w-6"
+              className="absolute -left-1 -top-1 h-6 w-6 rounded-full"
               style={{
                 background:
                   "radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 55%)",
