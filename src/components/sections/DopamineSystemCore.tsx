@@ -30,7 +30,12 @@ export default function DopamineSystemCore() {
       className="pointer-events-none select-none absolute inset-0 block overflow-visible opacity-60 md:opacity-100"
     >
       <motion.div
-        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%] [mask-image:radial-gradient(circle at center,black_58%,transparent_82%)]"
+        className="absolute right-1/2 top-[58%] h-[380px] w-[380px] translate-x-1/2 -translate-y-1/2 md:right-0 md:top-1/2 md:h-[520px] md:w-[520px] md:translate-x-[6%]"
+        style={{
+          maskImage: "radial-gradient(circle at center, black 58%, transparent 82%)",
+          WebkitMaskImage:
+            "radial-gradient(circle at center, black 58%, transparent 82%)",
+        }}
         animate={reduce ? undefined : { y: [0, -6, 0] }}
         transition={
           reduce
