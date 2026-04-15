@@ -1,18 +1,28 @@
 import type { MetadataRoute } from "next";
+import { caseStudySlugs } from "./work/caseStudies";
 
-const baseUrl = "https://insidedopamine.com";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://insidedopamine.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = [
+  const coreRoutes = [
     "",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/process",
     "/services",
+    "/terms",
+    "/work",
+  ];
+
+  const serviceRoutes = [
     "/services/data-analytics-power-bi",
     "/services/web-platforms",
     "/services/ai-solutions",
-    "/work",
-    "/about",
-    "/contact",
   ];
+
+  const caseStudyRoutes = caseStudySlugs.map((slug) => `/work/${slug}`);
+  const routes = [...coreRoutes, ...serviceRoutes, ...caseStudyRoutes];
 
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
