@@ -30,7 +30,7 @@ export default function HeroSection() {
     <section className="hero-shell" aria-label="Hero">
       <Container>
         <motion.div
-          className="max-w-[44rem] py-16 md:py-20"
+          className="max-w-[44rem] py-14 md:py-20"
           variants={parentV}
           initial={reduceMotion ? false : "hidden"}
           animate="show"
@@ -39,7 +39,7 @@ export default function HeroSection() {
             AI SYSTEMS & AUTOMATION
           </motion.p>
 
-          <h1 className="type-display hero-title mt-6 text-[var(--color-text)]">
+          <h1 className="type-display hero-title mt-5 text-[var(--color-text)]">
             <motion.span variants={itemV} className="block">
               Systems that
             </motion.span>
@@ -51,16 +51,16 @@ export default function HeroSection() {
             </motion.span>
           </h1>
 
-          <motion.p variants={itemV} className="type-body mt-6 max-w-[36rem] text-balance">
+          <motion.p variants={itemV} className="type-body mt-5 max-w-[36rem] text-balance">
             We build dashboards, web apps, and automation systems for teams that are done
             doing things manually.
           </motion.p>
 
-          <motion.p variants={itemV} className="type-mono mt-6 text-[var(--color-muted)]">
+          <motion.p variants={itemV} className="type-mono mt-5 text-[var(--color-muted)]">
             40+ systems built • 12x avg ops speedup • 3-week delivery
           </motion.p>
 
-          <motion.div variants={itemV} className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <motion.div variants={itemV} className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button as="link" href="/contact" variant="primary">
               Book a Strategy Call →
             </Button>

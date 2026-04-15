@@ -7,7 +7,7 @@ const trustItems = [
   "40+ Systems Built",
   "12x Operations Speed",
   "3 Week Delivery",
-  "0 Generic Solutions",
+  "0 Template Thinking",
 ];
 
 export default function TrustStripSection() {
@@ -15,7 +15,7 @@ export default function TrustStripSection() {
 
   return (
     <motion.section
-      className="trust-strip"
+      className="trust-strip bg-[var(--color-surface-soft)]/70"
       aria-label="Trust metrics"
       initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -25,14 +25,14 @@ export default function TrustStripSection() {
       }
     >
       <Container>
-        <ul className="grid grid-cols-1 gap-0 py-4 sm:grid-cols-2 md:grid-cols-4 md:py-0">
+        <ul className="grid grid-cols-1 gap-0 py-3 sm:grid-cols-2 md:grid-cols-4 md:py-0">
           {trustItems.map((item, index) => (
             <li
               key={item}
               className={[
-                "type-mono flex min-h-[64px] items-center py-3 text-[var(--color-text)]",
+                "type-mono flex min-h-[64px] items-center justify-center py-3 text-center text-[var(--color-text)]",
                 "sm:py-4",
-                index > 0 ? "md:border-l md:border-[var(--border-light)] md:pl-6" : "md:pr-6",
+                index > 0 ? "md:border-l md:border-[var(--border-light)] md:px-6" : "md:px-6",
               ].join(" ")}
             >
               {item}

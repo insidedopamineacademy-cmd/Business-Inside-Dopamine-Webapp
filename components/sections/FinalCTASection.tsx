@@ -19,7 +19,7 @@ export default function FinalCTASection() {
       }
     >
       <Container>
-        <div className="rounded-3xl bg-[var(--color-surface-dark)] px-6 py-9 md:px-10 md:py-12">
+        <div className="rounded-3xl border border-white/10 bg-[var(--color-surface-dark)] px-6 py-9 md:px-10 md:py-12">
           <p className="type-mono text-white/70">BOOK A STRATEGY CALL</p>
           <h2 className="type-section mt-4 text-3xl text-white md:text-5xl">
             Ready to stop doing it manually?

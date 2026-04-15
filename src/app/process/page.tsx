@@ -57,7 +57,9 @@ export default function ProcessPage() {
           <ol className="border-y border-[var(--border-light)] py-2 md:py-3">
             {steps.map((step) => (
               <li key={step.number} className="grid grid-cols-[52px_1fr] gap-4 py-5 md:grid-cols-[72px_1fr] md:gap-8 md:py-6">
-                <p className="type-mono text-[var(--color-muted)]">{step.number}</p>
+                <p className="type-mono process-number-halo text-[var(--color-muted)]">
+                  {step.number}
+                </p>
                 <div>
                   <h3 className="type-section text-xl text-[var(--color-text)] md:text-2xl">{step.title}</h3>
                   <p className="type-body mt-2">{step.description}</p>

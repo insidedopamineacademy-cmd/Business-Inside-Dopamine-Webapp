@@ -98,7 +98,9 @@ export default function ProcessSection() {
             <motion.li key={step.number} variants={itemV}>
               <div className="grid grid-cols-[44px_1fr] gap-4 py-5 md:grid-cols-[72px_1fr] md:gap-8 md:py-6">
                 <div className="relative flex justify-center">
-                  <p className="type-mono pt-0.5 text-[var(--color-muted)]">{step.number}</p>
+                  <p className="type-mono process-number-halo pt-0.5 text-[var(--color-muted)]">
+                    {step.number}
+                  </p>
                   {index !== steps.length - 1 ? (
                     <span
                       aria-hidden="true"

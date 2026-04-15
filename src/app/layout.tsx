@@ -3,6 +3,7 @@ import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "../../styles/globals.css";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import ScrollToTopButton from "../../components/layout/ScrollToTopButton";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Navbar />
         <main>{children}</main>
+        <ScrollToTopButton />
         <Footer />
       </body>
     </html>
