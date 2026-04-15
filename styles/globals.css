@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #F5F4F0;
+  --color-bg: #F4F3EF;
   --color-text: #111010;
   --color-text-secondary: #555555;
   --color-muted: #888888;
   --color-accent: #E5007A;
   --color-accent-hover: #C0005A;
   --color-surface-light: #F0EDE6;
-  --color-surface-soft: #EFF1EC;
+  --color-surface-soft: #ECEEE9;
   --color-surface-dark: #111010;
   --border-light: rgba(0, 0, 0, 0.08);
   --border-medium: rgba(0, 0, 0, 0.15);
@@ -98,14 +98,22 @@ button:focus-visible {
 }
 
 .hero-shell {
-  min-height: 72vh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(80% 55% at 86% 8%, rgba(229, 0, 122, 0.05), transparent 58%),
+    radial-gradient(90% 70% at 18% 100%, rgba(17, 16, 16, 0.045), transparent 62%);
 }
 
 @media (min-width: 768px) {
   .hero-shell {
-    min-height: calc(100svh - 88px);
+    background:
+      radial-gradient(75% 50% at 85% 12%, rgba(229, 0, 122, 0.04), transparent 56%),
+      radial-gradient(85% 65% at 15% 100%, rgba(17, 16, 16, 0.04), transparent 60%);
   }
 }
 

@@ -93,14 +93,14 @@ export default function Navbar() {
             aria-controls="mobile-menu"
             onClick={() => setIsOpen((current) => !current)}
           >
-            <span className="relative block h-4 w-4" aria-hidden="true">
+            <span className="relative block h-5 w-5" aria-hidden="true">
               <span
-                className={`absolute left-0 top-1/2 h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                className={`absolute left-1/2 top-1/2 h-[1.5px] w-4 -translate-x-1/2 bg-current transition-transform duration-200 ${
                   isOpen ? "translate-y-0 rotate-45" : "-translate-y-[4px]"
                 }`}
               />
               <span
-                className={`absolute left-0 top-1/2 h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                className={`absolute left-1/2 top-1/2 h-[1.5px] w-4 -translate-x-1/2 bg-current transition-transform duration-200 ${
                   isOpen ? "translate-y-0 -rotate-45" : "translate-y-[4px]"
                 }`}
               />
@@ -112,7 +112,7 @@ export default function Navbar() {
           {isOpen ? (
             <motion.div
               id="mobile-menu"
-              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-surface-soft)]/98 backdrop-blur md:hidden"
+              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-surface-soft)] md:hidden"
               initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
               animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
@@ -123,13 +123,13 @@ export default function Navbar() {
               }
             >
               <Container>
-                <div className="flex min-h-[calc(100svh-78px)] flex-col justify-between py-4">
-                  <nav className="space-y-3" aria-label="Mobile navigation">
+                <div className="flex min-h-[calc(100svh-78px)] flex-col justify-between py-3">
+                  <nav className="border-b border-[var(--border-light)]" aria-label="Mobile navigation">
                     {links.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="group flex items-center justify-between rounded-2xl border border-[var(--border-light)] bg-[var(--color-bg)] px-4 py-[18px] no-underline transition-colors duration-200 hover:border-[var(--border-medium)]"
+                        className="group flex items-center justify-between border-t border-[var(--border-light)] px-1 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
                       >
                         <span className="type-mono text-[var(--color-text)]">{item.label}</span>
                         <span className="type-mono text-[var(--color-muted)] transition-colors duration-200 group-hover:text-[var(--color-text)]">
@@ -139,9 +139,9 @@ export default function Navbar() {
                     ))}
                   </nav>
 
-                  <div className="mt-7 border-t border-[var(--border-light)] pt-6">
+                  <div className="mt-6 border-t border-[var(--border-light)] pt-5">
                     <p className="type-mono text-[var(--color-muted)]">Start with a focused call</p>
-                    <Button as="link" href="/contact" className="mt-4 w-full justify-center">
+                    <Button as="link" href="/contact" variant="secondary" className="mt-4 w-full justify-center">
                       Book a Strategy Call →
                     </Button>
                   </div>
