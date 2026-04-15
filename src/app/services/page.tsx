@@ -41,7 +41,7 @@ export default function ServicesPage() {
         intro="From dashboards to automations to internal tools, we design and build systems that reduce manual work and improve execution."
       />
 
-      <section className="section-space" aria-label="Service blocks">
+      <section className="section-space surface-soft" aria-label="Service blocks">
         <Container>
           <ul className="border-y border-[var(--border-light)]">
             {serviceBlocks.map((service, index) => (

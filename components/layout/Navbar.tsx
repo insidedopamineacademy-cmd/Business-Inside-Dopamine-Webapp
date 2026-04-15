@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 
@@ -24,6 +24,17 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     const onScroll = () => {
       setIsCompressed(window.scrollY > 60);
     };
@@ -42,7 +53,7 @@ export default function Navbar() {
 
   return (
     <motion.header
-      className="sticky top-0 z-50 border-b border-[var(--border-light)] bg-[var(--color-bg)]/92 backdrop-blur"
+      className="relative sticky top-0 z-50 border-b border-[var(--border-light)] bg-[var(--color-bg)]/92 backdrop-blur"
       initial={reduceMotion ? false : { opacity: 0, y: -8 }}
       animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       transition={navTransition}
@@ -76,34 +87,69 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="type-mono inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-medium)] md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-medium)] text-[var(--color-text)] leading-none transition-colors duration-200 hover:border-[var(--border-medium)] md:hidden"
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
             onClick={() => setIsOpen((current) => !current)}
           >
-            {isOpen ? "✕" : "☰"}
+            <span className="relative block h-4 w-4" aria-hidden="true">
+              <span
+                className={`absolute left-0 top-1/2 h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                  isOpen ? "translate-y-0 rotate-45" : "-translate-y-[4px]"
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-1/2 h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                  isOpen ? "translate-y-0 -rotate-45" : "translate-y-[4px]"
+                }`}
+              />
+            </span>
           </button>
         </div>
 
-        {isOpen && (
-          <div id="mobile-menu" className="border-t border-[var(--border-light)] py-4 md:hidden">
-            <nav className="flex flex-col gap-3" aria-label="Mobile navigation">
-              {links.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="type-mono no-underline text-[var(--color-text)] transition-opacity duration-200 hover:opacity-70"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <Button as="link" href="/contact" className="mt-2 w-fit">
-                Book a Strategy Call →
-              </Button>
-            </nav>
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {isOpen ? (
+            <motion.div
+              id="mobile-menu"
+              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-surface-soft)]/98 backdrop-blur md:hidden"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { duration: 0.22, ease: [0.22, 1, 0.36, 1] as const }
+              }
+            >
+              <Container>
+                <div className="flex min-h-[calc(100svh-78px)] flex-col justify-between py-4">
+                  <nav className="space-y-3" aria-label="Mobile navigation">
+                    {links.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="group flex items-center justify-between rounded-2xl border border-[var(--border-light)] bg-[var(--color-bg)] px-4 py-[18px] no-underline transition-colors duration-200 hover:border-[var(--border-medium)]"
+                      >
+                        <span className="type-mono text-[var(--color-text)]">{item.label}</span>
+                        <span className="type-mono text-[var(--color-muted)] transition-colors duration-200 group-hover:text-[var(--color-text)]">
+                          →
+                        </span>
+                      </Link>
+                    ))}
+                  </nav>
+
+                  <div className="mt-7 border-t border-[var(--border-light)] pt-6">
+                    <p className="type-mono text-[var(--color-muted)]">Start with a focused call</p>
+                    <Button as="link" href="/contact" className="mt-4 w-full justify-center">
+                      Book a Strategy Call →
+                    </Button>
+                  </div>
+                </div>
+              </Container>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </Container>
     </motion.header>
   );

@@ -43,7 +43,7 @@ const services: ServiceItem[] = [
 
 export default function ServicesSection() {
   return (
-    <section className="section-space" aria-label="Services">
+    <section className="section-space surface-soft" aria-label="Services">
       <Container>
         <div className="max-w-[44rem]">
           <p className="type-mono text-[var(--color-muted)]">SOLUTIONS</p>

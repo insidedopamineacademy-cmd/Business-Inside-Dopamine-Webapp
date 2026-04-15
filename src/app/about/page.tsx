@@ -18,7 +18,7 @@ export default function AboutPage() {
         intro="Inside Dopamine builds systems that reduce operational drag and make execution easier."
       />
 
-      <section className="section-space" aria-label="What we do">
+      <section className="section-space surface-soft" aria-label="What we do">
         <Container>
           <div className="max-w-[44rem] rounded-2xl border border-[var(--border-light)] bg-[var(--color-bg)] p-6 md:p-8">
             <h2 className="type-section text-2xl text-[var(--color-text)] md:text-3xl">What we do</h2>
@@ -32,7 +32,7 @@ export default function AboutPage() {
 
       <section className="section-space" aria-label="How we work">
         <Container>
-          <div className="max-w-[44rem] rounded-2xl border border-[var(--border-light)] bg-[var(--color-bg)] p-6 md:p-8">
+          <div className="max-w-[44rem] rounded-2xl border border-[var(--border-light)] bg-[var(--color-surface-soft)] p-6 md:p-8">
             <h2 className="type-section text-2xl text-[var(--color-text)] md:text-3xl">How we work</h2>
             <p className="type-body mt-4">
               We keep projects clear, fast, and structured. Understand the workflow, design the

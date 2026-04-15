@@ -69,7 +69,7 @@ export default function ProcessSection() {
   };
 
   return (
-    <section className="section-space" aria-label="Process">
+    <section className="section-space surface-soft" aria-label="Process">
       <Container>
         <motion.div
           className="max-w-[44rem]"

@@ -52,7 +52,7 @@ export default function ProcessPage() {
         intro="We keep the work structured from discovery to launch so the build stays clear and useful."
       />
 
-      <section className="section-space" aria-label="Process steps">
+      <section className="section-space surface-soft" aria-label="Process steps">
         <Container>
           <ol className="border-y border-[var(--border-light)] py-2 md:py-3">
             {steps.map((step) => (

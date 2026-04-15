@@ -45,7 +45,7 @@ export default function ContactInquirySection() {
 
   return (
     <>
-      <section className="section-space" aria-label="Book a strategy call">
+      <section className="section-space surface-soft" aria-label="Book a strategy call">
         <Container>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6">
             <motion.div
