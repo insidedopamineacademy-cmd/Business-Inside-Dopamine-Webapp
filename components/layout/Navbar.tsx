@@ -112,7 +112,7 @@ export default function Navbar() {
           {isOpen ? (
             <motion.div
               id="mobile-menu"
-              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-surface-soft)] md:hidden"
+              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-menu-surface)] md:hidden"
               initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
               animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
@@ -124,12 +124,18 @@ export default function Navbar() {
             >
               <Container>
                 <div className="flex min-h-[calc(100svh-78px)] flex-col justify-between py-3">
-                  <nav className="border-b border-[var(--border-light)]" aria-label="Mobile navigation">
+                  <div className="border-b border-[var(--border-light)] pb-4">
+                    <p className="type-section text-[15px] leading-none text-[var(--color-text)]/80">
+                      inside dopamine
+                    </p>
+                  </div>
+
+                  <nav className="mt-3 border-b border-[var(--border-light)]" aria-label="Mobile navigation">
                     {links.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="group flex items-center justify-between border-t border-[var(--border-light)] px-1 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
+                        className="group flex items-center justify-between border-t border-[var(--border-light)] bg-[var(--color-bg)]/65 px-1 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
                       >
                         <span className="type-mono text-[var(--color-text)]">{item.label}</span>
                         <span className="type-mono text-[var(--color-muted)] transition-colors duration-200 group-hover:text-[var(--color-text)]">
@@ -141,7 +147,7 @@ export default function Navbar() {
 
                   <div className="mt-6 border-t border-[var(--border-light)] pt-5">
                     <p className="type-mono text-[var(--color-muted)]">Start with a focused call</p>
-                    <Button as="link" href="/contact" variant="secondary" className="mt-4 w-full justify-center">
+                    <Button as="link" href="/contact" variant="primary" className="mt-4 w-full justify-center">
                       Book a Strategy Call →
                     </Button>
                   </div>
