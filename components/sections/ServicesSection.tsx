@@ -106,16 +106,12 @@ export default function ServicesSection() {
                     aria-expanded={isOpen}
                     aria-controls={detailId}
                     onClick={() => setOpenNumber(isOpen ? null : service.number)}
-                    className="absolute right-0 top-7 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-light)] bg-[var(--color-bg)] transition-colors duration-200 hover:border-[var(--border-medium)] md:top-8"
+                    className="absolute right-0 top-7 inline-flex h-9 w-9 items-center justify-center text-[var(--color-text-secondary)] transition-[color,opacity,transform] duration-150 hover:scale-105 hover:text-[var(--color-text)] hover:opacity-95 focus-visible:scale-105 focus-visible:outline-2 focus-visible:outline-[rgba(0,0,0,0.3)] focus-visible:outline-offset-2 md:top-8"
                   >
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 rounded-full bg-[rgba(229,0,122,0.12)] blur-[6px]"
-                    />
                     <span className="relative block h-3 w-3" aria-hidden="true">
-                      <span className="absolute left-0 top-1/2 h-px w-3 -translate-y-1/2 bg-[var(--color-text)]" />
+                      <span className="absolute left-0 top-1/2 h-px w-3 -translate-y-1/2 bg-current" />
                       <span
-                        className={`absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-[var(--color-text)] transition-opacity duration-200 ${
+                        className={`absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-current transition-opacity duration-200 ${
                           isOpen ? "opacity-0" : "opacity-100"
                         }`}
                       />
