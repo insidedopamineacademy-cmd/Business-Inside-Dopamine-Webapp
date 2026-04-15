@@ -64,8 +64,14 @@ export default function Navbar() {
             isCompressed ? "py-3 md:py-4" : "py-4 md:py-5"
           }`}
         >
-          <Link href="/" className="type-section text-lg leading-none no-underline">
-            inside<span className="text-[var(--color-accent)]">.</span>
+          <Link
+            href="/"
+            className="type-section inline-flex flex-col items-start gap-[1px] leading-[0.9] no-underline"
+          >
+            <span>inside</span>
+            <span>
+              dopamine<span className="text-[var(--color-accent)]">.</span>
+            </span>
           </Link>
 
           <div className="hidden items-center gap-7 md:flex">
@@ -123,14 +129,8 @@ export default function Navbar() {
               }
             >
               <Container>
-                <div className="flex min-h-[calc(100svh-78px)] flex-col justify-between py-3">
-                  <div className="border-b border-[var(--border-light)] pb-4">
-                    <p className="type-section text-[15px] leading-none text-[var(--color-text)]/80">
-                      inside dopamine
-                    </p>
-                  </div>
-
-                  <nav className="mt-3 border-b border-[var(--border-light)]" aria-label="Mobile navigation">
+                <div className="flex min-h-[calc(100svh-78px)] flex-col py-3">
+                  <nav className="border-b border-[var(--border-light)]" aria-label="Mobile navigation">
                     {links.map((item) => (
                       <Link
                         key={item.href}
@@ -145,7 +145,7 @@ export default function Navbar() {
                     ))}
                   </nav>
 
-                  <div className="mt-6 border-t border-[var(--border-light)] pt-5">
+                  <div className="mt-auto border-t border-[var(--border-light)] pt-5">
                     <p className="type-mono text-[var(--color-muted)]">Start with a focused call</p>
                     <Button as="link" href="/contact" variant="primary" className="mt-4 w-full justify-center">
                       Book a Strategy Call →
