@@ -1,16 +1,7 @@
 "use server";
 
-export type ContactFormState = {
-  status: "idle" | "success" | "error";
-  message: string;
-  fieldErrors: Partial<Record<"fullName" | "email" | "need" | "bottleneck", string>>;
-};
-
-export const initialContactFormState: ContactFormState = {
-  status: "idle",
-  message: "",
-  fieldErrors: {},
-};
+import { prisma } from "@/lib/prisma";
+import type { ContactFormState } from "./form-state";
 
 type ContactSubmission = {
   fullName: string;
@@ -75,6 +66,30 @@ export async function submitContactForm(
     };
   }
 
+  try {
+    await prisma.lead.create({
+      data: {
+        fullName: payload.fullName,
+        email: payload.email,
+        company: payload.company || null,
+        phone: payload.phone || null,
+        need: payload.need,
+        bottleneck: payload.bottleneck,
+        preferredDate: payload.preferredDate || null,
+        preferredTime: payload.preferredTime || null,
+        notes: payload.notes || null,
+      },
+    });
+  } catch (error) {
+    console.error("[contact] failed to save lead submission", error);
+    return {
+      status: "error",
+      message:
+        "We couldn’t save your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
+      fieldErrors: {},
+    };
+  }
+
   const webhookUrl = process.env.CONTACT_INBOX_WEBHOOK_URL;
 
   if (webhookUrl) {
@@ -92,34 +107,18 @@ export async function submitContactForm(
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        return {
-          status: "error",
-          message:
-            "We couldn’t send your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
-          fieldErrors: {},
-        };
+        console.warn("[contact] webhook notification failed with non-ok status", {
+          status: response.status,
+        });
       }
-    } catch {
+    } catch (error) {
       clearTimeout(timeoutId);
-      return {
-        status: "error",
-        message:
-          "We couldn’t send your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
-        fieldErrors: {},
-      };
+      console.warn("[contact] webhook notification request failed", error);
     }
   } else {
     console.warn(
-      "[contact] CONTACT_INBOX_WEBHOOK_URL is not configured. Submission is logged only.",
+      "[contact] CONTACT_INBOX_WEBHOOK_URL is not configured. Lead is saved to database only.",
     );
-    console.info("[contact] strategy-call-submission", payload);
-
-    return {
-      status: "error",
-      message:
-        "We couldn’t send your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
-      fieldErrors: {},
-    };
   }
 
   return {

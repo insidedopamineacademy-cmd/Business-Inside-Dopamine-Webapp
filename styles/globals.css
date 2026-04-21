@@ -218,6 +218,36 @@ button:focus-visible {
   border-color: transparent;
 }
 
+.id-input-native-picker {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.id-input-native-picker::-webkit-date-and-time-value {
+  min-height: 1.2em;
+  text-align: left;
+}
+
+.id-input-native-picker::-webkit-datetime-edit,
+.id-input-native-picker::-webkit-datetime-edit-fields-wrapper {
+  min-width: 0;
+  padding: 0;
+}
+
+.id-input-native-picker::-webkit-calendar-picker-indicator {
+  margin: 0;
+  opacity: 0.75;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .id-input-native-picker {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+}
+
 .id-field-error {
   font-family: var(--font-grotesk), sans-serif;
   font-size: 0.9rem;

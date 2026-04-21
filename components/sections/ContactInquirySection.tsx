@@ -5,10 +5,8 @@ import { useFormStatus } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
-import {
-  initialContactFormState,
-  submitContactForm,
-} from "@/app/contact/actions";
+import { submitContactForm } from "@/app/contact/actions";
+import { initialContactFormState } from "@/app/contact/form-state";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -194,14 +192,24 @@ export default function ContactInquirySection() {
                     <label htmlFor="preferredDate" className="type-mono text-[var(--color-text)]">
                       Preferred call date
                     </label>
-                    <input id="preferredDate" name="preferredDate" type="date" className="id-input mt-2" />
+                    <input
+                      id="preferredDate"
+                      name="preferredDate"
+                      type="date"
+                      className="id-input id-input-native-picker mt-2"
+                    />
                   </div>
 
                   <div className="md:col-span-1">
                     <label htmlFor="preferredTime" className="type-mono text-[var(--color-text)]">
                       Preferred call time
                     </label>
-                    <input id="preferredTime" name="preferredTime" type="time" className="id-input mt-2" />
+                    <input
+                      id="preferredTime"
+                      name="preferredTime"
+                      type="time"
+                      className="id-input id-input-native-picker mt-2"
+                    />
                   </div>
 
                   <div className="md:col-span-2">
