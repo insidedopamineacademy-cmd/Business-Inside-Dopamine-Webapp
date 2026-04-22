@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { caseStudies } from "@/app/content/work/caseStudies";
-import WorkCaseStudyPage from "../[slug]/page";
+import { caseStudies } from "@/data/caseStudies";
+import CaseStudyLayout from "@/components/sections/CaseStudyLayout";
 
 const study = caseStudies["ai-knowledge-copilot"];
 
@@ -17,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <WorkCaseStudyPage params={{ slug: "ai-knowledge-copilot" }} />;
+  return <CaseStudyLayout study={study} />;
 }

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useEffect, useState } from "react";
 
 export default function Header() {
@@ -15,7 +14,7 @@ export default function Header() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="font-semibold tracking-tight">
           <span className="inline-flex items-center gap-2 whitespace-nowrap">
@@ -63,13 +62,11 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-
           {/* Mobile menu toggle */}
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="inline-flex items-center justify-center rounded-xl border border-border bg-card/60 p-2.5 text-fg shadow-sm md:hidden"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-white/60 p-2.5 text-[var(--color-text-primary)] shadow-sm md:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >
@@ -131,7 +128,7 @@ export default function Header() {
           {/* Desktop only CTA (IMPORTANT: do NOT use .btn-primary here, it can override Tailwind's `hidden`) */}
           <Link
             href="/contact"
-            className="hidden md:inline-flex items-center justify-center rounded-full bg-fg px-5 py-3 text-sm font-semibold text-on-fg shadow-sm transition hover:opacity-90"
+            className="hidden md:inline-flex items-center justify-center rounded-full bg-[var(--color-text-primary)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
           >
             Book a Call
           </Link>
@@ -140,7 +137,7 @@ export default function Header() {
 
       {/* Mobile dropdown (full-width) */}
       {open && (
-        <div className="md:hidden border-t border-border bg-card/60 text-fg backdrop-blur-xl supports-[backdrop-filter]:bg-card/55 shadow-[0_18px_60px_-30px_rgba(0,0,0,0.35)] dark:shadow-[0_18px_60px_-30px_rgba(0,0,0,0.55)]">
+        <div className="md:hidden border-t border-[var(--color-border)] bg-white/60 text-[var(--color-text-primary)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/55 shadow-[0_18px_60px_-30px_rgba(0,0,0,0.35)]">
           <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-sm">
             {[
               { href: "/", label: "Home" },
@@ -152,7 +149,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl px-3 py-2 transition hover:bg-muted/45 active:bg-muted/55"
+                className="rounded-xl px-3 py-2 transition hover:bg-[var(--color-surface)] active:bg-[var(--color-surface)]"
                 aria-current={pathname === item.href ? "page" : undefined}
               >
                 {item.label}

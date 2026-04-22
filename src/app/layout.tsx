@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
-import "../../styles/globals.css";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
-import ScrollToTopButton from "../../components/layout/ScrollToTopButton";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import "@/styles/globals.css";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 
-const spaceGrotesk = Space_Grotesk({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-grotesk",
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-mono",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -30,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={plusJakartaSans.variable}>
       <body>
         <Navbar />
         <main>{children}</main>

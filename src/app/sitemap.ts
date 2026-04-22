@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { caseStudySlugs } from "./work/caseStudies";
+import { caseStudySlugs } from "@/data/caseStudies";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://insidedopamine.com";
 

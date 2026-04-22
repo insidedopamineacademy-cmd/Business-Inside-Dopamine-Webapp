@@ -1,7 +1,7 @@
 "use client";
-import Link from "next/link";
 import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
 import { useRef } from "react";
+import Button from "@/components/ui/Button";
 
 export default function CTA() {
   const reduce = useReducedMotion();
@@ -48,14 +48,14 @@ export default function CTA() {
         animate={inView ? { opacity: 1 } : undefined}
         transition={reduce ? { duration: 0 } : { duration: 0.6, ease: easing }}
       >
-        <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent opacity-[0.10] blur-3xl" />
-        <div className="absolute left-[10%] top-[20%] h-[280px] w-[280px] rounded-full bg-accent opacity-[0.06] blur-3xl" />
-        <div className="absolute right-[8%] bottom-[10%] h-[320px] w-[320px] rounded-full bg-accent opacity-[0.06] blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-accent)] opacity-[0.10] blur-3xl" />
+        <div className="absolute left-[10%] top-[20%] h-[280px] w-[280px] rounded-full bg-[var(--color-accent)] opacity-[0.06] blur-3xl" />
+        <div className="absolute right-[8%] bottom-[10%] h-[320px] w-[320px] rounded-full bg-[var(--color-accent)] opacity-[0.06] blur-3xl" />
       </motion.div>
 
       <div className="mx-auto max-w-6xl px-4">
         <motion.div
-          className="card relative overflow-hidden p-10 md:p-12"
+          className="relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white p-10 shadow-sm md:p-12"
           variants={fadeUp}
           whileHover={reduce ? undefined : { y: -3 }}
           transition={reduce ? { duration: 0 } : { duration: 0.18 }}
@@ -75,50 +75,50 @@ export default function CTA() {
             variants={fadeUp}
           >
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted">
+              <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
                 Next step
               </div>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">
-                Tell us what you’re building.
+                Tell us what you're building.
               </h2>
-              <p className="mt-4 max-w-2xl text-base text-muted md:text-lg">
-                Whether it’s a dashboard, an AI copilot, or a full platform —
-                we’ll help you design the right system and ship it with confidence.
+              <p className="mt-4 max-w-2xl text-base text-[var(--color-text-secondary)] md:text-lg">
+                Whether it's a dashboard, an AI copilot, or a full platform —
+                we'll help you design the right system and ship it with confidence.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/contact" className="btn-primary">
+                <Button as="link" href="/contact" variant="primary">
                   Book a Call
-                </Link>
-                <Link href="/contact" className="btn-secondary">
+                </Button>
+                <Button as="link" href="/contact" variant="secondary">
                   Contact Us
-                </Link>
+                </Button>
               </div>
 
-              <div className="mt-6 text-xs text-muted">
+              <div className="mt-6 text-xs text-[var(--color-text-secondary)]">
                 Global delivery • Remote-first • Enterprise & startup friendly
               </div>
             </div>
 
             {/* Right-side mini panel */}
-            <div className="rounded-3xl border border-border bg-muted p-6">
-              <div className="text-xs text-muted">What we can do in 2–4 weeks</div>
+            <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+              <div className="text-xs text-[var(--color-text-secondary)]">What we can do in 2–4 weeks</div>
               <div className="mt-3 grid gap-3">
-                <div className="rounded-2xl border border-border bg-card p-4">
+                <div className="rounded-2xl border border-[var(--color-border)] bg-white p-4">
                   <div className="text-sm font-semibold">Dashboard MVP</div>
-                  <div className="mt-1 text-xs text-muted">
+                  <div className="mt-1 text-xs text-[var(--color-text-secondary)]">
                     KPI model + executive BI dashboard
                   </div>
                 </div>
-                <div className="rounded-2xl border border-border bg-card p-4">
+                <div className="rounded-2xl border border-[var(--color-border)] bg-white p-4">
                   <div className="text-sm font-semibold">AI Copilot Prototype</div>
-                  <div className="mt-1 text-xs text-muted">
+                  <div className="mt-1 text-xs text-[var(--color-text-secondary)]">
                     RAG + secure knowledge base search
                   </div>
                 </div>
-                <div className="rounded-2xl border border-border bg-card p-4">
+                <div className="rounded-2xl border border-[var(--color-border)] bg-white p-4">
                   <div className="text-sm font-semibold">Platform Foundation</div>
-                  <div className="mt-1 text-xs text-muted">
+                  <div className="mt-1 text-xs text-[var(--color-text-secondary)]">
                     Next.js app + analytics-ready architecture
                   </div>
                 </div>

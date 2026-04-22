@@ -85,7 +85,6 @@ export default function DopamineLoop() {
   };
 
   const scheduleResetToData = () => {
-    // Desktop-only behavior: when the user leaves the loop area, softly return to the default stage.
     clearResetTimer();
     resetTimerRef.current = window.setTimeout(() => {
       setActive("data");
@@ -121,14 +120,14 @@ export default function DopamineLoop() {
           <h2 className="text-2xl font-semibold tracking-tight md:text-4xl">
             The Dopamine Loop
           </h2>
-          <p className="mt-3 max-w-2xl text-muted">
+          <p className="mt-3 max-w-2xl text-[var(--color-text-secondary)]">
             We move teams from raw data to real decisions — then automate the next step.
             Hover or tap a stage to explore.
           </p>
         </div>
 
-        <div className="text-sm text-muted">
-          <span className="rounded-full border border-border bg-card px-3 py-2">
+        <div className="text-sm text-[var(--color-text-secondary)]">
+          <span className="rounded-full border border-[var(--color-border)] bg-white px-3 py-2">
             Data → Insight → Action
           </span>
         </div>
@@ -136,7 +135,7 @@ export default function DopamineLoop() {
 
       {/* Loop Row */}
       <motion.div
-        className="relative mt-10 touch-pan-y rounded-3xl border border-border bg-card p-6 shadow-sm"
+        className="relative mt-10 touch-pan-y rounded-3xl border border-[var(--color-border)] bg-white p-6 shadow-sm"
         onMouseEnter={clearResetTimer}
         onMouseLeave={scheduleResetToData}
         initial={reduce ? false : { opacity: 0, y: 14 }}
@@ -175,17 +174,17 @@ export default function DopamineLoop() {
                 whileHover={reduce ? undefined : { y: -2 }}
                 whileTap={reduce ? undefined : { scale: 0.98 }}
                 className={[
-                  "group relative w-full touch-pan-y rounded-3xl border border-border bg-muted p-5 text-left transition",
-                  "hover:shadow-sm focus:outline-none",
-                  isActive ? "bg-card shadow-sm" : "opacity-90 hover:opacity-100",
+                  "group relative w-full touch-pan-y rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-left transition",
+                  "hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2",
+                  isActive ? "bg-white shadow-sm" : "opacity-90 hover:opacity-100",
                 ].join(" ")}
               >
                 {/* Node dot */}
                 <span
                   aria-hidden="true"
-                  className="absolute -top-2 left-6 hidden h-4 w-4 rounded-full border border-border md:block"
+                  className="absolute -top-2 left-6 hidden h-4 w-4 rounded-full border border-[var(--color-border)] md:block"
                   style={{
-                    background: isActive ? "rgb(var(--card))" : "rgb(var(--muted))",
+                    background: isActive ? "#ffffff" : "var(--color-surface)",
                     boxShadow: isActive ? `0 0 0 6px ${stepAccent(s.key)}` : "none",
                   }}
                 />
@@ -200,7 +199,7 @@ export default function DopamineLoop() {
                   </span>
                 </div>
 
-                <p className="mt-2 text-sm text-muted">{s.micro}</p>
+                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{s.micro}</p>
 
                 <div className="mt-4 text-sm font-medium">
                   {isActive ? "Selected" : "Explore"}
@@ -211,7 +210,7 @@ export default function DopamineLoop() {
         </div>
 
         {/* Detail Panel */}
-        <div className="relative mt-6 rounded-3xl border border-border bg-muted p-6">
+        <div className="relative mt-6 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeStep.key}
@@ -222,30 +221,30 @@ export default function DopamineLoop() {
             >
               <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
                 <div className="max-w-2xl">
-                  <div className="text-xs text-muted">Active stage</div>
+                  <div className="text-xs text-[var(--color-text-secondary)]">Active stage</div>
                   <div className="mt-2 text-2xl font-semibold">{activeStep.title}</div>
-                  <p className="mt-2 text-sm text-muted">{activeStep.subtitle}</p>
+                  <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{activeStep.subtitle}</p>
 
                   <div className="mt-5 grid gap-2">
                     {activeStep.bullets.map((b) => (
                       <div key={b} className="flex gap-2 text-sm">
-                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent" />
-                        <span className="text-muted">{b}</span>
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+                        <span className="text-[var(--color-text-secondary)]">{b}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div className="w-full md:max-w-xs">
-                  <div className="text-xs text-muted">Stage stats</div>
+                  <div className="text-xs text-[var(--color-text-secondary)]">Stage stats</div>
                   <div className="mt-3 grid grid-cols-3 gap-2 md:grid-cols-1">
                     {activeStep.outcomes.map((o) => (
                       <div
                         key={o.label}
-                        className="rounded-2xl border border-border bg-card px-4 py-3"
+                        className="rounded-2xl border border-[var(--color-border)] bg-white px-4 py-3"
                       >
                         <div className="text-base font-semibold">{o.value}</div>
-                        <div className="text-[11px] text-muted">{o.label}</div>
+                        <div className="text-[11px] text-[var(--color-text-secondary)]">{o.label}</div>
                       </div>
                     ))}
                   </div>
@@ -254,8 +253,6 @@ export default function DopamineLoop() {
             </motion.div>
           </AnimatePresence>
         </div>
-
-        {/* Optional suggestion: add animated connector pulse that travels from selected stage to this detail panel. */}
       </motion.div>
     </motion.section>
   );

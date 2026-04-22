@@ -1,7 +1,16 @@
 "use server";
 
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import { prisma } from "@/lib/prisma";
 import type { ContactFormState } from "./form-state";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "10 m"),
+  analytics: false,
+});
 
 type ContactSubmission = {
   fullName: string;
@@ -30,7 +39,19 @@ export async function submitContactForm(
     return {
       status: "success",
       message:
-        "Thanks, your inquiry has been received. We’ll reply shortly from info@insidedopamine.com.",
+        "Thanks, your inquiry has been received. We'll reply shortly from info@insidedopamine.com.",
+      fieldErrors: {},
+    };
+  }
+
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return {
+      status: "error",
+      message: "Too many submissions. Please try again in 10 minutes.",
       fieldErrors: {},
     };
   }
@@ -57,6 +78,8 @@ export async function submitContactForm(
   }
   if (!payload.need) fieldErrors.need = "Please select what you need.";
   if (!payload.bottleneck) fieldErrors.bottleneck = "Please describe your current bottleneck.";
+  if (payload.bottleneck.length > 4000) fieldErrors.bottleneck = "Please keep this under 4,000 characters.";
+  if (payload.notes.length > 2000) fieldErrors.notes = "Please keep this under 2,000 characters.";
 
   if (Object.keys(fieldErrors).length > 0) {
     return {
@@ -85,7 +108,7 @@ export async function submitContactForm(
     return {
       status: "error",
       message:
-        "We couldn’t save your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
+        "We couldn't save your request right now. Please email info@insidedopamine.com or call +44 7447 232654.",
       fieldErrors: {},
     };
   }
@@ -124,7 +147,7 @@ export async function submitContactForm(
   return {
     status: "success",
     message:
-      "Thanks, your inquiry has been received. We’ll reply shortly from info@insidedopamine.com.",
+      "Thanks, your inquiry has been received. We'll reply shortly from info@insidedopamine.com.",
     fieldErrors: {},
   };
 }

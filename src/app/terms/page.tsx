@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageHero from "../../../components/sections/PageHero";
+import PageHero from "@/components/sections/PageHero";
 
 export const metadata: Metadata = {
   title: "Terms of Service | Inside Dopamine",

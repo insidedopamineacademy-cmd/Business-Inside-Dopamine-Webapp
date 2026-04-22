@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import PageHero from "../../../components/sections/PageHero";
-import ContactInquirySection from "../../../components/sections/ContactInquirySection";
+import PageHero from "@/components/sections/PageHero";
+import ContactInquirySection from "@/components/sections/ContactInquirySection";
 
 export const metadata: Metadata = {
   title: "Contact | Inside Dopamine",

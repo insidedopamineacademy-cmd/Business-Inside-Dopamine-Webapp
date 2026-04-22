@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Container from "../ui/Container";
-import Tag from "../ui/Tag";
+import Badge from "../ui/Badge";
 
 type ServiceItem = {
   number: string;
   title: string;
   description: string;
   tag: string;
+  tagVariant: "accent" | "default";
   detail: string;
 };
 
@@ -19,6 +20,7 @@ const services: ServiceItem[] = [
     title: "BI & AI DASHBOARDS",
     description: "Real-time insights across your entire operation.",
     tag: "Primary",
+    tagVariant: "accent",
     detail:
       "Built for teams that need live visibility across performance, delivery, and operational throughput, these dashboards replace fragmented reporting with one reliable source of truth. We structure the data around your decisions, not generic templates, so reporting becomes faster, clearer, and useful for daily execution instead of retrospective guesswork.",
   },
@@ -27,6 +29,7 @@ const services: ServiceItem[] = [
     title: "WEB APPLICATIONS",
     description: "Custom tools built for your workflows, not templates.",
     tag: "Primary",
+    tagVariant: "accent",
     detail:
       "These applications are designed around how your team already operates, then improved to remove friction, duplicated effort, and tool switching. Instead of forcing people into generic SaaS constraints, we build a focused system that matches your process, supports real usage at speed, and keeps execution consistent across teams.",
   },
@@ -35,6 +38,7 @@ const services: ServiceItem[] = [
     title: "AUTOMATION SYSTEMS",
     description: "Remove repetitive work with fully automated pipelines.",
     tag: "n8n • Workflows",
+    tagVariant: "default",
     detail:
       "Automation systems connect repetitive tasks, approvals, data movement, and downstream actions into one dependable workflow. The result is less manual coordination, fewer dropped steps, and more consistent outcomes across operations. We design these flows to be resilient, auditable, and aligned to how your business actually runs day to day.",
   },
@@ -43,6 +47,7 @@ const services: ServiceItem[] = [
     title: "AI COPILOTS & LLMS",
     description: "Intelligent assistants tailored to your business logic.",
     tag: "Custom Builds",
+    tagVariant: "default",
     detail:
       "We build practical internal AI tools that help teams search knowledge faster, support decisions with context, and accelerate execution in recurring workflows. These copilots are shaped around your business logic, language, and process requirements, so they deliver useful operational leverage rather than novelty features that look impressive but fail in daily use.",
   },
@@ -51,6 +56,7 @@ const services: ServiceItem[] = [
     title: "CRM & WHATSAPP FLOWS",
     description: "Capture, qualify, and convert leads automatically.",
     tag: "Integrations",
+    tagVariant: "default",
     detail:
       "These flows capture inbound leads, qualify intent, route opportunities, and automate follow-up across CRM and WhatsApp touchpoints. By reducing response delays and manual handoffs, teams get a cleaner pipeline and better consistency from first contact to conversion. The system is structured to improve speed without sacrificing lead quality or control.",
   },
@@ -64,13 +70,13 @@ export default function ServicesSection() {
     <section className="section-space surface-soft" aria-label="Services">
       <Container>
         <div className="max-w-[44rem]">
-          <p className="type-mono text-[var(--color-muted)]">SOLUTIONS</p>
-          <h2 className="type-section mt-4 text-3xl text-[var(--color-text)] md:text-5xl">
+          <p className="type-mono text-[var(--color-text-tertiary)]">SOLUTIONS</p>
+          <h2 className="type-section mt-4 text-3xl text-[var(--color-text-primary)] md:text-5xl">
             Built for teams that need real systems.
           </h2>
         </div>
 
-        <ol className="mt-10 border-y border-[var(--border-light)]">
+        <ol className="mt-10 border-y border-[var(--color-border)]">
           {services.map((service, index) => {
             const isOpen = openNumber === service.number;
             const detailId = `service-detail-${service.number}`;
@@ -78,27 +84,24 @@ export default function ServicesSection() {
             return (
               <li
                 key={service.number}
-                className={`group service-row transition-colors duration-200 hover:border-[var(--border-medium)] ${
-                  index !== services.length - 1 ? "border-b border-[var(--border-light)]" : ""
+                className={`group service-row transition-colors duration-200 ${
+                  index !== services.length - 1
+                    ? "border-b border-[var(--color-border)]"
+                    : ""
                 }`}
               >
                 <div className="service-row-content relative grid gap-5 py-7 pr-12 md:grid-cols-[64px_1fr_220px] md:items-start md:gap-8 md:pr-14">
-                  <p className="type-mono text-[var(--color-muted)]">{service.number}</p>
+                  <p className="type-mono text-[var(--color-text-tertiary)]">{service.number}</p>
 
                   <div className="max-w-[40rem]">
-                    <h3 className="type-section text-xl text-[var(--color-text)] md:text-2xl">
+                    <h3 className="type-section text-xl text-[var(--color-text-primary)] md:text-2xl">
                       {service.title}
                     </h3>
                     <p className="type-body mt-2">{service.description}</p>
                   </div>
 
                   <div className="flex items-start gap-3 md:justify-self-end md:pt-1 md:pr-1">
-                    <Tag
-                      variant={service.tag === "Primary" ? "primary" : "neutral"}
-                      className="transition-colors duration-200 group-hover:border-[var(--border-medium)]"
-                    >
-                      {service.tag}
-                    </Tag>
+                    <Badge variant={service.tagVariant}>{service.tag}</Badge>
                   </div>
 
                   <button
@@ -106,7 +109,7 @@ export default function ServicesSection() {
                     aria-expanded={isOpen}
                     aria-controls={detailId}
                     onClick={() => setOpenNumber(isOpen ? null : service.number)}
-                    className="absolute right-0 top-7 inline-flex h-9 w-9 items-center justify-center text-[var(--color-text-secondary)] transition-[color,opacity,transform] duration-150 hover:scale-105 hover:text-[var(--color-text)] hover:opacity-95 focus-visible:scale-105 focus-visible:outline-2 focus-visible:outline-[rgba(0,0,0,0.3)] focus-visible:outline-offset-2 md:top-8"
+                    className="absolute right-0 top-7 inline-flex h-9 w-9 items-center justify-center text-[var(--color-text-secondary)] transition-[color,transform] duration-150 hover:scale-105 hover:text-[var(--color-text-primary)] focus-visible:scale-105 focus-visible:outline-2 focus-visible:outline-[var(--color-border)] focus-visible:outline-offset-2 md:top-8"
                   >
                     <span className="relative block h-3 w-3" aria-hidden="true">
                       <span className="absolute left-0 top-1/2 h-px w-3 -translate-y-1/2 bg-current" />
@@ -121,7 +124,7 @@ export default function ServicesSection() {
                 </div>
 
                 <AnimatePresence initial={false}>
-                  {isOpen ? (
+                  {isOpen && (
                     <motion.div
                       id={detailId}
                       initial={reduceMotion ? { opacity: 1 } : { height: 0, opacity: 0 }}
@@ -132,7 +135,7 @@ export default function ServicesSection() {
                           ? { duration: 0 }
                           : { duration: 0.22, ease: [0.22, 1, 0.36, 1] as const }
                       }
-                      className="overflow-hidden border-t border-[var(--border-light)]"
+                      className="overflow-hidden border-t border-[var(--color-border)]"
                     >
                       <div className="py-4 md:py-5">
                         <p className="type-body max-w-[44rem] text-[var(--color-text-secondary)]">
@@ -140,7 +143,7 @@ export default function ServicesSection() {
                         </p>
                       </div>
                     </motion.div>
-                  ) : null}
+                  )}
                 </AnimatePresence>
               </li>
             );

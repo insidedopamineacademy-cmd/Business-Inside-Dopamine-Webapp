@@ -1,11 +1,10 @@
-// src/app/content/work/caseStudies.ts
-export type WorkSlug =
+export type CaseStudySlug =
   | "ai-knowledge-copilot"
   | "executive-sales-dashboard"
   | "operations-data-platform";
 
 export type CaseStudy = {
-  slug: WorkSlug;
+  slug: CaseStudySlug;
   seo: { title: string; description: string };
 
   hero: {
@@ -46,9 +45,22 @@ export type CaseStudy = {
     primaryLabel: string;
     href: string;
   };
+
+  card: {
+    metric: string;
+    system: string;
+    context: string;
+    tag: string;
+  };
 };
 
-export const caseStudies: Record<WorkSlug, CaseStudy> = {
+export const caseStudySlugs: CaseStudySlug[] = [
+  "ai-knowledge-copilot",
+  "executive-sales-dashboard",
+  "operations-data-platform",
+];
+
+export const caseStudies: Record<CaseStudySlug, CaseStudy> = {
   "ai-knowledge-copilot": {
     slug: "ai-knowledge-copilot",
     seo: {
@@ -149,13 +161,12 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
           ],
         },
       ],
-      note:
-        "Designed to degrade safely: if evidence is weak, the system avoids guessing and guides users to verified paths.",
+      note: "Designed to degrade safely: if evidence is weak, the system avoids guessing and guides users to verified paths.",
     },
     impact: {
       bullets: [
         "Faster answers with clearer provenance and confidence.",
-        "Reduced dependency on a small set of “knowledge gatekeepers.”",
+        "Reduced dependency on a small set of "knowledge gatekeepers."",
         "More consistent decisions across teams and locations.",
         "A safer AI experience aligned with enterprise governance expectations.",
       ],
@@ -179,17 +190,22 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
           items: ["Web interface", "Admin console", "Secure APIs"],
         },
       ],
-      note:
-        "Tool choices depend on the environment and security posture. The design remains portable across cloud vendors.",
+      note: "Tool choices depend on the environment and security posture. The design remains portable across cloud vendors.",
     },
     confidentialityNote:
       "Client identifiers, internal taxonomies, and source systems are intentionally abstracted. The architecture and UX patterns remain representative.",
     cta: {
       heading: "Build something similar",
       subheading:
-        "If you need governed AI experiences that feel premium and stay safe under enterprise constraints, let’s talk.",
+        "If you need governed AI experiences that feel premium and stay safe under enterprise constraints, let's talk.",
       primaryLabel: "Contact Inside Dopamine",
       href: "/contact",
+    },
+    card: {
+      metric: "Governed AI Copilot",
+      system: "RAG + Traceability Layer",
+      context: "Enterprise knowledge management",
+      tag: "AI & RAG",
     },
   },
 
@@ -228,20 +244,17 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
       pillars: [
         {
           title: "Executive Layer",
-          description:
-            "A minimal, premium surface optimized for weekly decisions—signal over noise.",
+          description: "A minimal, premium surface optimized for weekly decisions—signal over noise.",
           highlights: ["Momentum signals", "Risk visibility", "Clear drill paths"],
         },
         {
           title: "Operational Layer",
-          description:
-            "Actionable views for teams: what moved, what stalled, and what needs intervention.",
+          description: "Actionable views for teams: what moved, what stalled, and what needs intervention.",
           highlights: ["Exception-based views", "Fast filtering", "Export-ready workflows"],
         },
         {
           title: "Governance Layer",
-          description:
-            "A definition system that keeps the dashboards honest as the business evolves.",
+          description: "A definition system that keeps the dashboards honest as the business evolves.",
           highlights: ["KPI dictionary", "Versioned logic", "Access patterns"],
         },
       ],
@@ -301,9 +314,15 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
     cta: {
       heading: "Build something similar",
       subheading:
-        "If your leadership team needs BI Dashboards people actually trust and use, let’s talk.",
+        "If your leadership team needs BI Dashboards people actually trust and use, let's talk.",
       primaryLabel: "Contact Inside Dopamine",
       href: "/contact",
+    },
+    card: {
+      metric: "Leadership-Grade BI",
+      system: "Executive Sales Dashboard",
+      context: "Multi-source pipeline visibility",
+      tag: "BI Dashboards",
     },
   },
 
@@ -342,33 +361,41 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
       pillars: [
         {
           title: "Reliable Data Foundation",
-          description:
-            "Pipelines optimized for correctness, freshness, and maintainability.",
+          description: "Pipelines optimized for correctness, freshness, and maintainability.",
           highlights: ["Incremental pipelines", "Observability hooks", "Quality validation"],
         },
         {
           title: "Operational Model",
-          description:
-            "A unified model that aligns teams around shared operational definitions.",
+          description: "A unified model that aligns teams around shared operational definitions.",
           highlights: ["Standard entities/events", "Data contracts", "Consistent dimensions"],
         },
         {
           title: "Delivery & Action",
-          description:
-            "Dashboards and tools designed to drive action, not just reporting.",
+          description: "Dashboards and tools designed to drive action, not just reporting.",
           highlights: ["BI Dashboards", "Exception-based reporting", "Automation-ready interfaces"],
         },
       ],
     },
     architecture: {
       lanes: [
-        { title: "Ingestion", items: ["Operational systems", "Vendor feeds", "Internal tools", "Event streams (optional)"] },
-        { title: "Transformation", items: ["Validated staging", "Modeled entities", "Versioned transformations"] },
-        { title: "Intelligence Layer", items: ["Operational signals", "Prediction-ready features", "Workflow triggers"] },
-        { title: "Delivery", items: ["BI Dashboards", "Internal web tools", "Secure APIs"] },
+        {
+          title: "Ingestion",
+          items: ["Operational systems", "Vendor feeds", "Internal tools", "Event streams (optional)"],
+        },
+        {
+          title: "Transformation",
+          items: ["Validated staging", "Modeled entities", "Versioned transformations"],
+        },
+        {
+          title: "Intelligence Layer",
+          items: ["Operational signals", "Prediction-ready features", "Workflow triggers"],
+        },
+        {
+          title: "Delivery",
+          items: ["BI Dashboards", "Internal web tools", "Secure APIs"],
+        },
       ],
-      note:
-        "The goal isn’t more data—it’s reliable decisions with durable contracts and maintainable models.",
+      note: "The goal isn't more data—it's reliable decisions with durable contracts and maintainable models.",
     },
     impact: {
       bullets: [
@@ -380,22 +407,43 @@ export const caseStudies: Record<WorkSlug, CaseStudy> = {
     },
     tech: {
       groups: [
-        { title: "Data Platform", items: ["Warehouse/lakehouse patterns", "ELT pipelines", "Orchestration & monitoring"] },
-        { title: "Modeling", items: ["Contract-driven modeling", "Quality validation", "Versioned transformations"] },
-        { title: "Intelligence", items: ["Feature readiness", "Predictive model hooks", "Automation triggers"] },
-        { title: "Delivery", items: ["BI Dashboards", "Internal tools", "Secure APIs"] },
+        {
+          title: "Data Platform",
+          items: ["Warehouse/lakehouse patterns", "ELT pipelines", "Orchestration & monitoring"],
+        },
+        {
+          title: "Modeling",
+          items: ["Contract-driven modeling", "Quality validation", "Versioned transformations"],
+        },
+        {
+          title: "Intelligence",
+          items: ["Feature readiness", "Predictive model hooks", "Automation triggers"],
+        },
+        {
+          title: "Delivery",
+          items: ["BI Dashboards", "Internal tools", "Secure APIs"],
+        },
       ],
-      note:
-        "We keep the system vendor-flexible and focus on durability: contracts, quality, and operational alignment.",
+      note: "We keep the system vendor-flexible and focus on durability: contracts, quality, and operational alignment.",
     },
     confidentialityNote:
       "Client systems, vendors, and operational processes are intentionally abstracted. The platform pattern and delivery approach remain representative.",
     cta: {
       heading: "Build something similar",
       subheading:
-        "If you want a data foundation that drives clarity now and supports AI later, let’s talk.",
+        "If you want a data foundation that drives clarity now and supports AI later, let's talk.",
       primaryLabel: "Contact Inside Dopamine",
       href: "/contact",
     },
+    card: {
+      metric: "Unified Data Foundation",
+      system: "Operations Data Platform",
+      context: "Analytics & AI-ready pipelines",
+      tag: "Data Platform",
+    },
   },
 };
+
+export const orderedCaseStudies: CaseStudy[] = caseStudySlugs.map(
+  (slug) => caseStudies[slug],
+);

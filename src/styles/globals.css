@@ -1,0 +1,442 @@
+@import "tailwindcss";
+
+/* ================================================================
+   DESIGN TOKENS — Tailwind v4 CSS-first (@theme)
+   Utilities generated: bg-accent, text-text-primary, rounded-md,
+   shadow-lg, text-display, p-space-4, ease-apple, duration-fast…
+================================================================ */
+
+@theme {
+  /* ── Colors ── */
+  --color-background:     #FFFFFF;
+  --color-surface:        #F5F5F7;
+  --color-border:         #D2D2D7;
+  --color-text-primary:   #1D1D1F;
+  --color-text-secondary: #86868B;
+  --color-text-tertiary:  #ABABAB;
+  --color-accent:         #6D56FA;
+  --color-accent-hover:   #5B44E8;
+  --color-accent-light:   #F0EEFF;
+  --color-success:        #34C759;
+  --color-error:          #FF3B30;
+  --color-white:          #FFFFFF;
+
+  /* ── Font Families ── */
+  --font-sans:    var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-display: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-body:    var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+
+  /* ── Type Scale ── */
+  --text-display:                  80px;
+  --text-display--line-height:     1.05;
+  --text-display--font-weight:     700;
+
+  --text-hero:                     56px;
+  --text-hero--line-height:        1.1;
+  --text-hero--font-weight:        700;
+
+  --text-title:                    40px;
+  --text-title--line-height:       1.15;
+  --text-title--font-weight:       600;
+
+  --text-heading:                  28px;
+  --text-heading--line-height:     1.25;
+  --text-heading--font-weight:     600;
+
+  --text-subheading:               21px;
+  --text-subheading--line-height:  1.35;
+  --text-subheading--font-weight:  500;
+
+  --text-body-lg:                  19px;
+  --text-body-lg--line-height:     1.6;
+  --text-body-lg--font-weight:     400;
+
+  --text-body:                     17px;
+  --text-body--line-height:        1.65;
+  --text-body--font-weight:        400;
+
+  --text-caption:                  14px;
+  --text-caption--line-height:     1.5;
+  --text-caption--font-weight:     400;
+
+  --text-label:                    12px;
+  --text-label--line-height:       1.4;
+  --text-label--font-weight:       500;
+  --text-label--letter-spacing:    0.06em;
+
+  /* ── Spacing — 8pt grid ── */
+  --spacing-space-1: 8px;
+  --spacing-space-2: 16px;
+  --spacing-space-3: 24px;
+  --spacing-space-4: 32px;
+  --spacing-space-5: 48px;
+  --spacing-space-6: 64px;
+  --spacing-space-7: 96px;
+  --spacing-space-8: 128px;
+  --spacing-space-9: 192px;
+
+  /* ── Border Radius ── */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.10);
+  --shadow-accent: 0 0 0 3px rgba(109, 86, 250, 0.25);
+
+  /* ── Transition Durations ── */
+  --transition-duration-fast:   200ms;
+  --transition-duration-base:   400ms;
+  --transition-duration-slow:   600ms;
+  --transition-duration-slower: 800ms;
+
+  /* ── Easing ── */
+  --ease-apple: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ================================================================
+   BACKWARD-COMPAT ALIASES
+   Old token names used across components → mapped to new values.
+   Remove progressively as components migrate to the new names.
+================================================================ */
+
+:root {
+  --color-bg:           #FFFFFF;
+  --color-text:         #1D1D1F;
+  --color-text-secondary: #86868B; /* same name, new value */
+  --color-muted:        #ABABAB;
+  --color-accent:       #6D56FA;   /* same name, new value */
+  --color-accent-hover: #5B44E8;   /* same name, new value */
+  --color-surface-light: #F5F5F7;
+  --color-surface-soft:  #F5F5F7;
+  --color-menu-surface:  #F5F5F7;
+  --color-surface-dark:  #1D1D1F;
+  --border-light:  rgba(210, 210, 215, 0.5);
+  --border-medium: rgba(210, 210, 215, 0.9);
+}
+
+/* ================================================================
+   BASE RESET
+================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   TYPOGRAPHY UTILITIES
+================================================================ */
+
+.type-display {
+  font-size: var(--text-display);
+  font-weight: var(--text-display--font-weight);
+  line-height: var(--text-display--line-height);
+  letter-spacing: -0.03em;
+}
+
+.type-hero {
+  font-size: var(--text-hero);
+  font-weight: var(--text-hero--font-weight);
+  line-height: var(--text-hero--line-height);
+  letter-spacing: -0.02em;
+}
+
+.type-title {
+  font-size: var(--text-title);
+  font-weight: var(--text-title--font-weight);
+  line-height: var(--text-title--line-height);
+  letter-spacing: -0.02em;
+}
+
+.type-heading {
+  font-size: var(--text-heading);
+  font-weight: var(--text-heading--font-weight);
+  line-height: var(--text-heading--line-height);
+  letter-spacing: -0.01em;
+}
+
+.type-subheading {
+  font-size: var(--text-subheading);
+  font-weight: var(--text-subheading--font-weight);
+  line-height: var(--text-subheading--line-height);
+}
+
+.type-body-lg {
+  font-size: var(--text-body-lg);
+  font-weight: var(--text-body-lg--font-weight);
+  line-height: var(--text-body-lg--line-height);
+}
+
+.type-body {
+  font-size: var(--text-body);
+  font-weight: var(--text-body--font-weight);
+  line-height: var(--text-body--line-height);
+  color: var(--color-text-secondary);
+}
+
+.type-caption {
+  font-size: var(--text-caption);
+  font-weight: var(--text-caption--font-weight);
+  line-height: var(--text-caption--line-height);
+  color: var(--color-text-tertiary);
+}
+
+.type-label {
+  font-size: var(--text-label);
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+}
+
+/* Legacy aliases kept for existing components */
+.type-section {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.mono-ui {
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* ================================================================
+   LAYOUT UTILITIES
+================================================================ */
+
+.id-container {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+@media (min-width: 768px) {
+  .id-container {
+    padding-inline: 32px;
+  }
+}
+
+.section-space {
+  padding-block: var(--spacing-space-5);
+}
+
+@media (min-width: 768px) {
+  .section-space {
+    padding-block: var(--spacing-space-6);
+  }
+}
+
+.surface-soft {
+  background: var(--color-surface);
+}
+
+.trust-strip {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ================================================================
+   HERO
+================================================================ */
+
+.hero-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(80% 55% at 86% 8%, rgba(109, 86, 250, 0.06), transparent 58%),
+    radial-gradient(90% 70% at 18% 100%, rgba(29, 29, 31, 0.04), transparent 62%);
+}
+
+@media (min-width: 768px) {
+  .hero-shell {
+    background:
+      radial-gradient(75% 50% at 85% 12%, rgba(109, 86, 250, 0.05), transparent 56%),
+      radial-gradient(85% 65% at 15% 100%, rgba(29, 29, 31, 0.04), transparent 60%);
+  }
+}
+
+.hero-title {
+  font-size: clamp(2.75rem, 9vw, 7rem);
+}
+
+/* ================================================================
+   INTERACTIVE COMPONENTS
+================================================================ */
+
+.service-row {
+  width: 100%;
+}
+
+.service-row-content {
+  transition: transform var(--transition-duration-fast) var(--ease-apple);
+}
+
+.service-row:hover .service-row-content,
+.service-row:focus-within .service-row-content {
+  transform: translateX(3px);
+}
+
+.work-card {
+  transition:
+    transform var(--transition-duration-fast) var(--ease-apple),
+    border-color var(--transition-duration-fast) var(--ease-apple);
+}
+
+.work-card:hover,
+.work-card:focus-visible {
+  transform: scale(1.01);
+  border-color: var(--color-border);
+}
+
+.process-number-halo {
+  position: relative;
+  z-index: 0;
+}
+
+.process-number-halo::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background: rgba(109, 86, 250, 0.12);
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ================================================================
+   FORM ELEMENTS
+================================================================ */
+
+.id-input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  min-height: 48px;
+  padding: 12px 14px;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  transition:
+    border-color var(--transition-duration-fast) ease,
+    background-color var(--transition-duration-fast) ease;
+}
+
+.id-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.id-input:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.id-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.id-input[aria-invalid="true"] {
+  border-color: rgba(255, 59, 48, 0.4);
+}
+
+.id-input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+.id-input-native-picker {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.id-input-native-picker::-webkit-date-and-time-value {
+  min-height: 1.2em;
+  text-align: left;
+}
+
+.id-input-native-picker::-webkit-datetime-edit,
+.id-input-native-picker::-webkit-datetime-edit-fields-wrapper {
+  min-width: 0;
+  padding: 0;
+}
+
+.id-input-native-picker::-webkit-calendar-picker-indicator {
+  margin: 0;
+  opacity: 0.75;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .id-input-native-picker {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+}
+
+.id-field-error {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-error);
+}
+
+/* ================================================================
+   REDUCED MOTION
+================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .service-row-content,
+  .work-card,
+  .id-input {
+    transition: border-color var(--transition-duration-fast) ease;
+  }
+
+  .service-row:hover .service-row-content,
+  .service-row:focus-within .service-row-content,
+  .work-card:hover {
+    transform: none;
+  }
+}

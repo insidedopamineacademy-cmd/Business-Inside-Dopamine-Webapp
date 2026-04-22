@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, useReducedMotion } from "framer-motion";
+import { MotionDiv } from "@/lib/motion";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 
@@ -25,26 +26,16 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!isOpen) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
+    return () => { document.body.style.overflow = previousOverflow; };
   }, [isOpen]);
 
   useEffect(() => {
-    const onScroll = () => {
-      setIsCompressed(window.scrollY > 60);
-    };
-
+    const onScroll = () => setIsCompressed(window.scrollY > 60);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const navTransition = reduceMotion
@@ -52,8 +43,9 @@ export default function Navbar() {
     : { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const };
 
   return (
-    <motion.header
-      className="relative sticky top-0 z-50 border-b border-[var(--border-light)] bg-[var(--color-bg)]/92 backdrop-blur"
+    <MotionDiv
+      role="banner"
+      className="relative sticky top-0 z-50 border-b border-[var(--color-border)] bg-white/92 backdrop-blur"
       initial={reduceMotion ? false : { opacity: 0, y: -8 }}
       animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       transition={navTransition}
@@ -66,7 +58,7 @@ export default function Navbar() {
         >
           <Link
             href="/"
-            className="type-section inline-flex flex-col items-start gap-[1px] leading-[0.9] no-underline"
+            className="type-section inline-flex flex-col items-start gap-[1px] leading-[0.9] no-underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
           >
             <span>inside</span>
             <span>
@@ -80,24 +72,25 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="type-mono no-underline text-[var(--color-text)] transition-opacity duration-200 hover:opacity-70"
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className="type-mono no-underline text-[var(--color-text-primary)] transition-opacity duration-200 hover:opacity-70 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-            <Button as="link" href="/contact" variant="primary">
+            <Button as="link" href="/contact" variant="primary" size="sm">
               Book a Strategy Call →
             </Button>
           </div>
 
           <button
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-medium)] text-[var(--color-text)] leading-none transition-colors duration-200 hover:border-[var(--border-medium)] md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-primary)] leading-none transition-colors duration-200 hover:border-[var(--color-text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 md:hidden"
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
-            onClick={() => setIsOpen((current) => !current)}
+            onClick={() => setIsOpen((c) => !c)}
           >
             <span className="relative block h-5 w-5" aria-hidden="true">
               <span
@@ -115,10 +108,10 @@ export default function Navbar() {
         </div>
 
         <AnimatePresence initial={false}>
-          {isOpen ? (
-            <motion.div
+          {isOpen && (
+            <MotionDiv
               id="mobile-menu"
-              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--border-light)] bg-[var(--color-menu-surface)] md:hidden"
+              className="absolute inset-x-0 top-full max-h-[calc(100svh-78px)] overflow-y-auto border-y border-[var(--color-border)] bg-[var(--color-surface)] md:hidden"
               initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
               animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
@@ -130,33 +123,46 @@ export default function Navbar() {
             >
               <Container>
                 <div className="flex min-h-[calc(100svh-78px)] flex-col py-3">
-                  <nav className="border-b border-[var(--border-light)]" aria-label="Mobile navigation">
+                  <nav className="border-b border-[var(--color-border)]" aria-label="Mobile navigation">
                     {links.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="group flex items-center justify-between border-t border-[var(--border-light)] bg-[var(--color-bg)]/65 px-1 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
+                        className="group flex items-center justify-between border-t border-[var(--color-border)] bg-white/65 px-1 py-4 no-underline transition-opacity duration-200 hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-inset"
                       >
-                        <span className="type-mono text-[var(--color-text)]">{item.label}</span>
-                        <span className="type-mono text-[var(--color-muted)] transition-colors duration-200 group-hover:text-[var(--color-text)]">
+                        <span className="type-mono text-[var(--color-text-primary)]">{item.label}</span>
+                        <span className="type-mono text-[var(--color-text-tertiary)] transition-colors duration-200 group-hover:text-[var(--color-text-primary)]">
                           →
                         </span>
                       </Link>
                     ))}
                   </nav>
 
-                  <div className="mt-auto border-t border-[var(--border-light)] pt-5">
-                    <p className="type-mono text-[var(--color-muted)]">Start with a focused call</p>
-                    <Button as="link" href="/contact" variant="primary" className="mt-4 w-full justify-center">
+                  <div className="mt-auto border-t border-[var(--color-border)] pt-5">
+                    <p className="type-mono text-[var(--color-text-tertiary)]">Start with a focused call</p>
+                    <Button
+                      as="link"
+                      href="/contact"
+                      variant="primary"
+                      className="mt-4 w-full justify-center"
+                    >
                       Book a Strategy Call →
                     </Button>
+                    <button
+                      type="button"
+                      aria-label="Close menu"
+                      onClick={() => setIsOpen(false)}
+                      className="mt-3 w-full rounded-full border border-[var(--color-border)] py-2.5 text-[var(--color-text-secondary)] type-mono transition-opacity duration-200 hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
               </Container>
-            </motion.div>
-          ) : null}
+            </MotionDiv>
+          )}
         </AnimatePresence>
       </Container>
-    </motion.header>
+    </MotionDiv>
   );
 }

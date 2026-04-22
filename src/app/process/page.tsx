@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Container from "../../../components/ui/Container";
-import PageHero from "../../../components/sections/PageHero";
-import PageCta from "../../../components/sections/PageCta";
+import Container from "@/components/ui/Container";
+import PageHero from "@/components/sections/PageHero";
+import PageCta from "@/components/sections/PageCta";
 
 export const metadata: Metadata = {
   title: "Process | Inside Dopamine",

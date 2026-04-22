@@ -110,13 +110,13 @@ export default function FeaturedWork() {
       <div className="mx-auto max-w-6xl px-4">
         <motion.div className="mb-10 flex items-end justify-between gap-6" variants={headerV}>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted">
+            <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
               Proof
             </div>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">
               Featured Work
             </h2>
-            <p className="mt-3 max-w-2xl text-muted">
+            <p className="mt-3 max-w-2xl text-[var(--color-text-secondary)]">
               A selection of systems we’ve built to turn data into clarity, and
               clarity into action.
             </p>
@@ -124,7 +124,7 @@ export default function FeaturedWork() {
 
           <Link
             href="/work"
-            className="hidden md:inline-flex btn-secondary"
+            className="hidden md:inline-flex btn-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
             aria-label="View all case studies"
           >
             View all
@@ -133,7 +133,7 @@ export default function FeaturedWork() {
 
         <motion.div className="grid gap-6 md:grid-cols-3">
           {cases.map((item) => (
-            <Link key={item.title} href={item.href} className="group block">
+            <Link key={item.title} href={item.href} className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">
               <motion.div
                 className="card relative block overflow-hidden p-6"
                 variants={cardV}
@@ -160,7 +160,7 @@ export default function FeaturedWork() {
                 <div className="relative">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <div className="text-xs text-muted">{item.category}</div>
+                      <div className="text-xs text-[var(--color-text-secondary)]">{item.category}</div>
                       <h3 className="mt-2 text-lg font-semibold tracking-tight">
                         {item.title}
                       </h3>
@@ -168,7 +168,7 @@ export default function FeaturedWork() {
 
                     {/* Arrow badge */}
                     <span
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-sm font-semibold transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-[var(--color-border)] bg-white text-sm font-semibold transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                       aria-hidden="true"
                       title="Open"
                     >
@@ -176,7 +176,7 @@ export default function FeaturedWork() {
                     </span>
                   </div>
 
-                  <p className="mt-3 text-sm text-muted leading-relaxed">
+                  <p className="mt-3 text-sm text-[var(--color-text-secondary)] leading-relaxed">
                     {item.description}
                   </p>
 
@@ -184,7 +184,7 @@ export default function FeaturedWork() {
                     {item.outcomes.map((o) => (
                       <li key={o} className="flex gap-2 text-sm">
                         <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent" />
-                        <span className="text-muted">{o}</span>
+                        <span className="text-[var(--color-text-secondary)]">{o}</span>
                       </li>
                     ))}
                   </ul>
@@ -199,7 +199,7 @@ export default function FeaturedWork() {
         </motion.div>
 
         <div className="mt-8 md:hidden">
-          <Link href="/work" className="btn-secondary w-full justify-center">
+          <Link href="/work" className="btn-secondary w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">
             View all
           </Link>
         </div>

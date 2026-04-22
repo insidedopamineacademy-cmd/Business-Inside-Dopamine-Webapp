@@ -65,7 +65,7 @@ export default function DopamineSystemCore() {
         />
 
         {/* Core (galaxy) */}
-        <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-border bg-card shadow-sm">
+        <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-[var(--color-border)] bg-white shadow-sm">
           {/* galaxy swirl */}
           <motion.div
             className="absolute inset-[-40%] rounded-full"
@@ -168,7 +168,7 @@ export default function DopamineSystemCore() {
           </motion.div>
 
           {/* inner ring */}
-          <div className="absolute inset-[10px] rounded-full border border-border/60" />
+          <div className="absolute inset-[10px] rounded-full border border-[var(--color-border)]/60" />
           {/* tiny center spark */}
           <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[rgba(255,255,255,.85)] shadow-[0_0_18px_rgba(139,92,246,.35)]" />
         </div>
@@ -339,7 +339,7 @@ function PeripheralNode({
       }}
     >
       <motion.div
-        className="flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-2 backdrop-blur"
+        className="flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-white/80 px-3 py-2 backdrop-blur"
         // Keep the pill upright relative to the viewport while the parent orbit rotates.
         // parent rotation (theta) + wrapper rotation (a) + this rotation (-a - theta) => 0
         animate={
@@ -360,7 +360,7 @@ function PeripheralNode({
         }
       >
         <span className={`h-2.5 w-2.5 rounded-full ${t.dot} ${t.halo}`} />
-        <span className="text-[11px] font-medium text-muted">{node.label}</span>
+        <span className="text-[11px] font-medium text-[var(--color-text-secondary)]">{node.label}</span>
       </motion.div>
     </div>
   );
