@@ -10,7 +10,7 @@ function unauthorized() {
   });
 }
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const username = process.env.ADMIN_USERNAME;
   const password = process.env.ADMIN_PASSWORD;
 

@@ -166,7 +166,7 @@ export const caseStudies: Record<CaseStudySlug, CaseStudy> = {
     impact: {
       bullets: [
         "Faster answers with clearer provenance and confidence.",
-        "Reduced dependency on a small set of "knowledge gatekeepers."",
+        "Reduced dependency on a small set of \"knowledge gatekeepers.\"",
         "More consistent decisions across teams and locations.",
         "A safer AI experience aligned with enterprise governance expectations.",
       ],
