@@ -15,6 +15,8 @@ type Message = {
 const GREETING =
   "Hi! I'm Dopamine, Inside Dopamine's AI assistant. Ask me anything about our services, process, or how we work — I'm here to help.";
 
+const BUBBLE_TEXT = "Wondering where to start? 👋";
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -24,8 +26,59 @@ export default function ChatWidget() {
   const [sessionId] = useState<string>(() => crypto.randomUUID());
   const [hasGreeted, setHasGreeted] = useState(false);
 
+  // Proactive bubble state
+  const [showBubble, setShowBubble] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [isTypingDone, setIsTypingDone] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Prevents bubble from ever appearing again after first dismiss
+  const bubbleShownRef = useRef(false);
+  // Stable ref to isOpen so the 8s timer sees current value, not stale closure
+  const isOpenRef = useRef(false);
+
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  // Show bubble once after 8 seconds if chat hasn't been opened
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!isOpenRef.current && !bubbleShownRef.current) {
+        bubbleShownRef.current = true;
+        setShowBubble(true);
+      }
+    }, 8000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Typing animation + auto-hide when bubble becomes visible
+  useEffect(() => {
+    if (!showBubble) return;
+
+    setTypedText("");
+    setIsTypingDone(false);
+    let i = 0;
+
+    const typing = setInterval(() => {
+      i++;
+      setTypedText(BUBBLE_TEXT.slice(0, i));
+      if (i >= BUBBLE_TEXT.length) {
+        clearInterval(typing);
+        setIsTypingDone(true);
+      }
+    }, 40);
+
+    const autoHide = setTimeout(() => {
+      setShowBubble(false);
+    }, 6000);
+
+    return () => {
+      clearInterval(typing);
+      clearTimeout(autoHide);
+    };
+  }, [showBubble]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,10 +88,15 @@ export default function ChatWidget() {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 88)}px`; // ~3 rows
+    el.style.height = `${Math.min(el.scrollHeight, 88)}px`;
   }, [inputValue]);
 
+  function dismissBubble() {
+    setShowBubble(false);
+  }
+
   function openChat() {
+    setShowBubble(false);
     setIsOpen(true);
     if (!hasGreeted) {
       setMessages([{ id: crypto.randomUUID(), role: "assistant", content: GREETING }]);
@@ -214,30 +272,71 @@ export default function ChatWidget() {
         )}
       </AnimatePresence>
 
-      {/* Trigger button */}
-      <button
-        type="button"
-        onClick={openChat}
-        aria-label="Open chat"
-        aria-expanded={isOpen}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-accent)] text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
-      >
-        {!hasGreeted && (
-          <span
-            aria-label="Unread message"
-            className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500"
-          />
-        )}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+      {/* Trigger button + proactive bubble — fixed wrapper keeps them in sync */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* Proactive bubble */}
+        <AnimatePresence>
+          {showBubble && !isOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              style={{ originX: 1, originY: 1 }}
+              className="absolute bottom-16 right-0 max-w-[200px] rounded-2xl rounded-br-sm border border-[var(--color-border)] bg-white px-4 py-3 shadow-lg"
+            >
+              {/* Dismiss button */}
+              <button
+                type="button"
+                onClick={dismissBubble}
+                aria-label="Dismiss"
+                className="absolute right-2 top-1 text-xs text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]"
+              >
+                ✕
+              </button>
+
+              {/* Typed text */}
+              <p className="pr-3 text-[14px] font-medium leading-snug text-[var(--color-text-primary)]">
+                {typedText}
+                {!isTypingDone && (
+                  <span className="ml-px inline-block animate-pulse">|</span>
+                )}
+              </p>
+
+              {/* Triangle pointer toward chat button */}
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-[7px] right-4 h-3 w-3 rotate-45 border-b border-r border-[var(--color-border)] bg-white"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Chat trigger button */}
+        <button
+          type="button"
+          onClick={openChat}
+          aria-label="Open chat"
+          aria-expanded={isOpen}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-accent)] text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+        >
+          {!hasGreeted && (
+            <span
+              aria-label="Unread message"
+              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500"
+            />
+          )}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
     </>
   );
 }
