@@ -29,6 +29,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Leads
             </Link>
             <Link
+              href="/admin/faqs"
+              className="type-mono text-[var(--color-text)] no-underline transition-opacity duration-200 hover:opacity-65"
+            >
+              FAQ Manager
+            </Link>
+            <Link
+              href="/admin/conversations"
+              className="type-mono text-[var(--color-text)] no-underline transition-opacity duration-200 hover:opacity-65"
+            >
+              Conversations
+            </Link>
+            <Link
               href="/"
               className="type-mono text-[var(--color-text-secondary)] no-underline transition-opacity duration-200 hover:opacity-65"
             >
