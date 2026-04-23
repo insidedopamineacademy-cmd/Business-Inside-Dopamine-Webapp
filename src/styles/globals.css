@@ -117,6 +117,14 @@
   --color-surface-dark:  #1D1D1F;
   --border-light:  rgba(210, 210, 215, 0.5);
   --border-medium: rgba(210, 210, 215, 0.9);
+  /* Hero gradient start — more vivid on mobile, softer on desktop */
+  --hero-gradient-start: #EDE9FF;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --hero-gradient-start: #F3F0FF;
+  }
 }
 
 /* ================================================================

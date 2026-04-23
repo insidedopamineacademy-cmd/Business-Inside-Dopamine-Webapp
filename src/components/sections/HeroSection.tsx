@@ -23,23 +23,23 @@ function delayed(base: Variants, delay: number): Variants {
 
 export default function HeroSection({ eyebrow, headline, subheadline, primaryCta, secondaryCta }: Props) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col">
       <MotionDiv
         variants={fadeIn}
         initial="hidden"
         animate="visible"
-        className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)]"
+        className="mb-4 text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)]"
       >
         {eyebrow}
       </MotionDiv>
 
-      <MotionDiv variants={delayed(fadeUp, 0.1)} initial="hidden" animate="visible">
+      <MotionDiv variants={delayed(fadeUp, 0.1)} initial="hidden" animate="visible" className="mb-6">
         <h1 className="max-w-4xl text-[clamp(2.5rem,5vw,5rem)] font-bold leading-[1.1] tracking-tight text-[var(--color-text-primary)]">
           {headline}
         </h1>
       </MotionDiv>
 
-      <MotionDiv variants={delayed(fadeUp, 0.2)} initial="hidden" animate="visible">
+      <MotionDiv variants={delayed(fadeUp, 0.2)} initial="hidden" animate="visible" className="mb-8">
         <p className="max-w-2xl text-lg text-[var(--color-text-secondary)] md:text-xl">
           {subheadline}
         </p>

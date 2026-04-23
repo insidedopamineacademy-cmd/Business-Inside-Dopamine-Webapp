@@ -10,7 +10,7 @@ export default function FinalCTASection() {
 
   return (
     <MotionSection
-      className="section-space"
+      className="section-space surface-soft"
       aria-label="Final call to action"
       variants={fadeUp}
       initial={reduceMotion ? false : "hidden"}

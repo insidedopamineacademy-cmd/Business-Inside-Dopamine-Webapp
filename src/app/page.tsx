@@ -17,9 +17,13 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <section className="hero-shell" aria-label="Hero">
+      <section
+        className="hero-shell"
+        aria-label="Hero"
+        style={{ background: "linear-gradient(180deg, var(--hero-gradient-start) 0%, #FAFAFA 60%, #FFFFFF 100%)" }}
+      >
         <Container>
-          <div className="flex min-h-[clamp(34rem,76svh,48rem)] max-w-[44rem] flex-col justify-center py-10 md:min-h-[clamp(38rem,72svh,50rem)] md:py-14">
+          <div className="flex min-h-[clamp(34rem,76svh,48rem)] max-w-[44rem] flex-col justify-start pt-16 pb-10 md:min-h-[clamp(38rem,72svh,50rem)] md:justify-center md:py-14">
             <HeroSection
               eyebrow="AI-NATIVE DIGITAL AGENCY"
               headline="We build digital products powered by AI"

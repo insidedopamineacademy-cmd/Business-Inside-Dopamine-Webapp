@@ -16,7 +16,7 @@ export default function TrustStripSection() {
 
   return (
     <MotionSection
-      className="trust-strip bg-[var(--color-surface)]"
+      className="trust-strip bg-white"
       aria-label="Trust metrics"
       variants={fadeIn}
       initial={reduceMotion ? false : "hidden"}
