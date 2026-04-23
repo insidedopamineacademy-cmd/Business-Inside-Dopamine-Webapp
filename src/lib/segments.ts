@@ -22,7 +22,7 @@ export const SEGMENTS: Record<string, Segment> = {
         "From knowledge copilots to intelligent dashboards — we design, build and ship AI that fits your workflow, not the other way around.",
       cta: "See our AI work",
     },
-    serviceOrder: ["ai-copilot", "dashboard", "platform", "strategy"],
+    serviceOrder: ["automation", "dashboard", "platform", "performance-analytics"],
     caseStudyTags: ["ai", "copilot", "automation"],
   },
 
@@ -36,7 +36,7 @@ export const SEGMENTS: Record<string, Segment> = {
         "We turn your raw data into executive-ready dashboards that drive real decisions — fast, beautiful, and built to scale.",
       cta: "See our dashboard work",
     },
-    serviceOrder: ["dashboard", "analytics", "platform", "ai-copilot"],
+    serviceOrder: ["dashboard", "performance-analytics", "platform", "automation"],
     caseStudyTags: ["dashboard", "analytics", "data"],
   },
 
@@ -50,7 +50,7 @@ export const SEGMENTS: Record<string, Segment> = {
         "We are the technical co-founder you need — strategy, design, and full-stack engineering under one roof.",
       cta: "See how we build",
     },
-    serviceOrder: ["platform", "strategy", "dashboard", "ai-copilot"],
+    serviceOrder: ["platform", "automation", "dashboard", "performance-analytics"],
     caseStudyTags: ["platform", "saas", "product"],
   },
 
@@ -64,7 +64,7 @@ export const SEGMENTS: Record<string, Segment> = {
         "We embed with your team to design and deliver secure, scalable digital products — with the governance your stakeholders expect.",
       cta: "Talk to our team",
     },
-    serviceOrder: ["platform", "dashboard", "ai-copilot", "strategy"],
+    serviceOrder: ["platform", "dashboard", "automation", "performance-analytics"],
     caseStudyTags: ["enterprise", "scale", "governance"],
   },
 
@@ -78,7 +78,7 @@ export const SEGMENTS: Record<string, Segment> = {
         "Inside Dopamine designs and ships dashboards, AI copilots, and full digital platforms for ambitious businesses.",
       cta: "See our work",
     },
-    serviceOrder: ["dashboard", "ai-copilot", "platform", "strategy"],
+    serviceOrder: ["dashboard", "automation", "platform", "performance-analytics"],
     caseStudyTags: [],
   },
 };

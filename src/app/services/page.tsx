@@ -23,19 +23,14 @@ const serviceBlocks = [
     description: "Custom tools for internal operations, team workflows, and client-facing utility.",
   },
   {
-    id: "strategy",
+    id: "automation",
     title: "Automation Systems",
-    description: "n8n-powered workflows and API automations that remove repetitive work.",
+    description: "AI copilots, NLM solutions, CRM systems, WhatsApp flows, n8n workflows, and intelligent process automation — our broadest and most capable service category.",
   },
   {
-    id: "ai-copilot",
-    title: "AI Copilots & LLMs",
-    description: "Custom AI systems trained around your business logic and internal use cases.",
-  },
-  {
-    id: "analytics",
-    title: "CRM & WhatsApp Flows",
-    description: "Lead capture, qualification, routing, and follow-up systems that run automatically.",
+    id: "performance-analytics",
+    title: "Performance & Analytics",
+    description: "Google Ads management, GA4, GTM, conversion tracking, and AI-powered campaign analysis — the full measurement and growth stack.",
   },
 ];
 

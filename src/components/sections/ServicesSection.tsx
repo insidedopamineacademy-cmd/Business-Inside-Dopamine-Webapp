@@ -36,29 +36,20 @@ const services: ServiceItem[] = [
   {
     number: "03",
     title: "AUTOMATION SYSTEMS",
-    description: "Remove repetitive work with fully automated pipelines.",
-    tag: "n8n • Workflows",
-    tagVariant: "default",
+    description: "AI copilots, NLM solutions, CRM, WhatsApp flows, and intelligent process automation.",
+    tag: "AI • n8n • Integrations",
+    tagVariant: "accent",
     detail:
-      "Automation systems connect repetitive tasks, approvals, data movement, and downstream actions into one dependable workflow. The result is less manual coordination, fewer dropped steps, and more consistent outcomes across operations. We design these flows to be resilient, auditable, and aligned to how your business actually runs day to day.",
+      "Our broadest and most capable service category. We build AI copilots and NLM solutions trained on your business logic, CRM systems that qualify and route leads automatically, WhatsApp flows that turn conversations into conversions, and n8n-powered workflows that connect every tool in your stack. The result is end-to-end intelligent process automation — less coordination overhead, fewer dropped steps, and an operation that compounds in efficiency over time.",
   },
   {
     number: "04",
-    title: "AI COPILOTS & LLMS",
-    description: "Intelligent assistants tailored to your business logic.",
-    tag: "Custom Builds",
+    title: "PERFORMANCE & ANALYTICS",
+    description: "Data-driven growth, measured and optimised.",
+    tag: "Google Ads • GA4",
     tagVariant: "default",
     detail:
-      "We build practical internal AI tools that help teams search knowledge faster, support decisions with context, and accelerate execution in recurring workflows. These copilots are shaped around your business logic, language, and process requirements, so they deliver useful operational leverage rather than novelty features that look impressive but fail in daily use.",
-  },
-  {
-    number: "05",
-    title: "CRM & WHATSAPP FLOWS",
-    description: "Capture, qualify, and convert leads automatically.",
-    tag: "Integrations",
-    tagVariant: "default",
-    detail:
-      "These flows capture inbound leads, qualify intent, route opportunities, and automate follow-up across CRM and WhatsApp touchpoints. By reducing response delays and manual handoffs, teams get a cleaner pipeline and better consistency from first contact to conversion. The system is structured to improve speed without sacrificing lead quality or control.",
+      "We build the full measurement stack — GA4, GTM, conversion tracking, and attribution — then layer Google Ads management on top. AI-powered analysis turns your data into decisions, not just reports. From initial setup to ongoing optimisation, we own the full loop: track, analyse, act, and iterate. Key inclusions: Google Ads Management, GA4 Setup & Configuration, Google Tag Manager, Conversion Tracking & Attribution, Custom Performance Dashboards, and AI Campaign Analysis.",
   },
 ];
 
