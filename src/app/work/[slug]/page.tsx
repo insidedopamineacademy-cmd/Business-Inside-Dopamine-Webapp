@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { caseStudies, caseStudySlugs, type CaseStudySlug } from "@/data/caseStudies";
 import CaseStudyLayout from "@/components/sections/CaseStudyLayout";
+import Section from "@/components/ui/Section";
+import RelatedCaseStudies from "@/components/ui/RelatedCaseStudies";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -37,5 +39,12 @@ export default async function WorkCaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
   if (!isCaseStudySlug(slug)) notFound();
   const study = caseStudies[slug];
-  return <CaseStudyLayout study={study} />;
+  return (
+    <>
+      <CaseStudyLayout study={study} />
+      <Section background="surface" size="md">
+        <RelatedCaseStudies currentSlug={slug} />
+      </Section>
+    </>
+  );
 }

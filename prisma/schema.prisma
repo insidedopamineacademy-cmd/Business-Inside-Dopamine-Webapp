@@ -57,6 +57,18 @@ model Faq {
   updatedAt DateTime @updatedAt
 }
 
+model SegmentEvent {
+  id        String   @id @default(cuid())
+  segment   String
+  source    String
+  intent    String
+  path      String
+  createdAt DateTime @default(now())
+
+  @@index([segment])
+  @@index([createdAt(sort: Desc)])
+}
+
 model Conversation {
   id         String   @id @default(cuid())
   sessionId  String   @unique

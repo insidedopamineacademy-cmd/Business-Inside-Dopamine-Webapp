@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Container from "@/components/ui/Container";
 import PageHero from "@/components/sections/PageHero";
 import PageCta from "@/components/sections/PageCta";
+import { getSegment } from "@/lib/segments";
 
 export const metadata: Metadata = {
   title: "Solutions | Inside Dopamine",
@@ -11,28 +13,44 @@ export const metadata: Metadata = {
 
 const serviceBlocks = [
   {
+    id: "dashboard",
     title: "BI & AI Dashboards",
     description: "Real-time reporting systems built for visibility and decision-making.",
   },
   {
+    id: "platform",
     title: "Web Applications",
     description: "Custom tools for internal operations, team workflows, and client-facing utility.",
   },
   {
+    id: "strategy",
     title: "Automation Systems",
     description: "n8n-powered workflows and API automations that remove repetitive work.",
   },
   {
+    id: "ai-copilot",
     title: "AI Copilots & LLMs",
     description: "Custom AI systems trained around your business logic and internal use cases.",
   },
   {
+    id: "analytics",
     title: "CRM & WhatsApp Flows",
     description: "Lead capture, qualification, routing, and follow-up systems that run automatically.",
   },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const headersList = await headers();
+  const segment = headersList.get("x-visitor-segment") ?? "general";
+  const { serviceOrder } = getSegment(segment);
+
+  const ordered = [
+    ...serviceOrder
+      .map((key) => serviceBlocks.find((s) => s.id === key))
+      .filter((s): s is (typeof serviceBlocks)[number] => s !== undefined),
+    ...serviceBlocks.filter((s) => !serviceOrder.includes(s.id)),
+  ];
+
   return (
     <>
       <PageHero
@@ -44,11 +62,11 @@ export default function ServicesPage() {
       <section className="section-space surface-soft" aria-label="Service blocks">
         <Container>
           <ul className="border-y border-[var(--border-light)]">
-            {serviceBlocks.map((service, index) => (
+            {ordered.map((service, index) => (
               <li
                 key={service.title}
                 className={`py-6 md:py-7 ${
-                  index !== serviceBlocks.length - 1 ? "border-b border-[var(--border-light)]" : ""
+                  index !== ordered.length - 1 ? "border-b border-[var(--border-light)]" : ""
                 }`}
               >
                 <h2 className="type-section text-2xl text-[var(--color-text)] md:text-3xl">{service.title}</h2>
