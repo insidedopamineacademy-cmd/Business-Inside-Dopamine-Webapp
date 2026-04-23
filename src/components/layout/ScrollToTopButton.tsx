@@ -31,7 +31,7 @@ export default function ScrollToTopButton() {
           type="button"
           aria-label="Scroll to top"
           onClick={scrollToTop}
-          className="fixed bottom-5 right-5 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-medium)] bg-[var(--color-surface-light)] text-[var(--color-text)] transition-opacity duration-200 hover:opacity-85"
+          className="fixed top-20 right-6 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-medium)] bg-[var(--color-surface-light)] text-[var(--color-text)] transition-opacity duration-200 hover:opacity-85"
           initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 8, scale: 0.96 }}
           animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
