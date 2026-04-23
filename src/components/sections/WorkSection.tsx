@@ -7,33 +7,33 @@ import { MotionDiv, useReducedMotion } from "@/lib/motion";
 import { staggerContainer, scaleIn, viewport } from "@/lib/animations";
 
 type WorkCard = {
-  metric: string;
-  system: string;
-  context: string;
-  tag: string;
+  headline: string;
+  subheadline: string;
+  label: string;
+  clientType: string;
   href: string;
 };
 
 const workCards: WorkCard[] = [
   {
-    metric: "12x faster reporting",
-    system: "BI dashboard + automation layer",
-    context: "Ops-heavy services team",
-    tag: "BI & Automation",
+    headline: "Reporting that runs itself",
+    subheadline: "BI dashboard + automation layer",
+    label: "BI & AUTOMATION",
+    clientType: "Operations team",
     href: "/work/reporting-speed-dashboard",
   },
   {
-    metric: "+127% lead conversion",
-    system: "WhatsApp + CRM qualification flow",
-    context: "Ecommerce brand",
-    tag: "CRM & Messaging",
+    headline: "Leads qualified before your team picks up the phone",
+    subheadline: "WhatsApp + CRM qualification flow",
+    label: "CRM & MESSAGING",
+    clientType: "E-commerce brand",
     href: "/work/whatsapp-crm-qualification-flow",
   },
   {
-    metric: "3-week internal tool launch",
-    system: "Custom web app for internal operations",
-    context: "Multi-team workflow",
-    tag: "Web App",
+    headline: "Internal tool live in three weeks",
+    subheadline: "Custom web app for internal operations",
+    label: "WEB APP",
+    clientType: "Multi-team workflow",
     href: "/work/internal-ops-web-app",
   },
 ];
@@ -74,24 +74,22 @@ export default function WorkSection() {
           viewport={viewport}
         >
           {workCards.map((card) => (
-            <MotionDiv key={card.metric} variants={scaleIn}>
+            <MotionDiv key={card.headline} variants={scaleIn}>
               <Link
                 href={card.href}
-                className="work-card flex h-full flex-col rounded-2xl border border-[var(--color-border)] bg-white p-6 no-underline md:p-7"
+                className="flex h-full flex-col rounded-2xl border border-[var(--color-border)] bg-white p-6 no-underline transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-md"
               >
-                <div className="flex flex-col gap-4">
-                  <p className="type-section text-3xl leading-[1.02] text-[var(--color-text-primary)] md:text-4xl">
-                    {card.metric}
-                  </p>
-                  <p className="type-section text-lg tracking-[-0.01em] text-[var(--color-text-primary)] md:text-xl">
-                    {card.system}
-                  </p>
-                  <p className="type-body text-sm text-[var(--color-text-secondary)]">
-                    {card.context}
-                  </p>
-                </div>
-                <div className="mt-6">
-                  <Badge variant="default">{card.tag}</Badge>
+                <p className="text-2xl font-bold leading-snug text-[var(--color-text-primary)]">
+                  {card.headline}
+                </p>
+                <p className="mt-2 text-base font-semibold text-[var(--color-text-primary)]">
+                  {card.subheadline}
+                </p>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+                  {card.clientType}
+                </p>
+                <div className="mt-4">
+                  <Badge variant="default">{card.label}</Badge>
                 </div>
               </Link>
             </MotionDiv>
