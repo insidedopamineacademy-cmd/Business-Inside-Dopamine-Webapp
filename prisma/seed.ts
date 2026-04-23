@@ -157,9 +157,9 @@ const faqs = [
 async function main() {
   console.log("Seeding FAQs...");
 
-  await prisma.fAQ.deleteMany();
+  await prisma.faq.deleteMany();
 
-  const created = await prisma.fAQ.createMany({ data: faqs });
+  const created = await prisma.faq.createMany({ data: faqs });
 
   console.log(`✓ Seeded ${created.count} FAQs`);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { FAQ } from "@prisma/client";
+import type { Faq } from "@prisma/client";
 import { getFAQs, createFAQ, updateFAQ, deleteFAQ } from "@/app/admin/faqs/actions";
 import { Button, Card, Badge, Input, Label, HelperText } from "@/components/ui";
 
@@ -27,7 +27,7 @@ function categoryVariant(cat: string): "default" | "accent" | "success" | "error
 }
 
 export default function FAQManagerPage() {
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -53,7 +53,7 @@ export default function FAQManagerPage() {
     setShowForm(true);
   }
 
-  function openEdit(faq: FAQ) {
+  function openEdit(faq: Faq) {
     setEditingId(faq.id);
     setForm({
       question: faq.question,
@@ -102,18 +102,18 @@ export default function FAQManagerPage() {
     }
   }
 
-  async function handleToggle(faq: FAQ) {
+  async function handleToggle(faq: Faq) {
     await updateFAQ(faq.id, { isActive: !faq.isActive });
     await loadFAQs();
   }
 
-  async function handleDelete(faq: FAQ) {
+  async function handleDelete(faq: Faq) {
     if (!window.confirm(`Delete: "${faq.question}"?`)) return;
     await deleteFAQ(faq.id);
     await loadFAQs();
   }
 
-  const grouped = CATEGORIES.reduce<Record<string, FAQ[]>>((acc, cat) => {
+  const grouped = CATEGORIES.reduce<Record<string, Faq[]>>((acc, cat) => {
     acc[cat] = faqs.filter((f) => f.category === cat);
     return acc;
   }, {});

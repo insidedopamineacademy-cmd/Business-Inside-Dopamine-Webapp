@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         typeof m.content === "string"
     );
 
-    const faqs = await prisma.fAQ.findMany({
+    const faqs = await prisma.faq.findMany({
       where: { isActive: true },
       orderBy: { order: "asc" },
     });

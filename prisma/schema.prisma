@@ -46,7 +46,7 @@ model Lead {
   @@index([email])
 }
 
-model FAQ {
+model Faq {
   id        String   @id @default(cuid())
   question  String
   answer    String

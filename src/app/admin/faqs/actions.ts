@@ -1,11 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import type { FAQ } from "@prisma/client";
+import type { Faq } from "@prisma/client";
 
-export async function getFAQs(): Promise<FAQ[]> {
+export async function getFAQs(): Promise<Faq[]> {
   try {
-    return await prisma.fAQ.findMany({ orderBy: { order: "asc" } });
+    return await prisma.faq.findMany({ orderBy: { order: "asc" } });
   } catch (err) {
     console.error("[getFAQs]", err);
     throw new Error("Failed to fetch FAQs.");
@@ -17,13 +17,13 @@ export async function createFAQ(data: {
   answer: string;
   category: string;
   order: number;
-}): Promise<FAQ> {
+}): Promise<Faq> {
   if (!data.question.trim()) throw new Error("Question is required.");
   if (!data.answer.trim()) throw new Error("Answer is required.");
   if (!data.category.trim()) throw new Error("Category is required.");
 
   try {
-    return await prisma.fAQ.create({
+    return await prisma.faq.create({
       data: {
         question: data.question.trim(),
         answer: data.answer.trim(),
@@ -46,7 +46,7 @@ export async function updateFAQ(
     isActive: boolean;
     order: number;
   }>
-): Promise<FAQ> {
+): Promise<Faq> {
   if (!id.trim()) throw new Error("FAQ id is required.");
   if (data.question !== undefined && !data.question.trim())
     throw new Error("Question cannot be empty.");
@@ -56,7 +56,7 @@ export async function updateFAQ(
     throw new Error("Category cannot be empty.");
 
   try {
-    return await prisma.fAQ.update({
+    return await prisma.faq.update({
       where: { id },
       data: {
         ...(data.question !== undefined && { question: data.question.trim() }),
@@ -76,7 +76,7 @@ export async function deleteFAQ(id: string): Promise<{ success: true }> {
   if (!id.trim()) throw new Error("FAQ id is required.");
 
   try {
-    await prisma.fAQ.delete({ where: { id } });
+    await prisma.faq.delete({ where: { id } });
     return { success: true };
   } catch (err) {
     console.error("[deleteFAQ]", err);
