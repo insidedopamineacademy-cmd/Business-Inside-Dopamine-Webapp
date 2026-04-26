@@ -192,7 +192,7 @@ export default function ChatWidget() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             style={{ originX: 1, originY: 1 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[520px] max-h-[calc(100vh-120px)] w-[380px] max-w-[calc(100vw-48px)] flex-col rounded-3xl border border-[var(--color-border)] bg-white shadow-[0_8px_48px_rgba(0,0,0,0.16)]"
+            className="fixed bottom-24 right-6 z-40 flex h-[520px] max-h-[calc(100vh-120px)] w-[380px] max-w-[calc(100vw-48px)] flex-col rounded-3xl border border-[var(--color-border)] bg-white shadow-[0_8px_48px_rgba(0,0,0,0.16)]"
           >
             {/* Header */}
             <div className="flex shrink-0 items-center justify-between rounded-t-3xl bg-[var(--color-accent)] px-4 py-3 text-white">
@@ -273,7 +273,7 @@ export default function ChatWidget() {
       </AnimatePresence>
 
       {/* Trigger button + proactive bubble — fixed wrapper keeps them in sync */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-40">
         {/* Proactive bubble */}
         <AnimatePresence>
           {showBubble && !isOpen && (
