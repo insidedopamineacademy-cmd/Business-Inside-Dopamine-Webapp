@@ -42,7 +42,7 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <PageCta heading="Book a Strategy Call" ctaLabel="Book a Strategy Call →" href="/contact" />
+      <PageCta heading="Request a Strategy Call" ctaLabel="Request a Strategy Call →" href="/contact" />
     </>
   );
 }

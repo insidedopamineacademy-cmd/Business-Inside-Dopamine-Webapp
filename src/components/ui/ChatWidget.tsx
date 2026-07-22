@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ChatMessage from "@/components/ui/ChatMessage";
 import ChatLeadCapture from "@/components/ui/ChatLeadCapture";
+import { safeApiErrorMessage } from "@/lib/chat-client-contract";
 
 type Message = {
   id: string;
@@ -12,8 +13,20 @@ type Message = {
   isLoading?: boolean;
 };
 
+type ApiFailure = {
+  error?: {
+    code?: string;
+    message?: string;
+    retryable?: boolean;
+    requestId?: string;
+  };
+};
+
 const GREETING =
   "Hi! I'm Dopamine, Inside Dopamine's AI assistant. Ask me anything about our services, process, or how we work — I'm here to help.";
+const CHAT_FAILURE_MESSAGE = "Chat is temporarily unavailable. Please try again.";
+const LEAD_FAILURE_MESSAGE =
+  "We couldn't save your request. Please retry or use the contact page.";
 
 const BUBBLE_TEXT = "Wondering where to start? 👋";
 
@@ -33,6 +46,7 @@ export default function ChatWidget() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const retryRequestRef = useRef<{ text: string; messageId: string } | null>(null);
   // Prevents bubble from ever appearing again after first dismiss
   const bubbleShownRef = useRef(false);
   // Stable ref to isOpen so the 8s timer sees current value, not stale closure
@@ -108,32 +122,39 @@ export default function ChatWidget() {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
+    const retryRequest = retryRequestRef.current;
+    const apiMessageId =
+      retryRequest?.text === trimmed ? retryRequest.messageId : crypto.randomUUID();
     const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: trimmed };
     const loadingId = crypto.randomUUID();
     const loadingMsg: Message = { id: loadingId, role: "assistant", content: "", isLoading: true };
 
-    const history = messages
-      .filter((m) => !m.isLoading)
-      .slice(-8)
-      .map(({ role, content }) => ({ role, content }));
-
     setMessages((prev) => [...prev, userMsg, loadingMsg]);
     setInputValue("");
     setIsLoading(true);
+    let failureMessage = CHAT_FAILURE_MESSAGE;
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, sessionId, history }),
+        body: JSON.stringify({ message: trimmed, sessionId, messageId: apiMessageId }),
       });
 
-      const data = (await res.json()) as { response?: string; leadCaptureTriggered?: boolean };
+      const data = (await res.json()) as {
+        response?: string;
+        leadCaptureTriggered?: boolean;
+      } & ApiFailure;
+      failureMessage = safeApiErrorMessage(data, CHAT_FAILURE_MESSAGE);
+      if (!res.ok || typeof data.response !== "string" || !data.response.trim()) {
+        throw new Error("Chat request did not return a usable success response.");
+      }
+      retryRequestRef.current = null;
 
       setMessages((prev) =>
         prev.map((m) =>
           m.id === loadingId
-            ? { id: loadingId, role: "assistant" as const, content: data.response ?? "Something went wrong. Please try again." }
+            ? { id: loadingId, role: "assistant" as const, content: data.response! }
             : m
         )
       );
@@ -143,35 +164,48 @@ export default function ChatWidget() {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === loadingId
-            ? { id: loadingId, role: "assistant" as const, content: "Sorry, something went wrong. Please try again." }
+            ? { id: loadingId, role: "assistant" as const, content: failureMessage }
             : m
         )
       );
+      retryRequestRef.current = { text: trimmed, messageId: apiMessageId };
+      setInputValue(trimmed);
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function handleLeadSubmit(name: string, email: string) {
-    setShowLeadCapture(false);
+  async function handleLeadSubmit(name: string, email: string, idempotencyKey: string) {
     try {
-      await fetch("/api/chat/lead", {
+      const response = await fetch("/api/chat/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, name, email }),
+        body: JSON.stringify({ sessionId, name, email, idempotencyKey }),
       });
+      const data = (await response.json()) as { success?: boolean } & ApiFailure;
+      if (!response.ok || data.success !== true) {
+        return {
+          success: false,
+          message: safeApiErrorMessage(data, LEAD_FAILURE_MESSAGE),
+        };
+      }
     } catch {
-      // silent — confirmation message still shown
+      return {
+        success: false,
+        message: LEAD_FAILURE_MESSAGE,
+      };
     }
+    setShowLeadCapture(false);
     setMessages((prev) => [
       ...prev,
       {
         id: crypto.randomUUID(),
         role: "assistant",
         content:
-          "Perfect! We have your details and will be in touch within 24 hours. Is there anything else I can help you with?",
+          "Thanks — your contact request has been received. The team can follow up using the details you provided.",
       },
     ]);
+    return { success: true };
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -200,7 +234,7 @@ export default function ChatWidget() {
                 <span className="h-2 w-2 shrink-0 rounded-full bg-green-400" aria-hidden="true" />
                 <div>
                   <div className="text-sm font-semibold leading-tight">Dopamine</div>
-                  <div className="text-[11px] opacity-75">Inside Dopamine AI</div>
+                  <div className="text-[11px] text-white">Inside Dopamine AI</div>
                 </div>
               </div>
               <button
@@ -251,7 +285,8 @@ export default function ChatWidget() {
                   placeholder="Ask me anything..."
                   disabled={isLoading}
                   aria-label="Chat message input"
-                  className="flex-1 resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] outline-none transition-[border-color] focus:border-[var(--color-accent)] disabled:opacity-50"
+                  maxLength={500}
+                  className="flex-1 resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] outline-none transition-[border-color] focus:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:text-[var(--color-text-secondary)]"
                   style={{ lineHeight: "1.5", overflowY: "hidden" }}
                 />
                 <button
@@ -259,7 +294,7 @@ export default function ChatWidget() {
                   onClick={() => sendMessage(inputValue)}
                   disabled={!inputValue.trim() || isLoading}
                   aria-label="Send message"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-white shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-white shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-[var(--color-text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />

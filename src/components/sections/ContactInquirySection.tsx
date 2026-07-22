@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
@@ -20,7 +20,7 @@ function SubmitButton() {
       isLoading={pending}
       disabled={pending}
     >
-      Book a Strategy Call →
+      Request a Strategy Call →
     </Button>
   );
 }
@@ -28,18 +28,23 @@ function SubmitButton() {
 export default function ContactInquirySection() {
   const reduceMotion = useReducedMotion();
   const [state, formAction] = useActionState(submitContactForm, initialContactFormState);
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
   const formRef = useRef<HTMLFormElement>(null);
   const fieldErrors = state?.fieldErrors ?? {};
   const status = state?.status ?? "idle";
   const message = state?.message ?? "";
+  const values = state?.values ?? {};
+  const activeIdempotencyKey = state.idempotencyKey ?? idempotencyKey;
 
   useEffect(() => {
-    if (status === "success") formRef.current?.reset();
-  }, [status]);
+    if (status === "success") {
+      formRef.current?.reset();
+    }
+  }, [status, state.requestId]);
 
   return (
     <>
-      <section className="section-space surface-soft" aria-label="Book a strategy call">
+      <section className="section-space surface-soft" aria-label="Request a strategy call">
         <Container>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6">
 
@@ -53,14 +58,20 @@ export default function ContactInquirySection() {
             >
               <p className="type-mono text-[var(--color-text-tertiary)]">30-MIN STRATEGY CALL</p>
               <h2 className="type-section mt-4 text-3xl text-[var(--color-text-primary)] md:text-4xl">
-                Book a call
+                Request a call
               </h2>
               <p className="type-body mt-4 max-w-2xl">
-                We'll review the workflow, identify friction points, and decide what kind of
+                We&apos;ll review the workflow, identify friction points, and decide what kind of
                 system makes sense.
               </p>
 
-              <form ref={formRef} action={formAction} className="mt-8">
+              <form
+                key={state.requestId ?? "contact-form"}
+                ref={formRef}
+                action={formAction}
+                className="mt-8"
+              >
+                <input type="hidden" name="idempotencyKey" value={activeIdempotencyKey} />
                 <p className="type-body text-sm text-[var(--color-text-secondary)]">
                   Fields marked with * are required.
                 </p>
@@ -79,7 +90,9 @@ export default function ContactInquirySection() {
                       name="fullName"
                       type="text"
                       autoComplete="name"
+                      maxLength={100}
                       required
+                      defaultValue={values.fullName ?? ""}
                       error={Boolean(fieldErrors.fullName)}
                       aria-describedby={fieldErrors.fullName ? "fullName-error" : undefined}
                       className="mt-1.5"
@@ -98,7 +111,9 @@ export default function ContactInquirySection() {
                       name="email"
                       type="email"
                       autoComplete="email"
+                      maxLength={254}
                       required
+                      defaultValue={values.email ?? ""}
                       error={Boolean(fieldErrors.email)}
                       aria-describedby={fieldErrors.email ? "email-error" : undefined}
                       className="mt-1.5"
@@ -117,8 +132,17 @@ export default function ContactInquirySection() {
                       name="company"
                       type="text"
                       autoComplete="organization"
+                      defaultValue={values.company ?? ""}
+                      maxLength={120}
+                      error={Boolean(fieldErrors.company)}
+                      aria-describedby={fieldErrors.company ? "company-error" : undefined}
                       className="mt-1.5"
                     />
+                    {fieldErrors.company && (
+                      <HelperText error id="company-error" role="alert">
+                        {fieldErrors.company}
+                      </HelperText>
+                    )}
                   </div>
 
                   <div className="md:col-span-1">
@@ -128,8 +152,17 @@ export default function ContactInquirySection() {
                       name="phone"
                       type="tel"
                       autoComplete="tel"
+                      defaultValue={values.phone ?? ""}
+                      maxLength={32}
+                      error={Boolean(fieldErrors.phone)}
+                      aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
                       className="mt-1.5"
                     />
+                    {fieldErrors.phone && (
+                      <HelperText error id="phone-error" role="alert">
+                        {fieldErrors.phone}
+                      </HelperText>
+                    )}
                   </div>
 
                   <div className="md:col-span-2">
@@ -138,6 +171,7 @@ export default function ContactInquirySection() {
                       id="need"
                       name="need"
                       required
+                      defaultValue={values.need ?? ""}
                       aria-invalid={Boolean(fieldErrors.need)}
                       aria-describedby={fieldErrors.need ? "need-error" : undefined}
                       className="id-input mt-1.5"
@@ -164,6 +198,7 @@ export default function ContactInquirySection() {
                       name="bottleneck"
                       rows={4}
                       required
+                      defaultValue={values.bottleneck ?? ""}
                       maxLength={4000}
                       aria-invalid={Boolean(fieldErrors.bottleneck)}
                       aria-describedby={fieldErrors.bottleneck ? "bottleneck-error" : undefined}
@@ -182,8 +217,18 @@ export default function ContactInquirySection() {
                       id="preferredDate"
                       name="preferredDate"
                       type="date"
+                      defaultValue={values.preferredDate ?? ""}
+                      error={Boolean(fieldErrors.preferredDate)}
+                      aria-describedby={
+                        fieldErrors.preferredDate ? "preferredDate-error" : undefined
+                      }
                       className="id-input-native-picker mt-1.5"
                     />
+                    {fieldErrors.preferredDate && (
+                      <HelperText error id="preferredDate-error" role="alert">
+                        {fieldErrors.preferredDate}
+                      </HelperText>
+                    )}
                   </div>
 
                   <div className="md:col-span-1">
@@ -192,8 +237,18 @@ export default function ContactInquirySection() {
                       id="preferredTime"
                       name="preferredTime"
                       type="time"
+                      defaultValue={values.preferredTime ?? ""}
+                      error={Boolean(fieldErrors.preferredTime)}
+                      aria-describedby={
+                        fieldErrors.preferredTime ? "preferredTime-error" : undefined
+                      }
                       className="id-input-native-picker mt-1.5"
                     />
+                    {fieldErrors.preferredTime && (
+                      <HelperText error id="preferredTime-error" role="alert">
+                        {fieldErrors.preferredTime}
+                      </HelperText>
+                    )}
                   </div>
 
                   <div className="md:col-span-2">
@@ -202,6 +257,7 @@ export default function ContactInquirySection() {
                       id="notes"
                       name="notes"
                       rows={3}
+                      defaultValue={values.notes ?? ""}
                       maxLength={2000}
                       className="id-input mt-1.5 resize-y"
                     />
@@ -237,6 +293,14 @@ export default function ContactInquirySection() {
 
                   <p className="type-body text-sm text-[var(--color-text-secondary)]">
                     No commitment. Just a focused first conversation.
+                  </p>
+                  <p className="type-body text-sm text-[var(--color-text-secondary)]">
+                    By sending, you ask Inside Dopamine to store these details and use them to
+                    respond to your inquiry. This does not book a meeting. See the{" "}
+                    <a href="/privacy" className="underline underline-offset-2">
+                      Privacy Notice
+                    </a>
+                    .
                   </p>
                 </div>
               </form>

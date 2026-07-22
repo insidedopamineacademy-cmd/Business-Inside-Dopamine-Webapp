@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import "@/styles/globals.css";
+import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import ChatWidget from "@/components/ui/ChatWidget";
+import PageTransition from "@/components/layout/PageTransition";
+import { getPublicSiteUrl } from "@/lib/env";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -13,7 +15,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://insidedopamine.com";
+const siteUrl = getPublicSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -27,7 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={plusJakartaSans.variable}>
       <body>
         <Navbar />
-        <main>{children}</main>
+        <main className="relative">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <ScrollToTopButton />
         <Footer />
         <ChatWidget />

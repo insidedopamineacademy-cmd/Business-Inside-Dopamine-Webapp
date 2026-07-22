@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { requireAdmin } from "@/lib/admin-auth";
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -12,7 +14,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  await requireAdmin();
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <header className="border-b border-[var(--border-light)] bg-[var(--color-bg)]/95">
@@ -49,7 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-[1100px] px-5 py-8 md:px-8 md:py-10">{children}</main>
+      <div className="mx-auto w-full max-w-[1100px] px-5 py-8 md:px-8 md:py-10">{children}</div>
     </div>
   );
 }

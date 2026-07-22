@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { caseStudySlugs } from "@/data/caseStudies";
+import { getPublicSiteUrl } from "@/lib/env";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://insidedopamine.com";
+const baseUrl = getPublicSiteUrl();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const coreRoutes = [

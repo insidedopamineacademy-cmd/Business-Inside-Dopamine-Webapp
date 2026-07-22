@@ -62,7 +62,7 @@ const base = [
   "transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
   "focus-visible:outline-none focus-visible:ring-2",
   "focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2",
-  "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
+  "disabled:cursor-not-allowed disabled:pointer-events-none",
 ].join(" ");
 
 // ── Variants ───────────────────────────────────────────────────────────────
@@ -70,18 +70,21 @@ const variants: Record<ButtonVariant, string> = {
   primary: [
     "bg-[var(--color-accent)] text-white border border-transparent",
     "hover:bg-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(109,86,250,0.30)]",
+    "disabled:bg-[var(--color-text-tertiary)] disabled:hover:translate-y-0 disabled:hover:shadow-none",
     "active:translate-y-0",
   ].join(" "),
 
   secondary: [
     "bg-transparent text-[var(--color-text-primary)] border border-[var(--color-border)]",
     "hover:bg-[var(--color-surface)] hover:-translate-y-px",
+    "disabled:bg-[var(--color-surface)] disabled:text-[var(--color-text-secondary)] disabled:hover:translate-y-0",
     "active:translate-y-0",
   ].join(" "),
 
   ghost: [
     "bg-transparent text-[var(--color-text-primary)] border border-transparent",
     "hover:bg-[var(--color-surface)] hover:-translate-y-px",
+    "disabled:bg-[var(--color-surface)] disabled:text-[var(--color-text-secondary)] disabled:hover:translate-y-0",
     "active:translate-y-0",
   ].join(" "),
 };
@@ -106,12 +109,13 @@ export default function Button({
   const content = (
     <>
       {isLoading && <Spinner />}
-      <span className={cx(isLoading && "opacity-60")}>{children}</span>
+      <span>{children}</span>
     </>
   );
 
   if (rest.as === "link") {
     const { href, as: _as, ...linkProps } = rest as AsLink;
+    void _as;
     return (
       <Link href={href} className={classes} {...linkProps}>
         {content}
@@ -120,6 +124,7 @@ export default function Button({
   }
 
   const { as: _as, disabled, ...buttonProps } = rest as AsButton;
+  void _as;
 
   return (
     <button

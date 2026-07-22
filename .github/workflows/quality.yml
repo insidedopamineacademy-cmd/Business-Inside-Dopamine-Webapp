@@ -1,0 +1,50 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  phase-one-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: phase_one
+          POSTGRES_PASSWORD: phase_one
+          POSTGRES_DB: phase_one
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U phase_one -d phase_one"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://phase_one:phase_one@127.0.0.1:5432/phase_one
+      DIRECT_URL: postgresql://phase_one:phase_one@127.0.0.1:5432/phase_one
+      NEXT_PUBLIC_SITE_URL: https://example.invalid
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run prisma:generate
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npx prisma validate
+      - run: npx prisma migrate deploy
+      - run: npm run build
+      - run: npm run secret:scan
+      - run: npm audit --omit=dev --audit-level=high

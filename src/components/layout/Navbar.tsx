@@ -15,14 +15,11 @@ const links = [
 ];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const [openPathname, setOpenPathname] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const reduceMotion = useReducedMotion();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+  const isOpen = openPathname === pathname;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -74,6 +71,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setOpenPathname(null)}
                   aria-current={pathname === item.href ? "page" : undefined}
                   className="rounded text-[13px] font-normal text-[var(--color-text-secondary)] no-underline transition-colors duration-150 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                 >
@@ -84,7 +82,7 @@ export default function Navbar() {
                 href="/contact"
                 className="rounded text-[13px] font-normal text-[var(--color-accent)] no-underline transition-colors duration-150 hover:text-[var(--color-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               >
-                Book a Call
+                Request a Call
               </Link>
             </nav>
 
@@ -95,7 +93,7 @@ export default function Navbar() {
               aria-label="Open navigation menu"
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
-              onClick={() => setIsOpen(true)}
+              onClick={() => setOpenPathname(pathname)}
             >
               <span className="relative block h-5 w-5" aria-hidden="true">
                 <span className="absolute left-1/2 top-1/2 h-[1.5px] w-4 -translate-x-1/2 -translate-y-[4px] bg-current" />
@@ -133,7 +131,7 @@ export default function Navbar() {
             <div className="flex h-12 shrink-0 items-center justify-between px-6" style={{ borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
               <Link
                 href="/"
-                onClick={() => setIsOpen(false)}
+                onClick={() => setOpenPathname(null)}
                 className="text-[15px] font-medium leading-none text-[var(--color-text-primary)] no-underline"
               >
                 inside dopamine<span className="text-[var(--color-accent)]">.</span>
@@ -141,7 +139,7 @@ export default function Navbar() {
               <button
                 type="button"
                 aria-label="Close menu"
-                onClick={() => setIsOpen(false)}
+                onClick={() => setOpenPathname(null)}
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-secondary)] transition-colors duration-150 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -157,6 +155,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setOpenPathname(null)}
                   aria-current={pathname === item.href ? "page" : undefined}
                   className="border-b border-[var(--color-border)] py-3 text-4xl font-semibold text-[var(--color-text-primary)] no-underline transition-opacity duration-150 hover:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
                 >
@@ -174,10 +173,10 @@ export default function Navbar() {
                 size="lg"
                 className="w-full justify-center"
               >
-                Book a Strategy Call →
+                Request a Strategy Call →
               </Button>
               <p className="text-center text-sm text-[var(--color-text-secondary)]">
-                We usually respond within 24 hours
+                Share your details and preferred time
               </p>
             </div>
           </MotionDiv>

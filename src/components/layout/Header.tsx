@@ -2,16 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  // Close the mobile menu when navigating
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -130,7 +125,7 @@ export default function Header() {
             href="/contact"
             className="hidden md:inline-flex items-center justify-center rounded-full bg-[var(--color-text-primary)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
           >
-            Book a Call
+            Request a Call
           </Link>
         </div>
       </div>
@@ -149,6 +144,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setOpen(false)}
                 className="rounded-xl px-3 py-2 transition hover:bg-[var(--color-surface)] active:bg-[var(--color-surface)]"
                 aria-current={pathname === item.href ? "page" : undefined}
               >

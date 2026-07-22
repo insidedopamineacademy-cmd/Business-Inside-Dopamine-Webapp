@@ -71,8 +71,8 @@ export default function ProcessPage() {
       </section>
 
       <PageCta
-        heading="Book a Strategy Call"
-        ctaLabel="Book a Strategy Call →"
+        heading="Request a Strategy Call"
+        ctaLabel="Request a Strategy Call →"
         href="/contact"
       />
     </>

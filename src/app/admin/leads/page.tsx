@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { LeadStatus, Prisma } from "@prisma/client";
 
+import { requireAdmin } from "@/lib/admin-auth";
 import { formatDateTime, formatLeadStatus, isLeadStatus, leadStatuses } from "@/lib/leads";
 import { prisma } from "@/lib/prisma";
 import StatusBadge from "./StatusBadge";
@@ -24,6 +25,8 @@ type LeadsPageProps = {
 };
 
 export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
+  await requireAdmin();
+
   const params = (await searchParams) ?? {};
   const status = params.status ?? "";
   const q = (params.q ?? "").trim();
@@ -188,7 +191,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
                 <tr
                   key={lead.id}
                   className={`border-b border-[var(--border-light)] transition-colors duration-150 hover:bg-[var(--color-surface-light)]/65 last:border-b-0 ${
-                    lead.archived ? "opacity-70" : ""
+                    lead.archived ? "bg-[var(--color-surface-light)]/55" : ""
                   }`}
                 >
                   <td className="px-4 py-3.5 align-top">

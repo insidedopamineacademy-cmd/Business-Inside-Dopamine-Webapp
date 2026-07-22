@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   formatDateTime,
   formatLeadStatus,
@@ -35,10 +36,44 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default async function AdminLeadDetailPage({ params }: LeadDetailPageProps) {
+  await requireAdmin();
+
   const { id } = await params;
 
   const lead = await prisma.lead.findUnique({
     where: { id },
+    select: {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      company: true,
+      need: true,
+      bottleneck: true,
+      preferredDate: true,
+      preferredTime: true,
+      notes: true,
+      status: true,
+      source: true,
+      meetingBooked: true,
+      meetingDate: true,
+      meetingNotes: true,
+      archived: true,
+      notifications: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          channel: true,
+          status: true,
+          attempts: true,
+          lastAttemptAt: true,
+          deliveredAt: true,
+          lastErrorCode: true,
+        },
+      },
+    },
   });
 
   if (!lead) notFound();
@@ -119,6 +154,54 @@ export default async function AdminLeadDetailPage({ params }: LeadDetailPageProp
         </div>
 
         <aside className="space-y-6">
+          <section
+            aria-label="Notification delivery"
+            className="rounded-2xl border border-[var(--border-light)] bg-white/55 p-5 md:p-6"
+          >
+            <h3 className="type-section text-xl text-[var(--color-text)]">Notification delivery</h3>
+            {lead.notifications.length === 0 ? (
+              <p className="type-body mt-3 text-sm text-[var(--color-error)]">
+                No notification outcome is recorded. Investigate before assuming delivery.
+              </p>
+            ) : (
+              <div className="mt-4 space-y-4">
+                {lead.notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className="rounded-xl border border-[var(--border-light)] bg-[var(--color-bg)] p-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="type-mono text-[var(--color-text)]">{notification.channel}</p>
+                      <span
+                        className={`type-mono rounded-full border px-2.5 py-1 ${
+                          notification.status === "SENT"
+                            ? "border-[var(--color-success)] text-[var(--color-success)]"
+                            : notification.status === "FAILED"
+                              ? "border-[var(--color-error)] text-[var(--color-error)]"
+                              : "border-[var(--border-medium)] text-[var(--color-text-secondary)]"
+                        }`}
+                      >
+                        {notification.status.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                      <Field label="Attempts" value={String(notification.attempts)} />
+                      <Field
+                        label="Last attempt"
+                        value={notification.lastAttemptAt ? formatDateTime(notification.lastAttemptAt) : "Never"}
+                      />
+                      <Field
+                        label="Delivered"
+                        value={notification.deliveredAt ? formatDateTime(notification.deliveredAt) : "No"}
+                      />
+                      <Field label="Last error code" value={formatOptionalText(notification.lastErrorCode)} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           <form action={updateLead} className="rounded-2xl border border-[var(--border-light)] bg-white/55 p-5 md:p-6">
             <input type="hidden" name="id" value={lead.id} />
 

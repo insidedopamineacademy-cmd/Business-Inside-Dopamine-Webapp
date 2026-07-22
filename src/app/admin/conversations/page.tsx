@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Conversation } from "@prisma/client";
 import { getConversations } from "@/app/admin/conversations/actions";
 import { Card, Badge } from "@/components/ui";
+
+type ConversationSummary = Awaited<ReturnType<typeof getConversations>>[number];
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
@@ -16,12 +17,8 @@ function formatDate(date: Date): string {
   }).format(new Date(date));
 }
 
-function messageCount(messages: unknown): number {
-  return Array.isArray(messages) ? messages.length : 0;
-}
-
 export default function ConversationsPage() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +28,7 @@ export default function ConversationsPage() {
   }, []);
 
   const total = conversations.length;
-  const leadsCount = conversations.filter((c) => c.bookedCall).length;
+  const leadsCount = conversations.filter((c) => c.leadCaptured).length;
   const conversionRate =
     total > 0 ? Math.round((leadsCount / total) * 100) : 0;
 
@@ -95,7 +92,7 @@ export default function ConversationsPage() {
             <span>Name</span>
             <span>Email</span>
             <span>Messages</span>
-            <span>Booked</span>
+            <span>Lead state</span>
             <span />
           </div>
 
@@ -115,11 +112,13 @@ export default function ConversationsPage() {
                     {conv.leadEmail ?? "—"}
                   </span>
                   <span className="text-[var(--color-text-secondary)]">
-                    {messageCount(conv.messages)}
+                    {conv.messageCount}
                   </span>
                   <span>
-                    <Badge variant={conv.bookedCall ? "accent" : "default"}>
-                      {conv.bookedCall ? "Booked" : "No"}
+                    <Badge
+                      variant={conv.leadCaptured ? "success" : conv.bookedCall ? "accent" : "default"}
+                    >
+                      {conv.leadCaptured ? "Captured" : conv.bookedCall ? "Legacy flag" : "No lead"}
                     </Badge>
                   </span>
                   <span>
@@ -139,12 +138,14 @@ export default function ConversationsPage() {
                       <span className="font-medium text-[var(--color-text-primary)]">
                         {conv.leadName ?? "Anonymous"}
                       </span>
-                      <Badge variant={conv.bookedCall ? "accent" : "default"}>
-                        {conv.bookedCall ? "Booked" : "No"}
+                      <Badge
+                        variant={conv.leadCaptured ? "success" : conv.bookedCall ? "accent" : "default"}
+                      >
+                        {conv.leadCaptured ? "Captured" : conv.bookedCall ? "Legacy flag" : "No lead"}
                       </Badge>
                     </div>
                     <p className="mt-0.5 truncate text-sm text-[var(--color-text-secondary)]">
-                      {conv.leadEmail ?? "No email"} · {messageCount(conv.messages)} messages
+                      {conv.leadEmail ?? "No email"} · {conv.messageCount} messages
                     </p>
                     <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">
                       {formatDate(conv.createdAt)}

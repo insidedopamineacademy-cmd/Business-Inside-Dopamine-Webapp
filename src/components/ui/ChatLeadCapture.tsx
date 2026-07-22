@@ -7,7 +7,11 @@ import Button from "@/components/ui/Button";
 import Input, { Label, HelperText } from "@/components/ui/Input";
 
 type Props = {
-  onSubmit: (name: string, email: string) => void;
+  onSubmit: (
+    name: string,
+    email: string,
+    idempotencyKey: string,
+  ) => Promise<{ success: boolean; message?: string }>;
   onSkip: () => void;
 };
 
@@ -22,6 +26,9 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   function validate() {
     const next: { name?: string; email?: string } = {};
@@ -35,9 +42,19 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (validate()) onSubmit(name.trim(), email.trim());
+    if (!validate() || isSubmitting) return;
+    setSubmitError("");
+    setIsSubmitting(true);
+    const result = await onSubmit(name.trim(), email.trim(), idempotencyKey);
+    if (!result.success) {
+      setSubmitError(
+        result.message ??
+          "We couldn't save your request. Please retry or use the contact page.",
+      );
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -48,10 +65,10 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
       className="rounded-2xl border border-[var(--color-border)] bg-white p-4 shadow-md"
     >
       <p className="text-[15px] font-semibold text-[var(--color-text-primary)]">
-        Book a call with our team
+        Request a call with our team
       </p>
       <p className="mb-3 mt-0.5 text-[13px] text-[var(--color-text-secondary)]">
-        We'll reach out within 24 hours
+        Share your details so the team can follow up
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
@@ -62,6 +79,8 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
             type="text"
             placeholder="Your name"
             value={name}
+            maxLength={100}
+            disabled={isSubmitting}
             onChange={(e) => {
               setName(e.target.value);
               if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
@@ -84,6 +103,8 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
             type="email"
             placeholder="you@company.com"
             value={email}
+            maxLength={254}
+            disabled={isSubmitting}
             onChange={(e) => {
               setEmail(e.target.value);
               if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
@@ -99,14 +120,39 @@ export default function ChatLeadCapture({ onSubmit, onSkip }: Props) {
           )}
         </div>
 
-        <Button type="submit" variant="primary" className="w-full mt-1">
-          Book a Call
+        {submitError && (
+          <p role="alert" className="text-sm text-[var(--color-error)]">
+            {submitError}{" "}
+            <a href="/contact" className="underline underline-offset-2">
+              Use the contact page
+            </a>
+            .
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full mt-1"
+          disabled={isSubmitting}
+          isLoading={isSubmitting}
+        >
+          Send request
         </Button>
+        <p className="text-xs leading-relaxed text-[var(--color-text-secondary)]">
+          By sending, you ask us to store these details and follow up. This does not book a
+          meeting. See the{" "}
+          <a href="/privacy" className="underline underline-offset-2">
+            Privacy Notice
+          </a>
+          .
+        </p>
       </form>
 
       <button
         type="button"
         onClick={onSkip}
+        disabled={isSubmitting}
         className="mt-3 w-full cursor-pointer text-center text-sm text-[var(--color-text-secondary)] underline underline-offset-2 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
       >
         Maybe later

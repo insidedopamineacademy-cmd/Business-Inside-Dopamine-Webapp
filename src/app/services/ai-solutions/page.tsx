@@ -29,7 +29,7 @@ const benchmarks = [
 
 export default function AISolutionsPage() {
   return (
-    <main>
+    <div>
       {/* Hero */}
       <section className="bg-[var(--color-surface)] border-b border-[var(--color-border)]">
         <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-24">
@@ -50,7 +50,7 @@ export default function AISolutionsPage() {
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-full bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--color-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               >
-                Book a Call
+                Request a Call
               </Link>
               <Link
                 href="/work"
@@ -132,7 +132,7 @@ export default function AISolutionsPage() {
             Ready to add AI to your workflow?
           </h2>
           <p className="mt-3 text-[var(--color-text-secondary)]">
-            Tell us what you want to automate or accelerate. We'll design the right AI solution.
+            Tell us what you want to automate or accelerate. We’ll design the right AI solution.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -148,9 +148,9 @@ export default function AISolutionsPage() {
               Back to services
             </Link>
           </div>
-          <div className="mt-2 text-xs text-[var(--color-text-secondary)]">Reply in 24h · No commitment</div>
+          <div className="mt-2 text-xs text-[var(--color-text-secondary)]">No commitment · We&apos;ll review your request</div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

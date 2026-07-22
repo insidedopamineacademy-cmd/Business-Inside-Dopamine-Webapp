@@ -1,53 +1,53 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { verifyAdminAuthorization } from "@/lib/admin-auth-core";
+import { getAdminCredentials } from "@/lib/env";
 import { detectVisitorProfile } from "@/lib/visitor";
 
 function unauthorized() {
   return new NextResponse("Authentication required.", {
     status: 401,
     headers: {
+      "Cache-Control": "private, no-store, max-age=0, must-revalidate",
+      Vary: "Authorization",
       "WWW-Authenticate": 'Basic realm="Inside Dopamine Admin", charset="UTF-8"',
     },
   });
+}
+
+function unavailable() {
+  return new NextResponse("Admin auth is not configured.", {
+    status: 503,
+    headers: {
+      "Cache-Control": "private, no-store, max-age=0, must-revalidate",
+      Vary: "Authorization",
+    },
+  });
+}
+
+function isAdminPath(pathname: string) {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+function authorized() {
+  const response = NextResponse.next();
+  response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+  response.headers.set("Vary", "Authorization");
+  return response;
 }
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Admin auth ────────────────────────────────────────────────────────────
-  if (pathname.startsWith("/admin")) {
-    const username = process.env.ADMIN_USERNAME;
-    const password = process.env.ADMIN_PASSWORD;
-
-    if (!username || !password) {
-      return new NextResponse("Admin auth is not configured.", { status: 503 });
-    }
+  if (isAdminPath(pathname)) {
+    const credentials = getAdminCredentials();
+    if (!credentials) return unavailable();
 
     const authorization = request.headers.get("authorization");
-    if (!authorization || !authorization.startsWith("Basic ")) {
-      return unauthorized();
-    }
+    if (!verifyAdminAuthorization(authorization, credentials)) return unauthorized();
 
-    let decoded = "";
-    try {
-      decoded = atob(authorization.slice(6));
-    } catch {
-      return unauthorized();
-    }
-
-    const separatorIndex = decoded.indexOf(":");
-    if (separatorIndex === -1) {
-      return unauthorized();
-    }
-
-    const incomingUsername = decoded.slice(0, separatorIndex);
-    const incomingPassword = decoded.slice(separatorIndex + 1);
-
-    if (incomingUsername !== username || incomingPassword !== password) {
-      return unauthorized();
-    }
-
-    return NextResponse.next();
+    return authorized();
   }
 
   // ── Visitor segment tagging ───────────────────────────────────────────────

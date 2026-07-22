@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useReducedMotion, type HTMLMotionProps } from "framer-motion";
 import { MotionDiv, MotionSection } from "@/lib/motion";
-import { fadeUp, fadeIn, viewport } from "@/lib/animations";
+import { fadeUp, fadeIn } from "@/lib/animations";
 import Button from "../ui/Button";
 import type { CaseStudy } from "@/data/caseStudies";
 
@@ -19,7 +18,7 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
       };
 
   return (
-    <main className="relative text-[var(--color-text-primary)]">
+    <div className="relative text-[var(--color-text-primary)]">
       {/* ── Hero ── */}
       <section className="relative">
         <div className="mx-auto max-w-6xl px-4 pt-12 pb-6 md:px-6 md:pt-20 md:pb-12">
@@ -184,7 +183,7 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
           </div>
         </div>
       </MotionSection>
-    </main>
+    </div>
   );
 }
 

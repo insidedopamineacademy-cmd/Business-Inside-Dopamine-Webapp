@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Container from "@/components/ui/Container";
 import Badge from "@/components/ui/Badge";
 import { Section } from "@/components/ui/index";
 import PageHero from "@/components/sections/PageHero";
@@ -58,7 +57,7 @@ export default function WorkPage() {
 
       <PageCta
         heading="Need something built around your workflow?"
-        ctaLabel="Book a Strategy Call →"
+        ctaLabel="Request a Strategy Call →"
         href="/contact"
       />
     </>

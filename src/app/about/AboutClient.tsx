@@ -22,7 +22,7 @@ export default function AboutClient() {
   } as const;
 
   return (
-    <main className="overflow-x-hidden">
+    <div className="overflow-x-hidden">
       {/* Hero */}
       <section className="bg-[var(--color-surface)] relative overflow-hidden">
         {/* Background graphic (subtle) */}
@@ -67,7 +67,7 @@ export default function AboutClient() {
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-full bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--color-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
               >
-                Book a Call
+                Request a Call
               </Link>
               <Link
                 href="/work"
@@ -203,9 +203,9 @@ export default function AboutClient() {
       <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-6">
         <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-8 md:p-10">
           <div className="max-w-2xl">
-            <h2 className="text-2xl font-semibold md:text-3xl">Let's build your next system</h2>
+            <h2 className="text-2xl font-semibold md:text-3xl">Let’s build your next system</h2>
             <p className="mt-3 text-[var(--color-text-secondary)]">
-              Share your goal and your data context. We'll propose a clear plan — dashboards, AI, and
+              Share your goal and your data context. We’ll propose a clear plan — dashboards, AI, and
               platform delivery — designed for speed and adoption.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -225,6 +225,6 @@ export default function AboutClient() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

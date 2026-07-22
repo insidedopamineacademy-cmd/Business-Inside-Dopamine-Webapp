@@ -60,7 +60,8 @@ const base = [
   "placeholder:text-[var(--color-text-tertiary)]",
   "outline-none",
   "transition-[border-color,box-shadow] duration-[200ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
-  "disabled:opacity-50 disabled:cursor-not-allowed",
+  "disabled:cursor-not-allowed disabled:bg-[var(--color-surface)] disabled:text-[var(--color-text-secondary)]",
+  "disabled:placeholder:text-[var(--color-text-secondary)]",
 ].join(" ");
 
 const stateDefault =

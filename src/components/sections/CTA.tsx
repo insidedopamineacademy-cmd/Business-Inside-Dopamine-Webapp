@@ -79,16 +79,16 @@ export default function CTA() {
                 Next step
               </div>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">
-                Tell us what you're building.
+                Tell us what you’re building.
               </h2>
               <p className="mt-4 max-w-2xl text-base text-[var(--color-text-secondary)] md:text-lg">
-                Whether it's a dashboard, an AI copilot, or a full platform —
-                we'll help you design the right system and ship it with confidence.
+                Whether it’s a dashboard, an AI copilot, or a full platform —
+                we’ll help you design the right system and ship it with confidence.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button as="link" href="/contact" variant="primary">
-                  Book a Call
+                  Request a Call
                 </Button>
                 <Button as="link" href="/contact" variant="secondary">
                   Contact Us

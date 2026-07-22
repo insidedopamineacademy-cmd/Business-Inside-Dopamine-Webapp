@@ -2,7 +2,7 @@
 
 import Container from "../ui/Container";
 import { MotionDiv, useReducedMotion } from "@/lib/motion";
-import { fadeUp, staggerContainer, viewport } from "@/lib/animations";
+import { fadeUp, staggerContainer } from "@/lib/animations";
 
 type PageHeroProps = {
   label: string;

@@ -1,5 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
+import {
+  assertFaqSeedAllowed,
+  replaceFaqsAtomically,
+} from "./seed-policy";
+
 const prisma = new PrismaClient();
 
 const faqs = [
@@ -28,7 +33,7 @@ const faqs = [
   {
     question: "Is there a minimum project size?",
     answer:
-      "We typically engage on projects starting at £10,000. Smaller scopes tend to lack the depth needed to produce work we're proud of. If you're not sure whether your project qualifies, book a call — we'll tell you honestly.",
+      "We typically engage on projects starting at £10,000. Smaller scopes tend to lack the depth needed to produce work we're proud of. If you're not sure whether your project qualifies, request a call and the team can discuss it with you.",
     category: "Services",
     order: 4,
   },
@@ -148,25 +153,31 @@ const faqs = [
   {
     question: "How do I get started?",
     answer:
-      "Book a call via our contact page. Come with a rough sense of your goal and your current data setup — we'll handle the rest. Most clients have a clear proposal in their inbox within 48 hours of the first call.",
+      "Request a call via our contact page. Come with a rough sense of your goal and your current data setup, and the team will use that context for the first conversation.",
     category: "General",
     order: 20,
   },
 ];
 
 async function main() {
+  assertFaqSeedAllowed({
+    nodeEnv: process.env.NODE_ENV,
+    productionAcknowledgement:
+      process.env.FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT,
+  });
+
   console.log("Seeding FAQs...");
 
-  await prisma.faq.deleteMany();
-
-  const created = await prisma.faq.createMany({ data: faqs });
+  const created = await replaceFaqsAtomically(prisma, faqs);
 
   console.log(`✓ Seeded ${created.count} FAQs`);
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
+  .catch((error: unknown) => {
+    console.error("FAQ seed failed", {
+      errorType: error instanceof Error ? error.name : "UnknownError",
+    });
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

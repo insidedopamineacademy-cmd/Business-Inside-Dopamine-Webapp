@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 type Message = {
@@ -34,9 +35,22 @@ export default async function ConversationDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAdmin();
+
   const { id } = await params;
 
-  const conversation = await prisma.conversation.findUnique({ where: { id } });
+  const conversation = await prisma.conversation.findUnique({
+    where: { id },
+    select: {
+      sessionId: true,
+      messages: true,
+      leadName: true,
+      leadEmail: true,
+      bookedCall: true,
+      createdAt: true,
+      lead: { select: { id: true } },
+    },
+  });
   if (!conversation) notFound();
 
   const messages = parseMessages(conversation.messages);
@@ -51,16 +65,25 @@ export default async function ConversationDetailPage({
         ← All Conversations
       </Link>
 
-      {/* Booked call banner */}
-      {conversation.bookedCall && (
+      {/* Lead outcome banner */}
+      {conversation.lead ? (
         <div className="mt-5 rounded-2xl border border-[rgba(52,199,89,0.3)] bg-[rgba(52,199,89,0.08)] px-5 py-3 text-sm text-[var(--color-success)]">
-          <span className="font-semibold">This visitor booked a call</span>
+          <span className="font-semibold">Durable lead captured</span>
           {" — "}
           {conversation.leadName && <>Name: <span className="font-medium">{conversation.leadName}</span></>}
           {conversation.leadName && conversation.leadEmail && " | "}
           {conversation.leadEmail && <>Email: <span className="font-medium">{conversation.leadEmail}</span></>}
+          {" | "}
+          <Link href={`/admin/leads/${conversation.lead.id}`} className="font-medium underline underline-offset-2">
+            View lead and notification status
+          </Link>
         </div>
-      )}
+      ) : conversation.bookedCall ? (
+        <div className="mt-5 rounded-2xl border border-[var(--border-medium)] bg-[var(--color-surface)] px-5 py-3 text-sm text-[var(--color-text-secondary)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">Legacy follow-up flag</span>
+          {" — "}The former capture flow set this field without creating a calendar booking. Reconcile the record before treating it as a meeting commitment.
+        </div>
+      ) : null}
 
       {/* Header */}
       <div className="mt-6 rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-sm">
@@ -74,13 +97,17 @@ export default async function ConversationDetailPage({
             </p>
           </div>
           <div>
-            {conversation.bookedCall ? (
+            {conversation.lead ? (
+              <span className="inline-flex items-center rounded-full bg-[rgba(52,199,89,0.12)] px-3 py-1 text-xs font-medium uppercase tracking-widest text-[var(--color-success)]">
+                Lead captured
+              </span>
+            ) : conversation.bookedCall ? (
               <span className="inline-flex items-center rounded-full bg-[var(--color-accent-light)] px-3 py-1 text-xs font-medium uppercase tracking-widest text-[var(--color-accent)]">
-                Booked
+                Legacy flag
               </span>
             ) : (
               <span className="inline-flex items-center rounded-full bg-[var(--color-surface)] px-3 py-1 text-xs font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">
-                No booking
+                No lead
               </span>
             )}
           </div>

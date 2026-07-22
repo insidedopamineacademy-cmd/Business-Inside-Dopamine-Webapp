@@ -17,28 +17,42 @@ enum LeadStatus {
 }
 
 enum LeadSource {
-  WEBSITE
+  CONTACT
+  CHAT
+}
+
+enum LeadNotificationStatus {
+  NOT_CONFIGURED
+  PENDING
+  SENT
+  FAILED
 }
 
 model Lead {
-  id            String     @id @default(cuid())
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  fullName      String
-  email         String
-  phone         String?
-  company       String?
-  need          String
-  bottleneck    String
-  preferredDate String?
-  preferredTime String?
-  notes         String?
-  status        LeadStatus @default(NEW)
-  source        LeadSource @default(WEBSITE)
-  meetingBooked Boolean    @default(false)
-  meetingDate   String?
-  meetingNotes  String?
-  archived      Boolean    @default(false)
+  id                 String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  fullName           String
+  email              String
+  phone              String?
+  company            String?
+  need               String
+  bottleneck         String
+  preferredDate      String?
+  preferredTime      String?
+  notes              String?
+  status             LeadStatus         @default(NEW)
+  source             LeadSource         @default(CONTACT)
+  meetingBooked      Boolean            @default(false)
+  meetingDate        String?
+  meetingNotes       String?
+  archived           Boolean            @default(false)
+  conversationId     String?            @unique
+  idempotencyKey     String?            @unique
+  requestFingerprint String?
+  traceId            String?            @unique
+  conversation       Conversation?      @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  notifications      LeadNotification[]
 
   @@index([createdAt(sort: Desc)])
   @@index([status])
@@ -59,6 +73,7 @@ model Faq {
 
 model SegmentEvent {
   id        String   @id @default(cuid())
+  eventId   String?  @unique
   segment   String
   source    String
   intent    String
@@ -76,6 +91,25 @@ model Conversation {
   leadName   String?
   leadEmail  String?
   bookedCall Boolean  @default(false)
+  version    Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  lead       Lead?
+}
+
+model LeadNotification {
+  id            String                 @id @default(cuid())
+  leadId        String
+  channel       String                 @default("WEBHOOK")
+  status        LeadNotificationStatus @default(PENDING)
+  attempts      Int                    @default(0)
+  lastAttemptAt DateTime?
+  deliveredAt   DateTime?
+  lastErrorCode String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  lead          Lead                   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, channel])
+  @@index([status, createdAt])
 }

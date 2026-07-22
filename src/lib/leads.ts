@@ -41,7 +41,7 @@ const leadStatusTones: Record<LeadStatus, LeadStatusTone> = {
   BOOKED: {
     backgroundColor: "rgba(22, 163, 74, 0.11)",
     borderColor: "rgba(22, 163, 74, 0.24)",
-    color: "#15803D",
+    color: "#146C2E",
   },
   CLOSED: {
     backgroundColor: "rgba(107, 114, 128, 0.10)",

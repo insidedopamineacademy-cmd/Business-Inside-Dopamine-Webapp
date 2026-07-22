@@ -30,20 +30,17 @@ export default function DynamicHero() {
       .then((r) => r.json())
       .then((data: { segment?: string; source?: string; intent?: string }) => {
         if (data.segment) setSegment(data.segment);
-        try {
-          fetch("/api/personalisation", {
+        void fetch("/api/personalisation", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              eventId: crypto.randomUUID(),
               segment: data.segment ?? "general",
               source: data.source ?? "other",
               intent: data.intent ?? "low",
               path: window.location.pathname,
             }),
-          });
-        } catch {
-          // fire-and-forget — silent failure
-        }
+          }).catch(() => {});
       })
       .catch(() => {})
       .finally(() => setLoaded(true));

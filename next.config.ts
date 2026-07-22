@@ -9,6 +9,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      // Raw multipart request ceiling; contact validation then applies the
+      // tighter decoded-field budget documented in the public contract.
+      bodySizeLimit: "32kb",
+    },
+  },
   async redirects() {
     return [
       {

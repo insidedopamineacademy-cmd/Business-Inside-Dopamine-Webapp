@@ -74,7 +74,7 @@ export default async function ServicesPage() {
 
       <PageCta
         heading="Ready to build the right system?"
-        ctaLabel="Book a Strategy Call →"
+        ctaLabel="Request a Strategy Call →"
         href="/contact"
       />
     </>
