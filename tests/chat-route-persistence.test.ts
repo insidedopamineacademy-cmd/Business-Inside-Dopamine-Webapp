@@ -45,6 +45,7 @@ vi.mock("@/lib/rate-limit", async (importOriginal) => {
 
 import { POST as chatPost } from "../src/app/api/chat/route";
 import { POST as chatLeadPost } from "../src/app/api/chat/lead/route";
+import { runChatService } from "../src/features/chat/server/chat-service";
 import { AIServiceError, type AIServiceErrorCode } from "../src/lib/ai";
 import { LeadServiceError } from "../src/lib/lead-service";
 
@@ -66,6 +67,16 @@ function chatRequest(message = "How can you help?") {
     sessionId: SESSION_ID,
     messageId: MESSAGE_ID,
   });
+}
+
+function serviceInput(message = "How can you help?") {
+  return {
+    requestId: "44444444-4444-4444-8444-444444444444",
+    requestHeaders: new Headers({ "x-forwarded-for": "203.0.113.44" }),
+    message,
+    sessionId: SESSION_ID,
+    messageId: MESSAGE_ID,
+  };
 }
 
 function snapshot(messages: Array<Record<string, unknown>>, version = 0) {
@@ -113,12 +124,42 @@ describe("chat persistence and duplicate route contract", () => {
     expect(mocks.conversationCreate).toHaveBeenCalledWith({
       data: {
         sessionId: SESSION_ID,
+        messageCount: 2,
         messages: expect.arrayContaining([
           expect.objectContaining({ id: MESSAGE_ID, role: "user", content: "How can you help?" }),
           expect.objectContaining({ role: "assistant", replyToId: MESSAGE_ID }),
         ]),
       },
       select: { id: true },
+    });
+  });
+
+  it("updates the durable count in the same optimistic transcript write", async () => {
+    mocks.conversationFindUnique.mockResolvedValue(
+      snapshot([
+        { id: "prior-user", role: "user", content: "Earlier question" },
+        {
+          id: "prior-assistant",
+          role: "assistant",
+          content: "Earlier answer",
+          replyToId: "prior-user",
+        },
+      ], 4),
+    );
+
+    const response = await chatPost(chatRequest());
+
+    expect(response.status).toBe(200);
+    expect(mocks.conversationUpdateMany).toHaveBeenCalledWith({
+      where: { id: "conversation_1", version: 4 },
+      data: {
+        messages: expect.arrayContaining([
+          expect.objectContaining({ id: MESSAGE_ID, role: "user" }),
+          expect.objectContaining({ role: "assistant", replyToId: MESSAGE_ID }),
+        ]),
+        messageCount: 4,
+        version: { increment: 1 },
+      },
     });
   });
 
@@ -266,6 +307,77 @@ describe("chat persistence and duplicate route contract", () => {
   });
 });
 
+describe("chat application-service orchestration", () => {
+  it("grounds one server-authored provider call and persists its result", async () => {
+    mocks.conversationFindUnique.mockResolvedValue(null);
+    mocks.faqFindMany.mockResolvedValue([
+      {
+        question: "Do you build BI dashboards?",
+        answer: "Yes, for decision-making teams.",
+        category: "Services",
+      },
+    ]);
+
+    const result = await runChatService(serviceInput());
+
+    expect(result).toEqual({
+      ok: true,
+      data: {
+        response: "A bounded mocked answer.",
+        leadCaptureTriggered: false,
+        duplicate: false,
+      },
+    });
+    expect(mocks.createChatCompletion).toHaveBeenCalledTimes(1);
+    expect(mocks.createChatCompletion).toHaveBeenCalledWith({
+      system: expect.stringContaining("Do you build BI dashboards?"),
+      messages: [{ role: "user", content: "How can you help?" }],
+    });
+    expect(
+      mocks.createChatCompletion.mock.calls[0]?.[0]?.messages[0]?.role,
+    ).toBe("user");
+    expect(mocks.conversationCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ messageCount: 2 }),
+      }),
+    );
+  });
+
+  it.each(["ip", "session"] as const)(
+    "denies the %s quota before database or provider work",
+    async (dimension) => {
+      mocks.checkPublicRateLimit.mockResolvedValue({
+        allowed: false,
+        retryAfterSeconds: 600,
+        dimension,
+      });
+
+      const result = await runChatService(serviceInput());
+
+      expect(result).toMatchObject({
+        ok: false,
+        error: { code: "CHAT_RATE_LIMITED", status: 429 },
+        retryAfterSeconds: 600,
+      });
+      expect(mocks.conversationFindUnique).not.toHaveBeenCalled();
+      expect(mocks.createChatCompletion).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps deterministic lead-capture decisions in the use case result", async () => {
+    mocks.conversationFindUnique.mockResolvedValue(null);
+
+    const result = await runChatService(
+      serviceInput("Please contact me about a dashboard"),
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      data: { leadCaptureTriggered: true, duplicate: false },
+    });
+  });
+});
+
 describe("chat public failure contract", () => {
   const providerCases: Array<{
     aiCode: AIServiceErrorCode;
@@ -349,6 +461,7 @@ describe("chat public failure contract", () => {
       );
       expect(mocks.conversationCreate).not.toHaveBeenCalled();
       expect(mocks.conversationUpdateMany).not.toHaveBeenCalled();
+      expect(mocks.createChatCompletion).toHaveBeenCalledTimes(1);
       logged.mockRestore();
     },
   );

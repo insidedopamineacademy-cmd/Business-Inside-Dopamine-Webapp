@@ -3,43 +3,20 @@ import { type NextRequest } from "next/server";
 import { caseStudies } from "@/data/caseStudies";
 import { AIServiceError, createRecommendationCompletion } from "@/lib/ai";
 import {
-  PublicApiError,
-  createRequestId,
-  invalidRequest,
-  isPlainObject,
-  logPublicApiFailure,
   publicErrorResponse,
   publicJsonResponse,
   readBoundedJson,
-  requireStrictObject,
 } from "@/lib/public-api";
 import { checkPublicRateLimit, rateLimitError } from "@/lib/rate-limit";
+import {
+  PublicApiError,
+  createRequestId,
+  isPlainObject,
+  logPublicApiFailure,
+} from "@/lib/server/public-api-core";
+import { parseRecommendationRequest } from "./route-helpers";
 
 const RECOMMEND_BODY_LIMIT_BYTES = 2 * 1_024;
-const SEGMENTS = ["ai", "dashboard", "platform", "enterprise", "general"] as const;
-
-type RecommendationRequest = {
-  currentSlug: string;
-  segment: (typeof SEGMENTS)[number];
-};
-
-export function parseRecommendationRequest(value: unknown): RecommendationRequest {
-  const body = requireStrictObject(value, ["currentSlug", "segment"]);
-  const slugs = Object.keys(caseStudies);
-  if (typeof body.currentSlug !== "string" || !slugs.includes(body.currentSlug)) {
-    throw invalidRequest("Recommendation current slug was not allowlisted.");
-  }
-  if (
-    typeof body.segment !== "string" ||
-    !SEGMENTS.includes(body.segment as (typeof SEGMENTS)[number])
-  ) {
-    throw invalidRequest("Recommendation segment was not allowlisted.");
-  }
-  return {
-    currentSlug: body.currentSlug,
-    segment: body.segment as RecommendationRequest["segment"],
-  };
-}
 
 function mapAIError(error: AIServiceError) {
   return new PublicApiError({

@@ -1,8 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-function cx(...args: (string | false | null | undefined)[]) {
-  return args.filter(Boolean).join(" ");
-}
+import { cx } from "./utils";
 
 export type CardVariant = "default" | "surface" | "bordered";
 export type CardSize = "default" | "large";
@@ -17,9 +15,9 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 
 // ── Variants ───────────────────────────────────────────────────────────────
 const variants: Record<CardVariant, string> = {
-  default:  "bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] rounded-2xl",
-  surface:  "bg-[var(--color-surface)] rounded-2xl",
-  bordered: "bg-white border border-[var(--color-border)] rounded-2xl",
+  default:  "bg-[var(--color-surface-raised)] shadow-[var(--shadow-md)] rounded-[var(--radius-lg)]",
+  surface:  "bg-[var(--color-surface)] rounded-[var(--radius-lg)]",
+  bordered: "bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-[var(--radius-lg)]",
 };
 
 // ── Sizes ──────────────────────────────────────────────────────────────────
@@ -30,8 +28,8 @@ const sizes: Record<CardSize, string> = {
 
 // Applied only when hoverable=true
 const hoverStyles =
-  "transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] " +
-  "cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)]";
+  "transition-all duration-[var(--transition-duration-base)] ease-[var(--ease-apple)] " +
+  "cursor-pointer hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]";
 
 export default function Card({
   children,

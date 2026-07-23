@@ -1,8 +1,4 @@
-"use client";
-
 import Container from "../ui/Container";
-import { MotionDiv, MotionUl, MotionLi, useReducedMotion } from "@/lib/motion";
-import { fadeUp, staggerContainer, viewport } from "@/lib/animations";
 
 const points = [
   "No long-term contracts.",
@@ -12,41 +8,28 @@ const points = [
 ];
 
 export default function ObjectionHandlingSection() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <section className="section-space" aria-label="Why Inside Dopamine">
       <Container>
-        <MotionDiv
-          className="max-w-[44rem]"
-          variants={fadeUp}
-          initial={reduceMotion ? false : "hidden"}
-          whileInView="visible"
-          viewport={viewport}
-        >
+        <div className="presentation-reveal-view max-w-[44rem]">
           <p className="type-mono text-[var(--color-text-tertiary)]">WHY INSIDE DOPAMINE</p>
-        </MotionDiv>
+        </div>
 
-        <MotionUl
+        <ul
           className="mt-8 border-y border-[var(--color-border)]"
-          variants={staggerContainer}
-          initial={reduceMotion ? false : "hidden"}
-          whileInView="visible"
-          viewport={viewport}
         >
           {points.map((point, index) => (
-            <MotionLi
+            <li
               key={point}
-              variants={fadeUp}
               className={[
-                "type-section py-5 text-2xl text-[var(--color-text-primary)] md:text-4xl",
+                "presentation-reveal-view type-section py-5 text-2xl text-[var(--color-text-primary)] md:text-4xl",
                 index !== points.length - 1 ? "border-b border-[var(--color-border)]" : "",
               ].join(" ")}
             >
               {point}
-            </MotionLi>
+            </li>
           ))}
-        </MotionUl>
+        </ul>
       </Container>
     </section>
   );

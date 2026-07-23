@@ -4,13 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, useReducedMotion } from "framer-motion";
+import { portfolioNavigationItems } from "@/data/portfolio";
 import { MotionDiv } from "@/lib/motion";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 
 const links = [
-  { href: "/services", label: "Solutions" },
-  { href: "/work", label: "Work" },
+  ...portfolioNavigationItems,
   { href: "/process", label: "Process" },
 ];
 

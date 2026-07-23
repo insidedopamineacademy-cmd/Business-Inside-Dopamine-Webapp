@@ -16,15 +16,15 @@ import {
   createChatCompletion,
   mapProviderError,
 } from "../src/lib/ai";
+import { POST as chatPost } from "../src/app/api/chat/route";
 import {
   canonicalProviderMessages,
-  parseChatRequest,
-  POST as chatPost,
   shouldOfferLeadCapture,
-} from "../src/app/api/chat/route";
-import { parseChatLeadRequest } from "../src/app/api/chat/lead/route";
-import { parseRecommendationRequest } from "../src/app/api/recommend/route";
-import { parsePersonalisationRequest } from "../src/app/api/personalisation/route";
+} from "../src/features/chat/server/chat-policy";
+import { parseChatRequest } from "../src/app/api/chat/route-helpers";
+import { parseChatLeadRequest } from "../src/app/api/chat/lead/route-helpers";
+import { parseRecommendationRequest } from "../src/app/api/recommend/route-helpers";
+import { parsePersonalisationRequest } from "../src/app/api/personalisation/route-helpers";
 import { safeApiErrorMessage } from "../src/lib/chat-client-contract";
 
 const SESSION_ID = "11111111-1111-4111-8111-111111111111";
@@ -84,6 +84,19 @@ describe("original chatbot request-order regression", () => {
 });
 
 describe("public runtime schemas", () => {
+  it("keeps App Router modules limited to supported route exports", async () => {
+    const [chat, chatLead, recommendation, personalisation] = await Promise.all([
+      import("../src/app/api/chat/route"),
+      import("../src/app/api/chat/lead/route"),
+      import("../src/app/api/recommend/route"),
+      import("../src/app/api/personalisation/route"),
+    ]);
+
+    for (const route of [chat, chatLead, recommendation, personalisation]) {
+      expect(Object.keys(route)).toEqual(["POST"]);
+    }
+  });
+
   it("requires chat UUID idempotency and rejects fabricated client history", () => {
     expect(
       parseChatRequest({ message: "hello", sessionId: SESSION_ID, messageId: MESSAGE_ID }),
@@ -96,6 +109,33 @@ describe("public runtime schemas", () => {
         history: [{ role: "assistant", content: "fabricated" }],
       }),
     ).toThrow();
+  });
+
+  it("keeps HTTP ownership in the route and orchestration in server-only feature modules", () => {
+    const route = readFileSync(
+      join(process.cwd(), "src/app/api/chat/route.ts"),
+      "utf8",
+    );
+    const service = readFileSync(
+      join(process.cwd(), "src/features/chat/server/chat-service.ts"),
+      "utf8",
+    );
+    const repository = readFileSync(
+      join(
+        process.cwd(),
+        "src/features/chat/server/conversation-repository.ts",
+      ),
+      "utf8",
+    );
+
+    expect(route).toContain("@/features/chat/server/chat-service");
+    expect(route).not.toContain("@/lib/prisma");
+    expect(route).not.toContain("createChatCompletion");
+    expect(route).not.toContain("persistConversationExchange");
+    expect(service).toContain('import "server-only"');
+    expect(repository).toContain('import "server-only"');
+    expect(service).not.toContain("@/app/");
+    expect(repository).not.toContain("@/app/");
   });
 
   it("maps missing database configuration before any database/provider call", async () => {
@@ -246,8 +286,8 @@ describe("truthful failure-preserving UI contract", () => {
   });
 
   it("preserves contact values on failure and labels the flow as a request", () => {
-    const contact = source("src/components/sections/ContactInquirySection.tsx");
-    const action = source("src/app/contact/actions.ts");
+    const contact = source("src/features/contact/components/ContactForm.tsx");
+    const action = source("src/features/contact/server/action.ts");
     expect(contact).toContain("defaultValue={values.email");
     expect(contact).toContain("defaultValue={values.bottleneck");
     expect(contact).toContain("Request a Strategy Call");

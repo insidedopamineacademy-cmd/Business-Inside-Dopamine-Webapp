@@ -1,5 +1,7 @@
 "use server";
 
+import "server-only";
+
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";

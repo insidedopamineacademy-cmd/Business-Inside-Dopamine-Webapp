@@ -1,28 +1,13 @@
-"use client";
-
-import { useReducedMotion, type HTMLMotionProps } from "framer-motion";
-import { MotionDiv, MotionSection } from "@/lib/motion";
-import { fadeUp, fadeIn } from "@/lib/animations";
 import Button from "../ui/Button";
 import type { CaseStudy } from "@/data/caseStudies";
 
 export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  const revealProps = prefersReducedMotion
-    ? {}
-    : {
-        initial: "hidden" as const,
-        whileInView: "visible" as const,
-        viewport: { once: true, margin: "-10% 0px" },
-      };
-
   return (
     <div className="relative text-[var(--color-text-primary)]">
       {/* ── Hero ── */}
       <section className="relative">
         <div className="mx-auto max-w-6xl px-4 pt-12 pb-6 md:px-6 md:pt-20 md:pb-12">
-          <MotionDiv {...revealProps} variants={fadeUp} className="flex flex-wrap gap-2">
+          <div className="presentation-reveal-load flex flex-wrap gap-2">
             {study.hero.tags.map((t) => (
               <span
                 key={t}
@@ -31,43 +16,31 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
                 {t}
               </span>
             ))}
-          </MotionDiv>
+          </div>
 
-          <MotionDiv
-            {...revealProps}
-            variants={fadeUp}
-            className="mt-6 text-3xl font-semibold tracking-tight md:text-5xl"
-          >
+          <div className="presentation-reveal-load presentation-delay-1 mt-6 text-3xl font-semibold tracking-tight md:text-5xl">
             <h1>{study.hero.title}</h1>
-          </MotionDiv>
+          </div>
 
-          <MotionDiv {...revealProps} variants={fadeUp}>
+          <div className="presentation-reveal-load presentation-delay-2">
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-text-secondary)] md:text-lg">
               {study.hero.subtitle}
             </p>
-          </MotionDiv>
+          </div>
 
-          <MotionDiv
-            {...revealProps}
-            variants={fadeUp}
-            className="mt-8 flex flex-wrap items-center gap-3"
-          >
+          <div className="presentation-reveal-load presentation-delay-3 mt-8 flex flex-wrap items-center gap-3">
             <Button as="link" href={study.cta.href} variant="primary">
               {study.cta.primaryLabel}
             </Button>
             <Button as="link" href="/work" variant="secondary">
               Back to Work
             </Button>
-          </MotionDiv>
+          </div>
         </div>
       </section>
 
       {/* ── Body ── */}
-      <MotionSection
-        className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16"
-        {...revealProps}
-        variants={fadeIn}
-      >
+      <section className="presentation-reveal-view presentation-reveal-fade mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
         <div className="grid gap-14">
           <CollapsibleModule title="Impact" defaultOpen>
             <div className="grid gap-3 md:grid-cols-2">
@@ -126,13 +99,13 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
             <summary className="cursor-pointer list-none rounded-2xl px-2 py-2 text-sm font-semibold transition hover:bg-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">
               <span className="inline-flex items-center gap-2">
                 <span>View full details</span>
-                <Chevron className="h-4 w-4 transition duration-200 group-open:rotate-180" />
+                <Chevron className="presentation-disclosure-motion h-4 w-4 transition duration-200 group-open:rotate-180" />
               </span>
             </summary>
 
-            <div className="grid grid-rows-[0fr] transition-all duration-300 ease-out group-open:grid-rows-[1fr]">
+            <div className="presentation-disclosure-motion grid grid-rows-[0fr] transition-all duration-300 ease-out group-open:grid-rows-[1fr]">
               <div className="overflow-hidden">
-                <div className="mt-6 grid gap-10 opacity-0 transition-opacity duration-300 ease-out group-open:opacity-100">
+                <div className="presentation-disclosure-motion mt-6 grid gap-10 opacity-0 transition-opacity duration-300 ease-out group-open:opacity-100">
                   <Section title="Context">
                     <Bullets items={study.context.bullets} />
                   </Section>
@@ -182,33 +155,22 @@ export default function CaseStudyLayout({ study }: { study: CaseStudy }) {
             </div>
           </div>
         </div>
-      </MotionSection>
+      </section>
     </div>
   );
 }
 
 // ── Local sub-components ───────────────────────────────────────────────────
 
-function Section({
-  title,
-  children,
-  ...motionProps
-}: {
+function Section({ title, children }: {
   title: string;
   children: React.ReactNode;
-} & HTMLMotionProps<"section">) {
+}) {
   return (
-    <MotionSection
-      {...motionProps}
-      variants={{
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-      }}
-      className="grid gap-4"
-    >
+    <section className="grid gap-4">
       <h2 className="text-xl font-semibold">{title}</h2>
       <div>{children}</div>
-    </MotionSection>
+    </section>
   );
 }
 
@@ -229,12 +191,12 @@ function CollapsibleModule({
       <summary className="cursor-pointer list-none rounded-2xl px-2 py-2 transition hover:bg-[var(--color-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">
         <h2 className="inline-flex items-center gap-2 text-xl font-semibold">
           <span>{title}</span>
-          <Chevron className="h-4 w-4 transition duration-200 group-open:rotate-180" />
+          <Chevron className="presentation-disclosure-motion h-4 w-4 transition duration-200 group-open:rotate-180" />
         </h2>
       </summary>
-      <div className="grid grid-rows-[0fr] transition-all duration-300 ease-out group-open:grid-rows-[1fr]">
+      <div className="presentation-disclosure-motion grid grid-rows-[0fr] transition-all duration-300 ease-out group-open:grid-rows-[1fr]">
         <div className="overflow-hidden">
-          <div className="mt-4 opacity-0 transition-opacity duration-300 ease-out group-open:opacity-100">
+          <div className="presentation-disclosure-motion mt-4 opacity-0 transition-opacity duration-300 ease-out group-open:opacity-100">
             {children}
           </div>
         </div>

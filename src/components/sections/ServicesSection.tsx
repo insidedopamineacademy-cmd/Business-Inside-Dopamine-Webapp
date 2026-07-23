@@ -4,54 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Container from "../ui/Container";
 import Badge from "../ui/Badge";
-
-type ServiceItem = {
-  number: string;
-  title: string;
-  description: string;
-  tag: string;
-  tagVariant: "accent" | "default";
-  detail: string;
-};
-
-const services: ServiceItem[] = [
-  {
-    number: "01",
-    title: "BI & AI DASHBOARDS",
-    description: "Real-time insights across your entire operation.",
-    tag: "Primary",
-    tagVariant: "accent",
-    detail:
-      "Built for teams that need live visibility across performance, delivery, and operational throughput, these dashboards replace fragmented reporting with one reliable source of truth. We structure the data around your decisions, not generic templates, so reporting becomes faster, clearer, and useful for daily execution instead of retrospective guesswork.",
-  },
-  {
-    number: "02",
-    title: "WEB APPLICATIONS",
-    description: "Custom tools built for your workflows, not templates.",
-    tag: "Primary",
-    tagVariant: "accent",
-    detail:
-      "These applications are designed around how your team already operates, then improved to remove friction, duplicated effort, and tool switching. Instead of forcing people into generic SaaS constraints, we build a focused system that matches your process, supports real usage at speed, and keeps execution consistent across teams.",
-  },
-  {
-    number: "03",
-    title: "AUTOMATION SYSTEMS",
-    description: "AI copilots, NLM solutions, CRM, WhatsApp flows, and intelligent process automation.",
-    tag: "AI • n8n • Integrations",
-    tagVariant: "accent",
-    detail:
-      "Our broadest and most capable service category. We build AI copilots and NLM solutions trained on your business logic, CRM systems that qualify and route leads automatically, WhatsApp flows that turn conversations into conversions, and n8n-powered workflows that connect every tool in your stack. The result is end-to-end intelligent process automation — less coordination overhead, fewer dropped steps, and an operation that compounds in efficiency over time.",
-  },
-  {
-    number: "04",
-    title: "PERFORMANCE & ANALYTICS",
-    description: "Data-driven growth, measured and optimised.",
-    tag: "Google Ads • GA4",
-    tagVariant: "default",
-    detail:
-      "We build the full measurement stack — GA4, GTM, conversion tracking, and attribution — then layer Google Ads management on top. AI-powered analysis turns your data into decisions, not just reports. From initial setup to ongoing optimisation, we own the full loop: track, analyse, act, and iterate. Key inclusions: Google Ads Management, GA4 Setup & Configuration, Google Tag Manager, Conversion Tracking & Attribution, Custom Performance Dashboards, and AI Campaign Analysis.",
-  },
-];
+import { homepageServiceItems } from "@/data/portfolio";
 
 export default function ServicesSection() {
   const [openNumber, setOpenNumber] = useState<string | null>(null);
@@ -68,7 +21,7 @@ export default function ServicesSection() {
         </div>
 
         <ol className="mt-10 border-y border-[var(--color-border)]">
-          {services.map((service, index) => {
+          {homepageServiceItems.map((service, index) => {
             const isOpen = openNumber === service.number;
             const detailId = `service-detail-${service.number}`;
 
@@ -76,7 +29,7 @@ export default function ServicesSection() {
               <li
                 key={service.number}
                 className={`group service-row transition-colors duration-200 ${
-                  index !== services.length - 1
+                  index !== homepageServiceItems.length - 1
                     ? "border-b border-[var(--color-border)]"
                     : ""
                 }`}

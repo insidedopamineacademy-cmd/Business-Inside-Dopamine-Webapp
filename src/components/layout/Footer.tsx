@@ -1,9 +1,9 @@
 import Link from "next/link";
+import { portfolioNavigationItems } from "@/data/portfolio";
 import Container from "../ui/Container";
 
 const links = [
-  { href: "/services", label: "Solutions" },
-  { href: "/work", label: "Work" },
+  ...portfolioNavigationItems,
   { href: "/process", label: "Process" },
   { href: "/contact", label: "Contact" },
   { href: "/privacy", label: "Privacy Policy" },

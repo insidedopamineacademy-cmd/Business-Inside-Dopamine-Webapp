@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -6,10 +8,14 @@ const mocks = vi.hoisted(() => ({
   leadGroupBy: vi.fn(),
   leadCount: vi.fn(),
   leadFindUnique: vi.fn(),
+  faqFindMany: vi.fn(),
+  conversationFindMany: vi.fn(),
+  conversationCount: vi.fn(),
   conversationFindUnique: vi.fn(),
   notFound: vi.fn(),
 }));
 
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/admin-auth", () => ({ requireAdmin: mocks.requireAdmin }));
 vi.mock("next/navigation", () => ({
   notFound: mocks.notFound,
@@ -23,11 +29,19 @@ vi.mock("@/lib/prisma", () => ({
       count: mocks.leadCount,
       findUnique: mocks.leadFindUnique,
     },
-    conversation: { findUnique: mocks.conversationFindUnique },
+    faq: { findMany: mocks.faqFindMany },
+    conversation: {
+      findMany: mocks.conversationFindMany,
+      count: mocks.conversationCount,
+      findUnique: mocks.conversationFindUnique,
+    },
   },
 }));
 
 import AdminLayout from "../src/app/admin/layout";
+import FAQEditor from "../src/app/admin/faqs/FAQEditor";
+import AdminFAQsPage from "../src/app/admin/faqs/page";
+import AdminConversationsPage from "../src/app/admin/conversations/page";
 import AdminLeadsPage from "../src/app/admin/leads/page";
 import AdminLeadDetailPage from "../src/app/admin/leads/[id]/page";
 import ConversationDetailPage from "../src/app/admin/conversations/[id]/page";
@@ -37,6 +51,9 @@ const prismaReadSpies = [
   mocks.leadGroupBy,
   mocks.leadCount,
   mocks.leadFindUnique,
+  mocks.faqFindMany,
+  mocks.conversationFindMany,
+  mocks.conversationCount,
   mocks.conversationFindUnique,
 ];
 
@@ -46,6 +63,9 @@ beforeEach(() => {
   mocks.leadFindMany.mockResolvedValue([]);
   mocks.leadGroupBy.mockResolvedValue([]);
   mocks.leadCount.mockResolvedValue(0);
+  mocks.faqFindMany.mockResolvedValue([]);
+  mocks.conversationFindMany.mockResolvedValue([]);
+  mocks.conversationCount.mockResolvedValue(0);
   mocks.notFound.mockImplementation(() => {
     throw new Error("Not found.");
   });
@@ -54,6 +74,8 @@ beforeEach(() => {
 describe("protected admin reads", () => {
   const reads: Array<[string, () => Promise<unknown>]> = [
     ["admin layout", () => AdminLayout({ children: null })],
+    ["FAQ list", () => AdminFAQsPage()],
+    ["conversation list", () => AdminConversationsPage({})],
     ["lead list", () => AdminLeadsPage({})],
     [
       "lead detail",
@@ -81,6 +103,89 @@ describe("protected admin reads", () => {
     expect(mocks.leadFindMany).toHaveBeenCalledOnce();
     expect(mocks.leadGroupBy).toHaveBeenCalledOnce();
     expect(mocks.leadCount).toHaveBeenCalledOnce();
+  });
+
+  it("loads authorized FAQ data on the server and passes it to the editor", async () => {
+    const faqs = [
+      {
+        id: "faq_123",
+        question: "What do you build?",
+        answer: "Business applications.",
+        category: "Services",
+        isActive: true,
+        order: 2,
+      },
+    ];
+    mocks.faqFindMany.mockResolvedValue(faqs);
+
+    const page = (await AdminFAQsPage()) as ReactElement<{
+      initialFaqs: typeof faqs;
+    }>;
+
+    expect(mocks.requireAdmin).toHaveBeenCalledOnce();
+    expect(mocks.faqFindMany).toHaveBeenCalledWith({
+      orderBy: { order: "asc" },
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+        category: true,
+        isActive: true,
+        order: true,
+      },
+    });
+    expect(page.type).toBe(FAQEditor);
+    expect(page.props.initialFaqs).toEqual(faqs);
+  });
+
+  it("renders the authorized conversation list on the server in query order", async () => {
+    mocks.conversationFindMany.mockResolvedValue([
+      {
+        id: "conversation_newer",
+        createdAt: new Date("2026-07-22T12:00:00.000Z"),
+        leadName: "Ada",
+        leadEmail: "ada@example.test",
+        bookedCall: false,
+        messageCount: 3,
+        lead: { id: "lead_123" },
+      },
+      {
+        id: "conversation_older",
+        createdAt: new Date("2026-07-21T12:00:00.000Z"),
+        leadName: "Grace",
+        leadEmail: null,
+        bookedCall: true,
+        messageCount: 0,
+        lead: null,
+      },
+    ]);
+
+    const markup = renderToStaticMarkup(await AdminConversationsPage({}));
+
+    expect(mocks.requireAdmin).toHaveBeenCalledOnce();
+    expect(mocks.conversationFindMany).toHaveBeenCalledWith({
+      where: undefined,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: 26,
+      select: {
+        id: true,
+        createdAt: true,
+        leadName: true,
+        leadEmail: true,
+        bookedCall: true,
+        messageCount: true,
+        lead: { select: { id: true } },
+      },
+    });
+    expect(mocks.conversationCount).toHaveBeenNthCalledWith(1);
+    expect(mocks.conversationCount).toHaveBeenNthCalledWith(2, {
+      where: { lead: { isNot: null } },
+    });
+    expect(markup).toContain("Chat Conversations");
+    expect(markup).toContain("3");
+    expect(markup).toContain("Captured");
+    expect(markup).toContain("Legacy flag");
+    expect(markup.indexOf("Ada")).toBeLessThan(markup.indexOf("Grace"));
   });
 
   it("uses a narrow select for an authorized conversation detail", async () => {

@@ -4,12 +4,167 @@ Inside Dopamine is a Next.js App Router portfolio platform with public service a
 
 ## Project status
 
-- **Engineering status:** Phase One COMPLETE
+- **Phase One:** COMPLETE — engineering safety and correctness foundation
+- **Phase Two:** COMPLETE — architecture refinement and design-system foundation
+- **UI/UX redesign readiness:** READY
 - **Release status:** Engineering Complete — Production Launch Pending
 - **Production readiness:** BLOCKED by the three launch gates in [CLEAN.md](CLEAN.md)
-- **Phase Two:** May begin independently, but its work must not be deployed to production until the launch gates close
+- **Current verified quality baseline:** 20 test files / 214 tests, plus passing TypeScript, ESLint, Prisma validation, and production build
 
-The engineering closure and its evidence are recorded in [AUDIT.md](AUDIT.md). This status is not unconditional production approval.
+Phase Two did not redesign the application or close production-only business, privacy, dependency, or hosting gates. The current implementation record is in [AUDIT.md](AUDIT.md), and the remaining launch requirements are maintained in [CLEAN.md](CLEAN.md).
+
+## Current architecture
+
+```mermaid
+flowchart TD
+    Proxy["src/proxy.ts"] --> Root["src/app/layout.tsx<br/>document, font, metadata"]
+    Root --> Public["src/app/(public)/layout.tsx<br/>public shell and main"]
+    Root --> Admin["src/app/admin/layout.tsx<br/>authorized admin shell and main"]
+    Root --> API["src/app/api<br/>HTTP adapters"]
+    Public --> Sections["Server-rendered presentation"]
+    Public --> Islands["Navbar, transition, services, contact, chat"]
+    Public --> Registry["src/data/portfolio.ts"]
+    Admin --> Queries["Authorized bounded query modules"]
+    Admin --> Actions["Authorized Server Actions"]
+    API --> Chat["features/chat/server"]
+    Public --> Contact["features/contact"]
+    Chat --> Infra["Server-only infrastructure"]
+    Contact --> Lead["src/lib/lead-service.ts"]
+    Queries --> Prisma["Prisma / PostgreSQL"]
+    Actions --> Prisma
+    Chat --> Prisma
+    Lead --> Prisma
+```
+
+The root layout is document-only. The `(public)` route group preserves every public URL while exclusively owning `Navbar`, `Footer`, `PageTransition`, `ScrollToTopButton`, `ChatWidget`, and the public `<main>`. The protected admin layout exclusively owns the admin header, navigation, content width, and admin `<main>`. Each rendered surface therefore has one semantic main landmark and never receives the other surface’s chrome.
+
+All three case-study URLs are owned by `src/app/(public)/work/[slug]/page.tsx`. Static parameters, metadata, canonical/Open Graph URLs, related work, sitemap projection, and unknown-slug behavior are derived from typed data rather than duplicate explicit routes.
+
+## Canonical folder structure
+
+```text
+src/
+  app/
+    layout.tsx                       # document, font, root metadata only
+    (public)/
+      layout.tsx                     # public shell and public main
+      page.tsx
+      about/ contact/ process/
+      services/ work/
+      privacy/ terms/
+    admin/
+      layout.tsx                     # authorization, admin shell, admin main
+      leads/                         # server page, bounded query, actions, detail
+      conversations/                 # server page, bounded query, detail
+      faqs/                          # server page plus client editor island
+    api/                             # thin HTTP route adapters
+    sitemap.ts
+    robots.ts
+  components/
+    layout/                          # reusable shell components
+    sections/                        # public presentation compositions
+    ui/                              # domain-neutral primitives and widgets
+  data/
+    portfolio.ts                     # typed Product / BI / Growth registry
+    caseStudies.ts                   # canonical case-study content
+  features/
+    contact/
+      contract.ts                    # client-safe fields, options, state
+      components/                    # server composition and client form
+      server/action.ts               # authoritative Server Action
+    chat/server/
+      chat-service.ts                # chat application orchestration
+      chat-policy.ts
+      chat-types.ts
+      conversation-repository.ts
+  lib/
+    server/public-api-core.ts        # transport-neutral server errors/logging
+    public-api.ts                    # Next.js response construction
+    admin-auth*.ts
+    admin-pagination.ts
+    ai.ts env.ts lead-service.ts
+    prisma.ts rate-limit.ts
+  styles/globals.css                 # authoritative Tailwind v4 CSS-first system
+prisma/
+  schema.prisma
+  migrations/
+tests/
+```
+
+This is an ownership map, not a rule that every domain needs a feature folder. Route-colocated admin queries/actions remain appropriate because they have one route-family owner. `src/data/portfolio.ts` remains the canonical client-safe registry; moving it only for naming symmetry is not justified.
+
+## Ownership and boundaries
+
+### Feature ownership
+
+- `src/data/portfolio.ts` owns stable category keys (`product`, `bi`, `growth`), service definitions, route projections, navigation/card projections, case-study relations, and contact enquiry options.
+- `src/data/caseStudies.ts` owns existing case-study copy and typed case-study records.
+- `src/features/contact` owns contact composition, the browser-safe contract, the narrow interactive form, and the Server Action. Static contact copy, trust content, sidebar content, and FAQs render on the server.
+- `src/features/chat/server` owns chat use-case orchestration, provider-message policy, conversation persistence, optimistic concurrency, and typed outcomes.
+- `src/lib/lead-service.ts` remains the single server-only lead transaction shared by contact and chat.
+- Admin route folders own authorized, narrow, bounded reads and route-specific mutations.
+
+### Server, client, and hydration boundaries
+
+Server Components are the default. Stable copy, cards, lists, page heroes, calls to action, work indexes, case-study content, admin lists, and initial FAQ data render on the server.
+
+Intentional client islands are limited to stateful behavior:
+
+- responsive/scroll-aware navigation;
+- public page transition and scroll-to-top control;
+- services accordion;
+- contact form state, pending feedback, and success reset;
+- chat widget, messages, and lead-capture interaction;
+- FAQ editing and mutation feedback;
+- legacy or currently unused motion experiments awaiting cleanup.
+
+Protected data remains dynamic and uncached. Client components may import only client-safe contracts, DTOs, constants, data projections, and UI modules. They must not reach Prisma, private configuration, authentication, request APIs, providers, notification code, persistence, quotas, or Server Actions through a shared import.
+
+### Dependency direction
+
+```text
+routes and Server Actions
+  -> feature services / authorized route queries
+    -> domain policy and persistence helpers
+      -> server-only infrastructure
+        -> Prisma, Next.js server APIs, providers
+
+client components
+  -> client-safe contracts / registry projections / UI
+```
+
+Shared and feature modules do not import from `src/app`. Feature services do not depend on route modules. Infrastructure does not import UI. General-purpose barrels may export domain-neutral UI or client-safe contracts only; server implementations use explicit imports.
+
+## Design system
+
+Tailwind CSS 4 remains CSS-first. `src/styles/globals.css` is the authoritative source for:
+
+- semantic color and status tokens;
+- typography roles and tracking;
+- spacing and section rhythm;
+- radii and elevation;
+- motion durations/easing;
+- focus and interaction states;
+- named content widths: `narrow`, `standard`, `wide`, and `admin`.
+
+`src/app/globals.css` is only the App Router import bridge. The obsolete `tailwind.config.ts` was removed after build verification.
+
+The domain-neutral primitive set includes `Button`, `Card`, `Badge`, `StatusBadge`, `Input`, `Textarea`, `Select`, `Field`, `Section`, `Container`, and `Divider`. Public contact and admin FAQ/status/layout surfaces are the reference migrations. Clearly marked compatibility aliases remain for untouched surfaces and should be removed only after their consumers migrate and visual checks pass.
+
+Static presentation reveal behavior is CSS-driven with a visible fallback and a reduced-motion override. Runtime motion remains only where interaction or legacy presentation genuinely requires a client boundary.
+
+## Architecture principles
+
+1. One canonical owner per shell, route, taxonomy, contract, and use case.
+2. Server rendering by default; hydrate only stateful controls.
+3. Point-of-use authorization before every sensitive read or mutation.
+4. Narrow DTOs and bounded collection queries; full records belong to detail views.
+5. Server-authoritative validation, chat history, provider input, lead success, quotas, and persistence.
+6. Static registries project into UI, metadata, redirects, and sitemap rather than being copied.
+7. Domain-neutral UI stays free of feature and route dependencies.
+8. Server-only modules declare their boundary explicitly.
+9. Preserve Phase One request, security, truthfulness, idempotency, and failure contracts.
+10. Add abstractions only for demonstrated Product, BI, or Growth needs.
 
 ## Installation
 
@@ -25,7 +180,7 @@ Install the locked dependency graph:
 npm ci
 ```
 
-`postinstall` generates Prisma Client automatically. It can also be regenerated explicitly with `npm run prisma:generate`.
+`postinstall` generates Prisma Client automatically. Regenerate it explicitly with `npm run prisma:generate` when the schema changes.
 
 ## Environment setup
 
@@ -39,21 +194,27 @@ Never commit, print, or reuse production credentials for local work.
 
 | Variable | Requirement |
 | --- | --- |
-| `DATABASE_URL` | Pooled PostgreSQL URL used by database-backed runtime features. |
-| `DIRECT_URL` | Direct/non-pooled PostgreSQL URL used by Prisma validation and migrations. It must identify the same isolated database and branch as `DATABASE_URL`. |
-| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Interim admin credential pair. Missing or invalid values fail closed; the password must contain 16–256 characters. |
+| `DATABASE_URL` | Pooled PostgreSQL URL for database-backed runtime features. |
+| `DIRECT_URL` | Direct PostgreSQL URL for Prisma validation/migrations; it must identify the same isolated database and branch as `DATABASE_URL`. |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Interim admin credential pair. Missing or invalid values fail closed; password length is 16–256 characters. |
 | `ANTHROPIC_API_KEY` | Required only for real chat/recommendation provider calls. |
 | `ANTHROPIC_MODEL` | Optional bounded model override; blank uses the server default. |
-| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Preferred complete production pair for distributed public-endpoint quotas. |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Preferred complete production pair for distributed public quotas. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | Supported complete fallback pair for the same quota store. |
-| `RATE_LIMIT_IDENTITY_SECRET` | Required in production to pseudonymize quota identities; must contain 32–256 characters. |
-| `CONTACT_INBOX_WEBHOOK_URL` | Optional HTTPS notification destination. Lead persistence remains authoritative if notification is disabled or fails. |
-| `NEXT_PUBLIC_SITE_URL` | Optional public canonical origin. Local HTTP is accepted only outside production; production requires HTTPS. |
-| `FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT` | Leave empty during ordinary operation. Every FAQ replacement requires the exact acknowledgement described below. |
+| `RATE_LIMIT_IDENTITY_SECRET` | Required in production to pseudonymize quota identities; length is 32–256 characters. |
+| `CONTACT_INBOX_WEBHOOK_URL` | Optional HTTPS notification destination. Lead persistence remains authoritative when notification is unavailable. |
+| `NEXT_PUBLIC_SITE_URL` | Public canonical origin. Local HTTP is accepted only outside production; production requires HTTPS. |
+| `FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT` | Empty by default; destructive FAQ replacement requires the exact guarded value below. |
 
-Prisma CLI does not automatically load `.env.local`; make the required database variables available to the command environment without printing them.
+Prisma CLI does not automatically load `.env.local`; provide required database variables to the command environment without printing them.
 
-## Local development
+## Development workflow
+
+1. Start from the relevant canonical document and identify the owning route, feature, registry, or infrastructure module.
+2. Add or update characterization tests before changing route ownership, persistence, authorization, public contracts, or compatibility aliases.
+3. Keep new route entries and stable presentation server-rendered unless browser state is required.
+4. Import server implementations explicitly and keep browser contracts dependency-free.
+5. Run focused tests while iterating, then the full quality sequence before handoff.
 
 Start the default development server:
 
@@ -61,70 +222,95 @@ Start the default development server:
 npm run dev
 ```
 
-If `NEXT_PUBLIC_SITE_URL` uses a non-default local port, pass the matching port to Next.js, for example:
+If `NEXT_PUBLIC_SITE_URL` uses another local port, pass the matching port to Next.js:
 
 ```bash
 npm run dev -- -p 3000
 ```
 
-Local/test public quotas use a bounded in-memory limiter. This proves request behavior but does not represent distributed production enforcement.
+Local/test public quotas use a bounded in-memory limiter. This validates request behavior but does not prove distributed production enforcement.
 
-## Testing and quality commands
+## Testing and build workflow
 
-These commands match the scripts in `package.json`:
+The scripts in `package.json` are authoritative:
 
 | Command | Purpose |
 | --- | --- |
 | `npm run typecheck` | Strict TypeScript validation. |
 | `npm run lint` | Full ESLint gate. |
-| `npm test` | Run the Vitest suite once. |
+| `npm test` | Run all Vitest tests once. |
 | `npm run build` | Create the production Next.js build. |
-| `npm run secret:scan` | Scan source, reachable history, and generated client assets for credential signatures. |
+| `npm run secret:scan` | Scan source, reachable history, and generated browser assets for credential signatures. |
 | `npm run prisma:generate` | Regenerate Prisma Client. |
-| `npm run prisma:migrate` | Apply pending migrations to the configured target; release use only. |
+| `npm run prisma:migrate` | Apply pending migrations to the configured target; approved release use only. |
 | `npm run start` | Start an already-built production server. |
 
-Additional non-destructive release checks:
+Recommended non-destructive local sequence:
 
 ```bash
+npm run typecheck
+npm run lint
+npm test
 npx prisma validate
-npm audit --omit=dev --audit-level=high
+npm run build
 git diff --check
 ```
 
-The dependency audit currently fails the High threshold by design; do not lower it or run an automatic audit fix to conceal [DEP-01](CLEAN.md#dep-01--dependency-disposition).
+When intentionally editing `prisma/schema.prisma`, run `npx prisma format` before validation; it rewrites the schema in place.
 
-No default test or validation command makes a paid provider request, sends a webhook, seeds data, or accesses production.
+Release-only checks also include:
+
+```bash
+npm audit --omit=dev --audit-level=high
+npm run secret:scan
+```
+
+The dependency audit remains a deliberate production gate; do not lower the threshold or use an automatic audit fix to conceal [DEP-01](CLEAN.md#dep-01--dependency-disposition). No default test or build command calls a paid provider, sends a webhook, seeds data, or accesses production.
 
 ## Database migrations and FAQ replacement
 
-`npm run prisma:migrate` runs `prisma migrate deploy` against whichever target the environment names. Before using it, independently confirm the target, backup/roll-forward plan, release authorization, and same-branch pooled/direct pairing.
+Admin lead and conversation lists use deterministic `(createdAt, id)` cursors, a default page size of 25, and a hard maximum of 50. Queries fetch one extra row to derive page navigation and select list DTO fields only. Full lead data and full conversation transcripts remain confined to detail routes.
 
-FAQ replacement is atomic but destructive. Every execution is blocked unless `FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT` exactly equals:
+`Conversation.messageCount` is a durable list-level summary. The reviewed Phase 2.3C migration backfills existing JSON arrays, adds a database equality constraint, and adds the composite cursor index. Every chat transcript create/update writes the transcript and count together; optimistic versioning remains authoritative. Do not derive the count from browser input.
+
+`npm run prisma:migrate` runs `prisma migrate deploy` against the configured target. Before using it, independently confirm the target, backup/roll-forward plan, authorization, and pooled/direct same-target pairing.
+
+FAQ replacement is atomic and destructive. Every execution is blocked unless `FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT` exactly equals:
 
 ```text
 I_UNDERSTAND_THIS_REPLACES_ALL_FAQS
 ```
 
-The acknowledgement is not proof that a target is safe. Never run the seed without separate target verification and authorization.
+The acknowledgement does not prove a target is safe. Never run the seed without separate target verification and authorization.
 
-## Deployment prerequisites
+## Current roadmap
 
-Production deployment is prohibited until all items in [CLEAN.md](CLEAN.md) are closed and recorded. A release candidate must then:
+### Phase One — complete
 
-1. pass the full CI workflow from the exact revision;
-2. use reviewed production configuration without exposing values;
-3. verify HTTPS/HSTS and the trusted proxy header chain;
-4. verify distributed Redis rate limiting in the production-like topology;
-5. confirm the migration target, backup, roll-forward, and application rollback plan;
-6. apply reviewed migrations through the approved release process;
-7. run redacted post-deploy smoke checks and monitor database, provider, limiter, and notification outcomes.
+Security/correctness foundations, truthful durable lead handling, server-authoritative chat, migration safety, environment validation, and the original regression baseline are complete.
 
-Do not use `prisma db push`, `prisma migrate reset`, an unreviewed seed, or production credentials as a substitute for the release process.
+### Phase Two — complete
 
-## Canonical documentation
+Route-shell separation, case-study consolidation, typed portfolio ownership, design-system authority, static Server Component migration, server-first admin loading, bounded admin pagination, durable conversation counts, contact ownership, chat application-service extraction, route-contract repair, and server-module boundary checks are complete.
 
-- [PRD.md](PRD.md) — product scope, requirements, architecture decisions, Phase One completion, and Phase Two scope
-- [AUDIT.md](AUDIT.md) — current technical/security condition and verified evidence
-- [CLEAN.md](CLEAN.md) — unresolved production-launch gates and launch checklist
-- [CHANGELOG.md](CHANGELOG.md) — concise chronological project record
+### Remaining Phase Three work
+
+- Implement the flagship visual redesign and add factual Product, BI, and Growth evidence without weakening current ownership.
+- Decide whether the current personalisation/recommendation path has a measured product owner; otherwise remove it with tests.
+- Remove verified dead presentation experiments and finish the motion/compatibility-alias cleanup as affected surfaces migrate.
+- Consolidate repeated service-detail compositions only after route/content characterization.
+- Continue the already-defined identity, privacy/lifecycle, cross-instance quota/provider reservation, notification outbox, observability, accessibility, performance, SEO/social metadata, and hosting-header work.
+- Close DEP-01, PRIV-001, and RATE-IDENTITY-01 before any production launch.
+
+## Documentation index
+
+- [README.md](README.md) — setup, current architecture, workflows, principles, and status
+- [PRD.md](PRD.md) — unchanged business goals, completed phases, accepted architecture decisions, and remaining roadmap
+- [AUDIT.md](AUDIT.md) — current evidence, resolved/partial/open findings, risks, and technical debt
+- [ARCHITECTURE_REVIEW.md](ARCHITECTURE_REVIEW.md) — Phase 2.0 recommendation status, current architecture score, and redesign-readiness verdict
+- [CLEAN.md](CLEAN.md) — repository ownership/cleanliness rules and unresolved production-launch gates
+- [CHANGELOG.md](CHANGELOG.md) — chronological Phase One and Phase Two implementation record
+
+## Deployment boundary
+
+Production deployment remains prohibited until every gate in [CLEAN.md](CLEAN.md) is closed and recorded. Do not use `prisma db push`, `prisma migrate reset`, an unreviewed seed, or production credentials as a substitute for the approved release process.

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { caseStudySlugs } from "@/data/caseStudies";
+import { caseStudyRouteProjections, serviceRouteProjections } from "@/data/portfolio";
 import { getPublicSiteUrl } from "@/lib/env";
 
 const baseUrl = getPublicSiteUrl();
@@ -16,13 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/work",
   ];
 
-  const serviceRoutes = [
-    "/services/data-analytics-power-bi",
-    "/services/web-platforms",
-    "/services/ai-solutions",
-  ];
-
-  const caseStudyRoutes = caseStudySlugs.map((slug) => `/work/${slug}`);
+  const serviceRoutes = serviceRouteProjections.map((service) => service.href);
+  const caseStudyRoutes = caseStudyRouteProjections.map((study) => study.href);
   const routes = [...coreRoutes, ...serviceRoutes, ...caseStudyRoutes];
 
   return routes.map((route) => ({

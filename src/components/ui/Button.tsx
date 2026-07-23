@@ -1,9 +1,7 @@
 import Link from "next/link";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 
-function cx(...args: (string | false | null | undefined)[]) {
-  return args.filter(Boolean).join(" ");
-}
+import { cx } from "./utils";
 
 function Spinner() {
   return (
@@ -58,10 +56,10 @@ export type ButtonProps = AsButton | AsLink;
 // ── Base ───────────────────────────────────────────────────────────────────
 const base = [
   "relative inline-flex items-center justify-center gap-2",
-  "font-medium rounded-full select-none whitespace-nowrap",
-  "transition-all duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
+  "font-medium rounded-[var(--radius-full)] select-none whitespace-nowrap",
+  "transition-all duration-[var(--transition-duration-base)] ease-[var(--ease-apple)]",
   "focus-visible:outline-none focus-visible:ring-2",
-  "focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2",
+  "focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-[var(--focus-ring-offset)]",
   "disabled:cursor-not-allowed disabled:pointer-events-none",
 ].join(" ");
 
@@ -69,7 +67,7 @@ const base = [
 const variants: Record<ButtonVariant, string> = {
   primary: [
     "bg-[var(--color-accent)] text-white border border-transparent",
-    "hover:bg-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(109,86,250,0.30)]",
+    "hover:bg-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[var(--shadow-accent-hover)]",
     "disabled:bg-[var(--color-text-tertiary)] disabled:hover:translate-y-0 disabled:hover:shadow-none",
     "active:translate-y-0",
   ].join(" "),

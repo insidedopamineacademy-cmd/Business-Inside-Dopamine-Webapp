@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Container } from "@/components/ui";
 import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
@@ -18,29 +19,32 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      <header className="border-b border-[var(--border-light)] bg-[var(--color-bg)]/95">
-        <div className="mx-auto flex w-full max-w-[1100px] items-center justify-between px-5 py-4 md:px-8">
+    <div className="min-h-screen bg-[var(--color-background)]">
+      <header className="border-b border-[var(--color-border-subtle)] bg-[var(--color-background)]/95">
+        <Container
+          variant="admin"
+          className="flex flex-col items-start gap-4 py-4 md:flex-row md:items-center md:justify-between"
+        >
           <div>
-            <p className="type-mono text-[var(--color-muted)]">INSIDE DOPAMINE ADMIN</p>
-            <h1 className="type-section mt-1 text-xl text-[var(--color-text)]">Leads Dashboard</h1>
+            <p className="type-mono text-[var(--color-text-tertiary)]">INSIDE DOPAMINE ADMIN</p>
+            <h1 className="type-section mt-1 text-xl text-[var(--color-text-primary)]">Leads Dashboard</h1>
           </div>
-          <nav className="flex items-center gap-4">
+          <nav className="flex w-full flex-wrap items-center gap-x-4 gap-y-2 md:w-auto md:flex-nowrap">
             <Link
               href="/admin/leads"
-              className="type-mono text-[var(--color-text)] no-underline transition-opacity duration-200 hover:opacity-65"
+              className="type-mono text-[var(--color-text-primary)] no-underline transition-opacity duration-[var(--transition-duration-fast)] hover:opacity-65"
             >
               Leads
             </Link>
             <Link
               href="/admin/faqs"
-              className="type-mono text-[var(--color-text)] no-underline transition-opacity duration-200 hover:opacity-65"
+              className="type-mono text-[var(--color-text-primary)] no-underline transition-opacity duration-[var(--transition-duration-fast)] hover:opacity-65"
             >
               FAQ Manager
             </Link>
             <Link
               href="/admin/conversations"
-              className="type-mono text-[var(--color-text)] no-underline transition-opacity duration-200 hover:opacity-65"
+              className="type-mono text-[var(--color-text-primary)] no-underline transition-opacity duration-[var(--transition-duration-fast)] hover:opacity-65"
             >
               Conversations
             </Link>
@@ -51,9 +55,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               Back to site
             </Link>
           </nav>
-        </div>
+        </Container>
       </header>
-      <div className="mx-auto w-full max-w-[1100px] px-5 py-8 md:px-8 md:py-10">{children}</div>
+      <main>
+        <Container variant="admin" className="py-8 md:py-10">
+          {children}
+        </Container>
+      </main>
     </div>
   );
 }

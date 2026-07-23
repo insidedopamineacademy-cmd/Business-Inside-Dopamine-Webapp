@@ -3,10 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import {
-  PublicApiError,
   readBoundedJson,
-  requireStrictObject,
 } from "../src/lib/public-api";
+import {
+  PublicApiError,
+  requireStrictObject,
+} from "../src/lib/server/public-api-core";
 import {
   checkPublicRateLimit,
   resetDevelopmentRateLimits,

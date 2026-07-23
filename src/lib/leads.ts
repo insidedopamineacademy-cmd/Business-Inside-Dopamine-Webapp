@@ -1,15 +1,15 @@
-import type { LeadStatus } from "@prisma/client";
-
-export const leadStatuses: LeadStatus[] = [
+export const leadStatuses = [
   "NEW",
   "CONTACTED",
   "QUALIFIED",
   "BOOKED",
   "CLOSED",
-];
+] as const;
+
+export type LeadStatus = (typeof leadStatuses)[number];
 
 export function isLeadStatus(value: string): value is LeadStatus {
-  return leadStatuses.includes(value as LeadStatus);
+  return (leadStatuses as readonly string[]).includes(value);
 }
 
 export function formatLeadStatus(status: LeadStatus) {

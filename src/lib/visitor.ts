@@ -1,3 +1,5 @@
+import "server-only";
+
 export interface VisitorProfile {
   segment: "ai" | "dashboard" | "platform" | "enterprise" | "general";
   source: "linkedin" | "google" | "direct" | "referral" | "other";

@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
-import ChatWidget from "@/components/ui/ChatWidget";
-import PageTransition from "@/components/layout/PageTransition";
 import { getPublicSiteUrl } from "@/lib/env";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -27,15 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={plusJakartaSans.variable}>
-      <body>
-        <Navbar />
-        <main className="relative">
-          <PageTransition>{children}</PageTransition>
-        </main>
-        <ScrollToTopButton />
-        <Footer />
-        <ChatWidget />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

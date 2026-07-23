@@ -1,11 +1,10 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getConversations } from "@/app/admin/conversations/actions";
+import PaginationNav from "@/app/admin/PaginationNav";
+import { getConversationListPage } from "@/app/admin/conversations/queries";
 import { Card, Badge } from "@/components/ui";
+import { ADMIN_LIST_DEFAULT_SIZE } from "@/lib/admin-pagination";
 
-type ConversationSummary = Awaited<ReturnType<typeof getConversations>>[number];
+export const dynamic = "force-dynamic";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
@@ -17,20 +16,41 @@ function formatDate(date: Date): string {
   }).format(new Date(date));
 }
 
-export default function ConversationsPage() {
-  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+type ConversationsPageProps = {
+  searchParams?: Promise<{
+    after?: string;
+    before?: string;
+    limit?: string;
+  }>;
+};
 
-  useEffect(() => {
-    getConversations()
-      .then(setConversations)
-      .finally(() => setLoading(false));
-  }, []);
+function conversationPageHref(
+  pageSize: number,
+  cursor: { key: "after" | "before"; value: string | null },
+) {
+  if (!cursor.value) return null;
+  const params = new URLSearchParams();
+  if (pageSize !== ADMIN_LIST_DEFAULT_SIZE) params.set("limit", String(pageSize));
+  params.set(cursor.key, cursor.value);
+  return `/admin/conversations?${params.toString()}`;
+}
 
-  const total = conversations.length;
-  const leadsCount = conversations.filter((c) => c.leadCaptured).length;
+export default async function ConversationsPage({ searchParams }: ConversationsPageProps) {
+  const params = (await searchParams) ?? {};
+  const { items: conversations, pageInfo, stats } = await getConversationListPage(params);
+
+  const total = stats.totalCount;
+  const leadsCount = stats.leadsCount;
   const conversionRate =
     total > 0 ? Math.round((leadsCount / total) * 100) : 0;
+  const previousHref = conversationPageHref(pageInfo.pageSize, {
+    key: "before",
+    value: pageInfo.previousCursor,
+  });
+  const nextHref = conversationPageHref(pageInfo.pageSize, {
+    key: "after",
+    value: pageInfo.nextCursor,
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -51,7 +71,7 @@ export default function ConversationsPage() {
             Total Conversations
           </p>
           <p className="mt-2 text-3xl font-semibold text-[var(--color-text-primary)]">
-            {loading ? "—" : total}
+            {total}
           </p>
         </Card>
 
@@ -60,7 +80,7 @@ export default function ConversationsPage() {
             Leads Captured
           </p>
           <p className="mt-2 text-3xl font-semibold text-[var(--color-text-primary)]">
-            {loading ? "—" : leadsCount}
+            {leadsCount}
           </p>
         </Card>
 
@@ -69,15 +89,13 @@ export default function ConversationsPage() {
             Conversion Rate
           </p>
           <p className="mt-2 text-3xl font-semibold text-[var(--color-text-primary)]">
-            {loading ? "—" : `${conversionRate}%`}
+            {conversionRate}%
           </p>
         </Card>
       </div>
 
       {/* List */}
-      {loading ? (
-        <p className="text-sm text-[var(--color-text-secondary)]">Loading…</p>
-      ) : conversations.length === 0 ? (
+      {conversations.length === 0 ? (
         <Card variant="bordered" className="p-8 text-center">
           <p className="text-sm text-[var(--color-text-secondary)]">
             No conversations yet — the chat widget will populate this once
@@ -163,6 +181,14 @@ export default function ConversationsPage() {
           </ul>
         </Card>
       )}
+
+      {previousHref || nextHref ? (
+        <PaginationNav
+          label="Conversation list pagination"
+          previousHref={previousHref}
+          nextHref={nextHref}
+        />
+      ) : null}
     </div>
   );
 }

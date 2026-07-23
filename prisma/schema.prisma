@@ -85,16 +85,19 @@ model SegmentEvent {
 }
 
 model Conversation {
-  id         String   @id @default(cuid())
-  sessionId  String   @unique
-  messages   Json
-  leadName   String?
-  leadEmail  String?
-  bookedCall Boolean  @default(false)
-  version    Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  lead       Lead?
+  id           String   @id @default(cuid())
+  sessionId    String   @unique
+  messages     Json
+  messageCount Int      @default(0)
+  leadName     String?
+  leadEmail    String?
+  bookedCall   Boolean  @default(false)
+  version      Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lead         Lead?
+
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model LeadNotification {

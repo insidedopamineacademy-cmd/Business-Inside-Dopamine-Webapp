@@ -1,21 +1,11 @@
-"use client";
-
 import Button from "../ui/Button";
 import Container from "../ui/Container";
-import { MotionSection, useReducedMotion } from "@/lib/motion";
-import { fadeUp, viewport } from "@/lib/animations";
 
 export default function FinalCTASection() {
-  const reduceMotion = useReducedMotion();
-
   return (
-    <MotionSection
-      className="section-space surface-soft"
+    <section
+      className="presentation-reveal-view section-space surface-soft"
       aria-label="Final call to action"
-      variants={fadeUp}
-      initial={reduceMotion ? false : "hidden"}
-      whileInView="visible"
-      viewport={viewport}
     >
       <Container>
         <div className="rounded-3xl border border-white/10 bg-[var(--color-text-primary)] px-6 py-9 md:px-10 md:py-12">
@@ -31,6 +21,6 @@ export default function FinalCTASection() {
           </div>
         </div>
       </Container>
-    </MotionSection>
+    </section>
   );
 }

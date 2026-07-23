@@ -1,7 +1,12 @@
 "use server";
 
+import "server-only";
+
+import { revalidatePath } from "next/cache";
+
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import type { FAQListItem } from "./contract";
 
 const FAQ_CATEGORIES = new Set(["General", "Services", "Process", "AI", "Pricing"]);
 const MAX_FAQ_ID_LENGTH = 128;
@@ -10,6 +15,15 @@ const MAX_ANSWER_LENGTH = 5_000;
 const MAX_ORDER = 10_000;
 
 type UnknownRecord = Record<string, unknown>;
+
+const FAQ_LIST_SELECT = {
+  id: true,
+  question: true,
+  answer: true,
+  category: true,
+  isActive: true,
+  order: true,
+} as const;
 
 function getRecord(value: unknown, allowedKeys: readonly string[]) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -59,27 +73,20 @@ function getOrder(record: UnknownRecord) {
   return value;
 }
 
-export async function getFAQs() {
+export async function getFAQs(): Promise<FAQListItem[]> {
   await requireAdmin();
 
   try {
     return await prisma.faq.findMany({
       orderBy: { order: "asc" },
-      select: {
-        id: true,
-        question: true,
-        answer: true,
-        category: true,
-        isActive: true,
-        order: true,
-      },
+      select: FAQ_LIST_SELECT,
     });
   } catch {
     throw new Error("Failed to fetch FAQs.");
   }
 }
 
-export async function createFAQ(data: unknown) {
+export async function createFAQ(data: unknown): Promise<FAQListItem> {
   await requireAdmin();
 
   const record = getRecord(data, ["question", "answer", "category", "order"]);
@@ -88,22 +95,23 @@ export async function createFAQ(data: unknown) {
   const category = getCategory(record);
   const order = getOrder(record);
 
-  try {
-    return await prisma.faq.create({
-      data: {
-        question,
-        answer,
-        category,
-        order,
-      },
-      select: { id: true },
-    });
-  } catch {
+  const faq = await prisma.faq.create({
+    data: {
+      question,
+      answer,
+      category,
+      order,
+    },
+    select: FAQ_LIST_SELECT,
+  }).catch(() => {
     throw new Error("Failed to create FAQ.");
-  }
+  });
+
+  revalidatePath("/admin/faqs");
+  return faq;
 }
 
-export async function updateFAQ(idValue: unknown, data: unknown) {
+export async function updateFAQ(idValue: unknown, data: unknown): Promise<FAQListItem> {
   await requireAdmin();
 
   const id = getFaqId(idValue);
@@ -131,15 +139,16 @@ export async function updateFAQ(idValue: unknown, data: unknown) {
   }
   if (record.order !== undefined) updateData.order = getOrder(record);
 
-  try {
-    return await prisma.faq.update({
-      where: { id },
-      data: updateData,
-      select: { id: true },
-    });
-  } catch {
+  const faq = await prisma.faq.update({
+    where: { id },
+    data: updateData,
+    select: FAQ_LIST_SELECT,
+  }).catch(() => {
     throw new Error("Failed to update FAQ.");
-  }
+  });
+
+  revalidatePath("/admin/faqs");
+  return faq;
 }
 
 export async function deleteFAQ(idValue: unknown): Promise<{ success: true }> {
@@ -147,10 +156,10 @@ export async function deleteFAQ(idValue: unknown): Promise<{ success: true }> {
 
   const id = getFaqId(idValue);
 
-  try {
-    await prisma.faq.delete({ where: { id }, select: { id: true } });
-    return { success: true };
-  } catch {
+  await prisma.faq.delete({ where: { id }, select: { id: true } }).catch(() => {
     throw new Error("Failed to delete FAQ.");
-  }
+  });
+
+  revalidatePath("/admin/faqs");
+  return { success: true };
 }

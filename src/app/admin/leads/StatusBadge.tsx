@@ -1,21 +1,32 @@
-import type { LeadStatus } from "@prisma/client";
-
-import { formatLeadStatus, getLeadStatusTone } from "@/lib/leads";
+import {
+  StatusBadge as StatusBadgePrimitive,
+  type StatusBadgeVariant,
+} from "@/components/ui";
+import {
+  formatLeadStatus,
+  type LeadStatus,
+} from "@/lib/leads";
 
 type StatusBadgeProps = {
   status: LeadStatus;
   className?: string;
 };
 
-export default function StatusBadge({ status, className = "" }: StatusBadgeProps) {
-  const tone = getLeadStatusTone(status);
+const variants: Record<LeadStatus, StatusBadgeVariant> = {
+  NEW: "neutral",
+  CONTACTED: "info",
+  QUALIFIED: "accent",
+  BOOKED: "success",
+  CLOSED: "muted",
+};
 
+export default function StatusBadge({ status, className = "" }: StatusBadgeProps) {
   return (
-    <span
-      className={`type-mono inline-flex items-center rounded-full border px-2.5 py-1 ${className}`.trim()}
-      style={tone}
+    <StatusBadgePrimitive
+      variant={variants[status]}
+      className={`type-mono ${className}`.trim()}
     >
       {formatLeadStatus(status)}
-    </span>
+    </StatusBadgePrimitive>
   );
 }

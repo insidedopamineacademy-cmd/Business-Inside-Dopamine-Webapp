@@ -15,9 +15,12 @@ const leadListSource = readFileSync(new URL("../app/admin/leads/page.tsx", impor
 function token(name: string): string {
   const values = Array.from(
     css.matchAll(
-      new RegExp(`--color-${name}:\\s*(#[0-9A-Fa-f]{6})\\s*;`, "g"),
+      new RegExp(
+        `--color-${name}:\\s*(#[0-9A-Fa-f]{6}|var\\(--color-[a-z-]+\\))\\s*;`,
+        "g",
+      ),
     ),
-    (match) => match[1].toUpperCase(),
+    (match) => match[1],
   );
 
   expect(values.length, `missing --color-${name}`).toBeGreaterThan(0);
@@ -26,7 +29,10 @@ function token(name: string): string {
     `conflicting --color-${name} declarations`,
   ).toBe(1);
 
-  return values[0];
+  const value = values[0];
+  const reference = value.match(/^var\(--color-([a-z-]+)\)$/);
+
+  return reference ? token(reference[1]) : value.toUpperCase();
 }
 
 function hexToRgb(value: string): Rgb {

@@ -5,35 +5,31 @@ import { createHash } from "node:crypto";
 import type { LeadNotificationStatus, LeadSource, PrismaClient } from "@prisma/client";
 
 import {
+  contactEnquiryValues,
+  contactFieldDefinitions,
+  contactFieldNames,
+  isContactEnquiryValue,
+  type ContactFieldName,
+} from "@/features/contact/contract";
+import {
   type ContactWebhookConfiguration,
   getContactWebhookConfiguration,
   getDatabaseConfiguration,
 } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
-import { isUuid, logPublicApiFailure, logPublicApiWarning } from "@/lib/public-api";
+import {
+  isUuid,
+  logPublicApiFailure,
+  logPublicApiWarning,
+} from "@/lib/server/public-api-core";
 
-export const CONTACT_NEEDS = [
-  "BI & AI Dashboards",
-  "Web Applications",
-  "Automation Systems",
-  "AI Copilots & LLMs",
-  "CRM & WhatsApp Flows",
-  "Other",
-] as const;
+export const CONTACT_NEEDS = contactEnquiryValues;
 
 const CONTACT_BODY_LIMIT_BYTES = 16 * 1_024;
 const CONTACT_FIELDS = new Set([
   "idempotencyKey",
   "website",
-  "fullName",
-  "email",
-  "company",
-  "phone",
-  "need",
-  "bottleneck",
-  "preferredDate",
-  "preferredTime",
-  "notes",
+  ...contactFieldNames,
 ]);
 
 export function validateContactFormEnvelope(formData: FormData) {
@@ -62,16 +58,7 @@ export function validateContactFormEnvelope(formData: FormData) {
   return { valid: true as const };
 }
 
-export type LeadField =
-  | "fullName"
-  | "email"
-  | "company"
-  | "phone"
-  | "need"
-  | "bottleneck"
-  | "preferredDate"
-  | "preferredTime"
-  | "notes";
+export type LeadField = ContactFieldName;
 
 export class LeadServiceError extends Error {
   readonly code:
@@ -156,7 +143,10 @@ function normalizedLongText(value: unknown, maximum: number) {
 }
 
 function validEmail(value: unknown) {
-  const email = normalizedText(value, 254)?.toLowerCase() ?? null;
+  const email = normalizedText(
+    value,
+    contactFieldDefinitions.email.maxLength,
+  )?.toLowerCase() ?? null;
   return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
 }
 
@@ -172,7 +162,10 @@ function validateLead(raw: RawLeadSubmission): NormalizedLead {
     typeof raw.idempotencyKey === "string" && isUuid(raw.idempotencyKey)
       ? raw.idempotencyKey
       : null;
-  const fullName = normalizedText(raw.fullName, 100);
+  const fullName = normalizedText(
+    raw.fullName,
+    contactFieldDefinitions.fullName.maxLength,
+  );
   const email = validEmail(raw.email);
 
   if (!fullName) fieldErrors.fullName = "Please enter a name using 100 characters or fewer.";
@@ -211,13 +204,28 @@ function validateLead(raw: RawLeadSubmission): NormalizedLead {
     };
   }
 
-  const company = normalizedText(raw.company, 120);
-  const phone = normalizedText(raw.phone, 32);
-  const need = normalizedText(raw.need, 80);
-  const bottleneck = normalizedLongText(raw.bottleneck, 4_000);
-  const preferredDate = normalizedText(raw.preferredDate, 10);
-  const preferredTime = normalizedText(raw.preferredTime, 5);
-  const notes = normalizedLongText(raw.notes, 2_000);
+  const company = normalizedText(
+    raw.company,
+    contactFieldDefinitions.company.maxLength,
+  );
+  const phone = normalizedText(raw.phone, contactFieldDefinitions.phone.maxLength);
+  const need = normalizedText(raw.need, contactFieldDefinitions.need.maxLength);
+  const bottleneck = normalizedLongText(
+    raw.bottleneck,
+    contactFieldDefinitions.bottleneck.maxLength,
+  );
+  const preferredDate = normalizedText(
+    raw.preferredDate,
+    contactFieldDefinitions.preferredDate.maxLength,
+  );
+  const preferredTime = normalizedText(
+    raw.preferredTime,
+    contactFieldDefinitions.preferredTime.maxLength,
+  );
+  const notes = normalizedLongText(
+    raw.notes,
+    contactFieldDefinitions.notes.maxLength,
+  );
 
   if (typeof raw.company !== "string" || company === null) {
     fieldErrors.company = "Please keep the company name under 120 characters.";
@@ -225,7 +233,7 @@ function validateLead(raw: RawLeadSubmission): NormalizedLead {
   if (typeof raw.phone !== "string" || phone === null) {
     fieldErrors.phone = "Please keep the phone number under 32 characters.";
   }
-  if (!need || !CONTACT_NEEDS.includes(need as (typeof CONTACT_NEEDS)[number])) {
+  if (!need || !isContactEnquiryValue(need)) {
     fieldErrors.need = "Please select one of the available options.";
   }
   if (!bottleneck) {

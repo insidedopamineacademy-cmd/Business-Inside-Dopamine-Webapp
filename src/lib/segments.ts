@@ -1,3 +1,5 @@
+import type { PortfolioServiceKey } from "@/data/portfolio";
+
 export interface Segment {
   key: string;
   label: string;
@@ -7,7 +9,7 @@ export interface Segment {
     subheadline: string;
     cta: string;
   };
-  serviceOrder: string[];
+  serviceOrder: PortfolioServiceKey[];
   caseStudyTags: string[];
 }
 

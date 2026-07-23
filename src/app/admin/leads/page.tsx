@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { LeadStatus, Prisma } from "@prisma/client";
 
-import { requireAdmin } from "@/lib/admin-auth";
+import { ADMIN_LIST_DEFAULT_SIZE } from "@/lib/admin-pagination";
 import { formatDateTime, formatLeadStatus, isLeadStatus, leadStatuses } from "@/lib/leads";
-import { prisma } from "@/lib/prisma";
+import PaginationNav from "../PaginationNav";
+import { getLeadListPage } from "./queries";
 import StatusBadge from "./StatusBadge";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Admin Leads | Inside Dopamine",
@@ -18,65 +20,44 @@ export const metadata: Metadata = {
 
 type LeadsPageProps = {
   searchParams?: Promise<{
+    after?: string;
     status?: string;
     q?: string;
     archived?: string;
+    before?: string;
+    limit?: string;
   }>;
 };
 
+function leadPageHref(
+  filters: { includeArchived: boolean; q: string; status: string },
+  pageSize: number,
+  cursor: { key: "after" | "before"; value: string | null },
+) {
+  if (!cursor.value) return null;
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.status) params.set("status", filters.status);
+  if (filters.includeArchived) params.set("archived", "1");
+  if (pageSize !== ADMIN_LIST_DEFAULT_SIZE) params.set("limit", String(pageSize));
+  params.set(cursor.key, cursor.value);
+  return `/admin/leads?${params.toString()}`;
+}
+
 export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
-  await requireAdmin();
-
   const params = (await searchParams) ?? {};
-  const status = params.status ?? "";
-  const q = (params.q ?? "").trim();
-  const includeArchived = params.archived === "1";
-
-  const where: Prisma.LeadWhereInput = {
-    archived: includeArchived ? undefined : false,
-  };
-
-  if (isLeadStatus(status)) {
-    where.status = status;
-  }
-
-  if (q) {
-    where.OR = [
-      { fullName: { contains: q, mode: "insensitive" } },
-      { email: { contains: q, mode: "insensitive" } },
-      { company: { contains: q, mode: "insensitive" } },
-    ];
-  }
-
-  const [leads, statusCounts, activeLeadsCount] = await Promise.all([
-    prisma.lead.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        company: true,
-        need: true,
-        status: true,
-        createdAt: true,
-        archived: true,
-      },
-    }),
-    prisma.lead.groupBy({
-      by: ["status"],
-      where: { archived: false },
-      _count: { status: true },
-    }),
-    prisma.lead.count({ where: { archived: false } }),
-  ]);
-
-  const statusCountMap = Object.fromEntries(leadStatuses.map((item) => [item, 0])) as Record<LeadStatus, number>;
-  for (const item of statusCounts) {
-    statusCountMap[item.status] = item._count.status;
-  }
-
+  const { filters, items: leads, pageInfo, stats } = await getLeadListPage(params);
+  const { includeArchived, q, status } = filters;
+  const { activeLeadsCount, statusCountMap } = stats;
   const hasFilters = Boolean(q) || isLeadStatus(status) || includeArchived;
+  const previousHref = leadPageHref(filters, pageInfo.pageSize, {
+    key: "before",
+    value: pageInfo.previousCursor,
+  });
+  const nextHref = leadPageHref(filters, pageInfo.pageSize, {
+    key: "after",
+    value: pageInfo.nextCursor,
+  });
 
   return (
     <section aria-label="Leads inbox">
@@ -113,6 +94,9 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
         method="get"
         className="mt-6 grid gap-3 rounded-2xl border border-[var(--border-light)] bg-white/35 p-4 md:grid-cols-[minmax(0,1fr)_220px_auto_auto] md:items-end md:p-5"
       >
+        {pageInfo.pageSize !== ADMIN_LIST_DEFAULT_SIZE ? (
+          <input type="hidden" name="limit" value={pageInfo.pageSize} />
+        ) : null}
         <div>
           <label htmlFor="q" className="type-mono text-[var(--color-text)]">
             Search
@@ -241,6 +225,14 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           </tbody>
         </table>
       </div>
+
+      {previousHref || nextHref ? (
+        <PaginationNav
+          label="Lead list pagination"
+          previousHref={previousHref}
+          nextHref={nextHref}
+        />
+      ) : null}
     </section>
   );
 }

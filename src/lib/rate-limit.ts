@@ -12,7 +12,7 @@ import {
   getRateLimitIdentitySecret,
   isProductionEnvironment,
 } from "@/lib/env";
-import { PublicApiError } from "@/lib/public-api";
+import { PublicApiError } from "@/lib/server/public-api-core";
 
 const MAX_MEMORY_IDENTITIES = 5_000;
 

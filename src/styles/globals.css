@@ -9,17 +9,42 @@
 @theme {
   /* ── Colors ── */
   --color-background:     #FFFFFF;
+  --color-surface-raised: #FFFFFF;
   --color-surface:        #F5F5F7;
   --color-border:         #D2D2D7;
+  --color-border-subtle:  rgba(210, 210, 215, 0.5);
+  --color-border-strong:  rgba(210, 210, 215, 0.9);
   --color-text-primary:   #1D1D1F;
   --color-text-secondary: #626267;
   --color-text-tertiary:  #6E6E73;
   --color-accent:         #5B44E8;
   --color-accent-hover:   #4E38D2;
   --color-accent-light:   #F0EEFF;
+  --color-focus:          #5B44E8;
   --color-success:        #137333;
+  --color-success-surface: rgba(52, 199, 89, 0.12);
+  --color-success-border: rgba(19, 115, 51, 0.28);
   --color-error:          #C62828;
+  --color-error-surface:  rgba(255, 59, 48, 0.12);
+  --color-error-border:   rgba(255, 59, 48, 0.4);
   --color-white:          #FFFFFF;
+
+  /* Status colours preserve the current admin lead-state palette. */
+  --color-status-neutral-background: rgba(17, 16, 16, 0.08);
+  --color-status-neutral-border: rgba(17, 16, 16, 0.18);
+  --color-status-neutral-text: #2A2929;
+  --color-status-info-background: rgba(29, 78, 216, 0.1);
+  --color-status-info-border: rgba(29, 78, 216, 0.24);
+  --color-status-info-text: #1D4ED8;
+  --color-status-accent-background: rgba(99, 102, 241, 0.11);
+  --color-status-accent-border: rgba(99, 102, 241, 0.24);
+  --color-status-accent-text: #4338CA;
+  --color-status-success-background: rgba(22, 163, 74, 0.11);
+  --color-status-success-border: rgba(22, 163, 74, 0.24);
+  --color-status-success-text: #146C2E;
+  --color-status-muted-background: rgba(107, 114, 128, 0.1);
+  --color-status-muted-border: rgba(107, 114, 128, 0.2);
+  --color-status-muted-text: #4B5563;
 
   /* ── Font Families ── */
   --font-sans:    var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
@@ -64,6 +89,11 @@
   --text-label--font-weight:       500;
   --text-label--letter-spacing:    0.06em;
 
+  /* ── Typography Tracking ── */
+  --tracking-display: -0.03em;
+  --tracking-title:   -0.02em;
+  --tracking-heading: -0.01em;
+
   /* ── Spacing — 8pt grid ── */
   --spacing-space-1: 8px;
   --spacing-space-2: 16px;
@@ -74,6 +104,17 @@
   --spacing-space-7: 96px;
   --spacing-space-8: 128px;
   --spacing-space-9: 192px;
+
+  /* Semantic section rhythm used by the Section primitive. */
+  --spacing-section-sm: 64px;
+  --spacing-section-md: 96px;
+  --spacing-section-lg: 128px;
+
+  /* Public and admin content measures. */
+  --container-narrow:   48rem;
+  --container-standard: 56.25rem;
+  --container-wide:     72rem;
+  --container-admin:    68.75rem;
 
   /* ── Border Radius ── */
   --radius-sm:   8px;
@@ -87,6 +128,7 @@
   --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.08);
   --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.10);
   --shadow-accent: 0 0 0 3px rgba(109, 86, 250, 0.25);
+  --shadow-accent-hover: 0 4px 16px rgba(109, 86, 250, 0.30);
 
   /* ── Transition Durations ── */
   --transition-duration-fast:   200ms;
@@ -96,27 +138,34 @@
 
   /* ── Easing ── */
   --ease-apple: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ── Focus Geometry ── */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 }
 
 /* ================================================================
-   BACKWARD-COMPAT ALIASES
-   Old token names used across components → mapped to new values.
-   Remove progressively as components migrate to the new names.
+   DEPRECATED COMPATIBILITY ALIASES
+   Existing feature surfaces may keep these during incremental migration.
+   New primitives and layouts must consume the @theme tokens directly.
+
+   Phase 2.2 compatibility inventory:
+   tokens  --color-bg, --color-text, --color-muted, --color-surface-light,
+           --color-surface-soft, --color-menu-surface, --color-surface-dark,
+           --border-light, --border-medium
+   classes .type-section, .mono-ui, .section-space, .surface-soft, .id-input
 ================================================================ */
 
 :root {
-  --color-bg:           #FFFFFF;
-  --color-text:         #1D1D1F;
-  --color-text-secondary: #626267; /* same name, new value */
-  --color-muted:        #6E6E73;
-  --color-accent:       #5B44E8;   /* same name, new value */
-  --color-accent-hover: #4E38D2;   /* same name, new value */
-  --color-surface-light: #F5F5F7;
-  --color-surface-soft:  #F5F5F7;
-  --color-menu-surface:  #F5F5F7;
-  --color-surface-dark:  #1D1D1F;
-  --border-light:  rgba(210, 210, 215, 0.5);
-  --border-medium: rgba(210, 210, 215, 0.9);
+  --color-bg: var(--color-background);
+  --color-text: var(--color-text-primary);
+  --color-muted: var(--color-text-tertiary);
+  --color-surface-light: var(--color-surface);
+  --color-surface-soft: var(--color-surface);
+  --color-menu-surface: var(--color-surface);
+  --color-surface-dark: var(--color-text-primary);
+  --border-light: var(--color-border-subtle);
+  --border-medium: var(--color-border-strong);
   /* Hero gradient start — more vivid on mobile, softer on desktop */
   --hero-gradient-start: #EDE9FF;
 }
@@ -154,8 +203,8 @@ body {
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* ================================================================
@@ -166,28 +215,28 @@ button:focus-visible {
   font-size: var(--text-display);
   font-weight: var(--text-display--font-weight);
   line-height: var(--text-display--line-height);
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-display);
 }
 
 .type-hero {
   font-size: var(--text-hero);
   font-weight: var(--text-hero--font-weight);
   line-height: var(--text-hero--line-height);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-title);
 }
 
 .type-title {
   font-size: var(--text-title);
   font-weight: var(--text-title--font-weight);
   line-height: var(--text-title--line-height);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-title);
 }
 
 .type-heading {
   font-size: var(--text-heading);
   font-weight: var(--text-heading--font-weight);
   line-height: var(--text-heading--line-height);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-heading);
 }
 
 .type-subheading {
@@ -224,13 +273,14 @@ button:focus-visible {
   text-transform: uppercase;
 }
 
-/* Legacy aliases kept for existing components */
+/* @deprecated: use a named typography role for new UI. */
 .type-section {
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.08;
 }
 
+/* @deprecated: use .type-label plus an explicit font role. */
 .mono-ui {
   font-family: ui-monospace, monospace;
   text-transform: uppercase;
@@ -240,22 +290,10 @@ button:focus-visible {
 }
 
 /* ================================================================
-   LAYOUT UTILITIES
+   DEPRECATED LAYOUT UTILITIES
 ================================================================ */
 
-.id-container {
-  width: 100%;
-  max-width: 900px;
-  margin-inline: auto;
-  padding-inline: 20px;
-}
-
-@media (min-width: 768px) {
-  .id-container {
-    padding-inline: 32px;
-  }
-}
-
+/* @deprecated: use Section spacing variants for new surfaces. */
 .section-space {
   padding-block: var(--spacing-space-5);
 }
@@ -266,6 +304,7 @@ button:focus-visible {
   }
 }
 
+/* @deprecated: use the semantic surface token or Section surface variant. */
 .surface-soft {
   background: var(--color-surface);
 }
@@ -301,6 +340,83 @@ button:focus-visible {
 
 .hero-title {
   font-size: clamp(2.75rem, 9vw, 7rem);
+}
+
+/* ================================================================
+   SERVER-RENDERED PRESENTATION MOTION
+   Load reveals preserve above-the-fold sequencing without hydration.
+   View reveals use CSS scroll timelines when supported and otherwise
+   fall back to immediately visible server-rendered content.
+================================================================ */
+
+@keyframes presentation-reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes presentation-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes presentation-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.presentation-reveal-load,
+.presentation-reveal-view {
+  --presentation-animation-name: presentation-reveal-up;
+  --presentation-animation-duration: var(--transition-duration-slow);
+}
+
+.presentation-reveal-load {
+  animation-name: var(--presentation-animation-name);
+  animation-duration: var(--presentation-animation-duration);
+  animation-delay: var(--presentation-animation-delay, 0ms);
+  animation-timing-function: var(--ease-apple);
+  animation-fill-mode: both;
+}
+
+.presentation-reveal-view {
+  opacity: 1;
+  transform: none;
+}
+
+.presentation-reveal-fade {
+  --presentation-animation-name: presentation-fade-in;
+}
+
+.presentation-reveal-scale {
+  --presentation-animation-name: presentation-scale-in;
+  --presentation-animation-duration: var(--transition-duration-slower);
+}
+
+.presentation-delay-1 { --presentation-animation-delay: 100ms; }
+.presentation-delay-2 { --presentation-animation-delay: 200ms; }
+.presentation-delay-3 { --presentation-animation-delay: 300ms; }
+
+@supports (animation-timeline: view()) {
+  .presentation-reveal-view {
+    animation-name: var(--presentation-animation-name);
+    animation-duration: auto;
+    animation-timing-function: var(--ease-apple);
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 38%;
+  }
 }
 
 /* ================================================================
@@ -356,6 +472,7 @@ button:focus-visible {
    FORM ELEMENTS
 ================================================================ */
 
+/* @deprecated: use Input, Select, or Textarea for new form controls. */
 .id-input {
   width: 100%;
   border: 1px solid var(--color-border);
@@ -368,8 +485,8 @@ button:focus-visible {
   font-size: 16px;
   line-height: 1.4;
   transition:
-    border-color var(--transition-duration-fast) ease,
-    background-color var(--transition-duration-fast) ease;
+    border-color var(--transition-duration-fast) var(--ease-apple),
+    background-color var(--transition-duration-fast) var(--ease-apple);
 }
 
 .id-input::placeholder {
@@ -382,11 +499,12 @@ button:focus-visible {
 
 .id-input:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
 }
 
 .id-input[aria-invalid="true"] {
-  border-color: rgba(255, 59, 48, 0.4);
+  border-color: var(--color-error-border);
 }
 
 .id-input:focus-visible {
@@ -436,10 +554,21 @@ button:focus-visible {
 ================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
+  .presentation-reveal-load,
+  .presentation-reveal-view {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .presentation-disclosure-motion {
+    transition-duration: 0.01ms !important;
+  }
+
   .service-row-content,
   .work-card,
   .id-input {
-    transition: border-color var(--transition-duration-fast) ease;
+    transition: border-color var(--transition-duration-fast) var(--ease-apple);
   }
 
   .service-row:hover .service-row-content,

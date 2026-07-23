@@ -1,10 +1,14 @@
-# Inside Dopamine — Current Technical and Security Audit
+# Inside Dopamine — Current Technical and Architecture Audit
 
 **Baseline audit:** 2026-07-20
 
 **Phase One verification and consolidation:** 2026-07-22
 
-**Engineering status:** Phase One COMPLETE
+**Phase Two architecture synchronization:** 2026-07-23
+
+**Phase One:** COMPLETE
+
+**Phase Two:** COMPLETE
 
 **Release status:** Engineering Complete — Production Launch Pending
 
@@ -12,13 +16,13 @@
 
 ## 1. Scope and evidence boundary
 
-This is the consolidated current-state record. It preserves the still-relevant findings, decisions, and validation evidence from the original audit and Phase One reports without repeating the obsolete pre-remediation narrative. It is not a new technical audit or a claim that production-only behavior was tested.
+This is the current consolidated evidence record. It preserves the still-relevant Phase One security/correctness history and synchronizes it with the completed Phase Two architecture. It is not a new security audit, production-readiness audit, legal approval, deployment report, or claim that production-only behavior was tested.
 
-The reviewed surface included App Router routes/layouts, components, Server Actions, API handlers, data/domain modules, Prisma schema/migrations/seed policy, proxy and admin authorization, external integrations, styling, tests, CI, environment handling, public assets, generated client assets, and documentation.
+The reviewed Phase Two surface includes App Router layouts/routes, typed data registries, presentation boundaries, design-system tokens/primitives, admin query/action modules, contact/chat features, Prisma schema/migration changes, server-only dependency boundaries, focused tests, and production build output.
 
-No environment value, credential, connection string, personal record, provider response, full transcript, production data, or protected admin record is recorded here. No production migration, seed, webhook delivery, deployment, commit, or push formed part of the evidence.
+No environment value, credential, connection string, personal record, provider response, full transcript, production data, or protected admin record is recorded here. Phase Two did not perform a production/shared migration, seed, webhook delivery, external provider call, deployment, commit, or push.
 
-The historical 4.7/10 score and 33-finding baseline are retired rather than recalculated. The authoritative status is now the control/evidence disposition below.
+The historical 4.7/10 security score and 33-finding baseline remain retired. The Phase 2.0 architecture review now scores the current repository **8.5/10 for architecture**. That is a structure/ownership assessment, not a security or production-readiness score.
 
 ## 2. Current architecture
 
@@ -27,151 +31,199 @@ Inside Dopamine is a Next.js 16 App Router application using React 19, strict Ty
 ```mermaid
 flowchart TD
     U["Visitor or administrator"] --> P["Next.js proxy"]
-    P --> L["Server Component root layout"]
-    L --> R["App Router pages and handlers"]
-    R --> AA["Admin reads and Server Actions"]
-    AA --> AUTH["Point-of-use admin authorization"]
-    AUTH --> DB["Prisma and PostgreSQL"]
-    R --> PA["Protected public endpoints"]
-    PA --> LIMIT["Quota and transport boundary"]
-    LIMIT --> AI["Anthropic"]
-    LIMIT --> DB
-    R --> CONTACT["Contact Server Action"]
+    P --> ROOT["Document-only root layout"]
+    ROOT --> PUB["Public route-group shell"]
+    ROOT --> ADM["Authorized admin shell"]
+    ROOT --> API["API route adapters"]
+    PUB --> REG["Typed portfolio registry"]
+    PUB --> SC["Server-rendered presentation"]
+    PUB --> CI["Narrow client islands"]
+    ADM --> Q["Authorized bounded queries"]
+    ADM --> A["Authorized Server Actions"]
+    API --> CHAT["Chat application service"]
+    PUB --> CONTACT["Contact feature"]
+    CHAT --> CORE["Server-only policy and persistence"]
     CONTACT --> LEAD["Shared lead service"]
+    Q --> DB["Prisma / PostgreSQL"]
+    A --> DB
+    CORE --> DB
     LEAD --> DB
+    CORE --> AI["Anthropic"]
     LEAD --> NOTIFY["Optional notification"]
 ```
 
-Key ownership:
+Current ownership:
 
-- The root layout is a Server Component and owns one semantic `<main>` with a narrow pathname-based client transition.
-- The proxy challenges `/admin` and derives visitor metadata; sensitive admin reads/actions independently authorize at their point of use.
-- `src/lib/env.ts` owns validated server configuration.
-- `src/lib/public-api.ts` and `src/lib/rate-limit.ts` own safe public transport, errors, identities, and quotas.
-- `src/lib/lead-service.ts` owns contact/chat normalization, idempotency, persistence, relations, and notification outcomes.
-- `src/lib/ai.ts` owns the bounded provider client.
-- Prisma owns Lead, LeadNotification, Conversation, Faq, and SegmentEvent persistence.
-
-Known Phase Two architecture work—not a reason to reopen Phase One—includes separating public/admin shells, consolidating duplicate case-study route ownership and service templates, removing verified dead UI, bounding wider admin reads, reducing static client hydration, and adding broader operational tooling.
+- `src/app/layout.tsx` owns the document, font, global stylesheet, and root metadata only.
+- `src/app/(public)/layout.tsx` owns public navigation, transition, main, scroll control, footer, and chat.
+- `src/app/admin/layout.tsx` owns authorization, admin chrome, admin content width, and the admin main.
+- `src/app/(public)/work/[slug]/page.tsx` is the only case-study detail route owner.
+- `src/data/portfolio.ts` owns Product Engineering, Business Intelligence, and Growth identities and projections.
+- `src/features/contact` owns contact composition, client contract/form, and server action.
+- `src/features/chat/server` owns chat orchestration, policy, typed outcomes, and conversation persistence.
+- Route-colocated admin query/action modules own authorized admin reads and mutations.
+- `src/lib/server/public-api-core.ts` is transport-neutral; `src/lib/public-api.ts` owns Next.js response construction.
+- `src/styles/globals.css` is the authoritative Tailwind v4 CSS-first design-system source.
+- `src/lib/lead-service.ts`, `src/lib/prisma.ts`, `src/lib/ai.ts`, `src/lib/rate-limit.ts`, environment/authentication modules, feature server modules, and route helpers are explicitly server-only.
 
 ## 3. Current security and correctness condition
 
-| Area | Current verified condition | Boundary |
+| Area | Current verified condition | Remaining boundary |
 | --- | --- | --- |
-| Framework | Next.js and matching lint configuration are patched to 16.2.11; the original proxy-bypass advisories are absent. | New transitive advisories are handled by DEP-01. |
-| Admin | Proxy Basic challenge plus server-only, timing-safe, fail-closed authorization on protected reads and all eight exported actions. Unauthorized paths reject before Prisma access. | Shared identity lacks per-user attribution, selective revocation, MFA, RBAC, and durable auth-attempt throttling; replacement is Phase Two. HTTPS/HSTS must be verified before launch. |
-| Public endpoints | Strict methods/content types, known fields, actual UTF-8 byte ceilings, bounded schemas/identifiers, quotas, deadlines, zero provider retries, safe typed errors, request IDs, and `no-store`. | Distributed Redis and the deployed proxy trust chain remain unverified. |
-| Lead truth | Contact and chat use one database-first idempotent service. Notification outcome is separate and duplicate-safe. Browser success follows durable persistence. | Scheduled notification retry/outbox remains Phase Two. |
-| Chat | Canonical history is server-owned; writes use optimistic versioning and stored-message idempotency; operational claims are deterministically removed. | Cross-instance paid-call reservation and broader grounded-output controls remain Phase Two. |
-| Seed | FAQ replacement requires the exact acknowledgement in every environment and runs in one transaction. | The seed was not run during closure. |
-| Secrets | Server integrations remain behind server-only boundaries. The repository/history/client-asset scan found no credible credential. | Signature scanning is bounded; private server artifacts/source maps must not be published. |
-| Accessibility | Audited semantic contrast and disabled-control colors meet their intended AA thresholds. | Overlay/chat focus, announcements, reduced motion, skip/current/heading details remain Phase Two. |
+| Framework | Next.js and matching lint configuration are 16.2.11; the original audited proxy-bypass advisories are absent. | Current transitive dependency disposition remains DEP-01. |
+| Admin | Proxy Basic challenge plus timing-safe, fail-closed authorization on protected reads and exported actions. Initial reads are server-first and collection reads are bounded. | Shared identity still lacks per-user attribution, selective revocation, MFA, RBAC, and durable auth-attempt throttling. HTTPS/HSTS must be verified before launch. |
+| Public endpoints | Strict methods/content types, actual byte ceilings, bounded schemas/identifiers, quotas, deadlines, zero provider retries, safe typed errors, request IDs, and `no-store`. | Distributed Redis and deployed proxy trust remain unverified. |
+| Lead truth | Contact/chat share one database-first idempotent service. Notification outcome is separate and duplicate-safe. | Scheduled notification retry/outbox remains open. |
+| Chat | Canonical history and provider messages are server-owned; one application service orchestrates rate limit, database, FAQ grounding, provider, policy, persistence, and lead-capture decisions. | Cross-instance paid-call reservation and broader grounded-output evaluation remain open. |
+| Conversation data | Transcript writes use optimistic versioning and maintain a durable constrained `messageCount`. Lists do not select transcript JSON. | The Phase 2.3C migration has not been applied to a production/shared database. |
+| Module graph | Static checks prevent client reachability of server implementations, reverse feature/shared imports from `src/app`, and server exports through client-facing barrels. | Checks cover repository-local static imports; deployment artifact inspection remains part of release verification. |
+| Seed | FAQ replacement requires the exact acknowledgement in every environment and runs in one transaction. | The seed was not run during Phase Two. |
+| Accessibility | Audited contrast remains intact; new primitives expose explicit focus/error/disabled states; CSS presentation motion honors reduced motion. | Broader overlay/chat focus, announcements, skip/current/heading behavior remains future work. |
 
-No raw SQL, unsafe HTML injection sink, `eval`, open redirect, or application client-side secret reference was identified. Prisma writes use explicit fields and parameterized APIs.
+No raw SQL application sink, unsafe HTML injection sink, `eval`, open redirect, or application client-side secret reference was identified in the inherited Phase One review. Prisma application writes use explicit fields and parameterized APIs. The Phase 2.3C migration intentionally uses reviewed SQL for backfill, constraint, and index creation.
 
-## 4. Confirmed Phase One implementation
+## 4. Resolved architecture findings
+
+| ID | Completed improvement | Current evidence |
+| --- | --- | --- |
+| H-01 | Public/admin shell split | Root is document-only; public/admin layouts own separate chrome and one main each. |
+| H-02 | Typed Product/BI/Growth taxonomy | One client-safe registry projects categories, services, routes, cards, case-study relations, navigation, and contact options. |
+| H-03 | Case-study route ownership | One `[slug]` route owns all known detail URLs, static params, metadata, canonical/Open Graph data, related work, 404 behavior, and sitemap entries. |
+| H-04 | Static presentation hydration reduction | Nine prioritized presentation components are Server Components; reveal intent is CSS-based and reduced-motion safe. |
+| M-01 | Chat application-service extraction | HTTP handling remains in the route; server orchestration/persistence/policy moved to `src/features/chat/server`. |
+| M-02 | Bounded admin reads and transcript-free conversation lists | Stable cursor pages use default 25 / maximum 50 and narrow DTOs; list queries select `messageCount`, not `messages`. |
+| M-03 | Server-first FAQ/conversation loading | Both pages render initial data on the server; FAQ editor receives initial DTOs and updates local state from mutation results. |
+| M-04 | Contact feature ownership | Contact composition, client contract/form, and action are feature-owned; shared UI does not import from routes. |
+| M-06 | Server-module dependency boundaries | Explicit protection, transport/core split, client-safe contracts, narrowed barrels, and static dependency checks are implemented. |
+| L-03 | Competing Tailwind configuration | The unused `tailwind.config.ts` was removed after production-build verification. |
+
+The Phase 2.4A.1 route-contract repair also resolved unsupported route exports and the admin conversation page prop mismatch by moving reusable route parsers into adjacent server-only helpers.
+
+## 5. Partially resolved findings
+
+| ID | Current residual risk | Completed portion | Remaining work |
+| --- | --- | --- | --- |
+| H-05 | **Medium** | Semantic tokens, named widths, normalized primitives, CSS-first Tailwind authority, focus/state rules, and representative public/admin migrations are complete. | Deprecated aliases and manual route-level values remain on unmigrated surfaces. Retire them incrementally during the redesign after visual tests. |
+| L-02 | **Low** | Static presentation no longer hydrates for reveal effects; CSS reduced-motion rules are tested. | Legacy/unused motion modules and some intentional client components still import Framer Motion directly instead of following one final façade policy. Decide and normalize while removing dead presentation files. |
+
+These partial items do not block the visual redesign. They constrain how redesigned surfaces should be migrated.
+
+## 6. Still-open findings
+
+| ID | Current risk | Open condition | Required next decision |
+| --- | --- | --- | --- |
+| M-05 | **Medium** | Personalisation/recommendation is split across proxy tagging, dynamic service ordering, APIs, data persistence, and an unreferenced client hero. | Assign a measured Product/Growth owner and tests, or remove the orphaned path. Do not broaden caching changes until that decision is made. |
+| L-01 | **Low** | Eight presentation experiments remain unreferenced or reachable only through unused modules: `Header`, `AboutClient`, `DopamineSystemCore`, `DopamineLoop`, `FeaturedWork`, `CTA`, `DynamicHero`, and `WorkHeroBackdrop`. | Remove them only after a final importer/build check; coordinate the personalisation-related file with M-05. |
+
+No Critical or High architecture risk remains from the Phase 2.0 review. The active architecture residual is two Medium and two Low items when the partial findings are included.
+
+## 7. Completed Phase One implementation
+
+Phase One remains historically complete; Phase Two did not replace or weaken its contracts.
 
 | Control | Disposition |
 | --- | --- |
 | SEC-001 framework advisories | Resolved for the audited Next.js advisories. |
-| SEC-002 point-of-use authorization | Resolved. Protected reads and all eight exported admin actions are covered. |
+| SEC-002 point-of-use authorization | Resolved. Protected reads and exported admin actions are covered. |
 | SEC-003 public endpoint protection | Engineering complete; production topology remains RATE-IDENTITY-01. |
 | LOGIC-001 truthful chat/contact lead behavior | Resolved in code, mocks, and isolated durable success. |
 | DATA-003 destructive seed safety | Resolved through exact acknowledgement and atomic replacement. |
 | A11Y-001 launch-blocking semantic contrast | Resolved for the audited pairs/states. |
-| TEST-001 regression foundation | Resolved for Phase One scope with Vitest, 148 tests, and CI definition. |
-| OPS-002 environment contract | Resolved through one server-only validator and value-free `.env.example`. |
-| MAINT-001 lint baseline | Resolved; full ESLint passes with no warnings/errors. |
+| TEST-001 regression foundation | Resolved for Phase One with 148 tests across 12 files and CI definition. |
+| OPS-002 environment contract | Resolved through protected server validation and value-free `.env.example`. |
+| MAINT-001 lint baseline | Resolved; full ESLint passed with no warnings/errors. |
 | Chat request construction and failure contract | Resolved; verified through mocks plus one bounded real provider success. |
-| Phase One database migration | Verified in an isolated temporary schema; not applied to a persistent application schema. |
+| Phase One database migration | Verified in an isolated temporary schema; not applied to a persistent application schema during closure. |
 
-The original chatbot had a deterministic request-construction defect: a decorative assistant greeting entered client-supplied history, producing assistant-first provider context, while a broad error handler collapsed unrelated failures into one generic response. The exact failing layer in the historical deployed observation was never captured, so that uncertainty is preserved.
+The original chatbot defect was deterministic: a decorative assistant greeting entered client-supplied history and could produce assistant-first provider context, while broad error handling collapsed unrelated failures. The repair made history server-authoritative, guaranteed a user-first provider sequence, bounded work, mapped safe typed failures, and made browser behavior respect HTTP outcomes. Phase Two preserved that behavior while moving the orchestration behind a dedicated application service.
 
-The repair removes client authorship of provider history, begins canonical provider input with a user turn, validates dependencies before use, bounds provider work, maps typed failures to stable safe responses, and makes the widget respect HTTP failure/success. The configured integration subsequently succeeded once end to end.
+## 8. Phase One isolated evidence preserved
 
-## 5. Isolated database and durable contact evidence
+The configured pooled/direct PostgreSQL values were checked without displaying them. They had the expected pooled/direct roles, TLS, same isolated endpoint/database identity, a non-superuser role, and branch metadata.
 
-The configured pooled and direct PostgreSQL values were checked without displaying them. They had the expected pooled/direct roles, TLS, same Neon endpoint/database identity, a non-superuser role, and Neon branch metadata. The development designation came from the explicitly user-designated isolated branch; no branch name or identifier was recorded.
-
-The authoritative rehearsal used a uniquely named temporary schema and the exact repository migration order:
+The Phase One rehearsal used uniquely named temporary schemas and exact repository migration order:
 
 - representative pre-migration data: 2 Leads, 2 Conversations, 2 SegmentEvents, and 1 Faq;
-- a forced Phase One failure rolled back transactionally with counts intact;
+- a forced failure rolled back transactionally with counts intact;
 - roll-forward applied successfully;
 - all representative records were retained;
-- enum/default changes, five unique indexes, the notification lookup index, relations, set-null/cascade actions, uniqueness/idempotency behavior, and invalid-relation rejection passed;
-- one real contact Server Action then persisted one synthetic Contact Lead and one `NOT_CONFIGURED` notification before returning success;
-- required trace/idempotency/fingerprint state was present, no meeting was claimed, no webhook fired, and no existing public-schema row was created.
+- enum/default changes, five unique indexes, notification lookup index, relations, referential actions, uniqueness/idempotency, and invalid-relation rejection passed;
+- one real contact Server Action persisted one synthetic Contact Lead and one `NOT_CONFIGURED` notification before returning success;
+- required trace/idempotency/fingerprint state was present, no meeting was claimed, and no webhook fired.
 
-All temporary rehearsal schemas, including preliminary harness attempts, were removed. Existing schemas/data were not targeted and the persistent application schema remained pre-Phase-One.
+All temporary rehearsal schemas were removed. Existing schemas/data were not targeted.
 
-## 6. Exactly one real Anthropic verification
+After those prerequisites passed, exactly one synthetic, non-personal chat request reached Anthropic with automatic SDK retries disabled. It returned bounded HTTP 200 JSON with `no-store` and a safe request ID in under five seconds; provider history began with a user turn; one exchange persisted; and no fabricated operational claim or sensitive provider content was printed. This was a one-time isolation check, not a production, load, availability, or cost guarantee.
 
-After the isolated migration and durable-contact prerequisites passed, exactly one synthetic, non-personal `/api/chat` request reached Anthropic. Automatic SDK retries were disabled, and no second request was made.
+Phase Two made no external provider or notification call.
 
-Verified result:
+## 9. Phase Two validation evidence
 
-- valid bounded HTTP 200 JSON response with `no-store` and a safe request ID;
-- completion in under five seconds;
-- canonical provider history began with the user turn and excluded the decorative greeting;
-- one user/assistant pair persisted and the stored assistant response matched the returned response;
-- no fabricated booking, callback, receipt, or response-deadline claim;
-- no provider content, transcript, credential, model detail, or sensitive payload was printed.
-
-This verifies the configured local/isolation path once. It is not a load test, availability guarantee, production deployment test, or permission for another paid request.
-
-## 7. Verification evidence
-
-| Check | Result | Evidence boundary |
+| Check | Current result | Evidence boundary |
 | --- | --- | --- |
-| Clean install | Passed in the Phase One closure | `npm ci` completed and `postinstall` generated Prisma Client. |
-| TypeScript | Passed | Strict project `npm run typecheck`; explicit side-effect import checking is enabled. |
-| ESLint | Passed | Full project, zero errors and zero warnings. |
-| Automated tests | Passed | Full Phase One suite: 12 files / 148 tests. After the database/provider checks, 3 affected files / 48 tests passed. After documentation consolidation, 7 focused contract files / 87 tests passed without repeating the complete suite. |
-| Production build | Passed | Next.js 16.2.11 generated 23 static pages using a non-secret HTTPS canonical-origin override; no environment file changed. |
-| Prisma validation | Passed | Actual ignored local datasource configuration was supplied through a value-free wrapper because Prisma CLI does not load `.env.local` automatically. |
-| Migration | Passed in isolation | Exact repository order, retained data, rollback, roll-forward, constraints, indexes, relations, and behavior passed; temporary schema removed. |
-| Durable contact | Passed in isolation | Real Server Action persisted the synthetic Lead and notification outcome before browser success; no webhook. |
-| Real Anthropic | Passed exactly once | One bounded request, zero retries, contract/history/persistence/claim checks passed. |
-| Mocked chat matrix | Passed | Configuration, auth/model/quota, timeout/network, malformed output, persistence, duplicates/conflicts, concurrency exhaustion, validation/size/media, fabricated history, redaction, and browser recovery branches are covered without provider calls. |
-| Local limiter | Passed | Session and primary-identity limits, identifier rotation resistance, safe `429`/`Retry-After`, and production fail-closed configuration behavior passed locally/mocked. |
-| Browser regression | Passed for exercised paths | Representative desktop/mobile layout, one main, navigation/Back/Forward transition, mobile pointer path, controlled failures, durable contact success, admin denial, public transport limits, and clean-console checks passed. |
-| Secret review | Passed within scope | Source, reachable Git history, ignored environment handling, docs/tests/assets, generated client bundle, response/log surfaces, source-map boundary, and imports yielded no credible credential. |
-| Dependency audit | Production launch blocked | 6 production entries (5 High, 1 Moderate) and 12 full-graph entries (9 High, 2 Moderate, 1 Low), 0 Critical. |
-| Diff integrity | Passed at closure | `git diff --check` returned no whitespace errors. |
-| Documentation consolidation | Passed | Exactly five root Markdown files remain; removed-path and broken-link searches passed; every `npm run` command in README maps to `package.json`; typecheck, full lint, 87 focused tests, and final whitespace checks passed. |
+| TypeScript | Passed | Strict project `npm run typecheck`. |
+| ESLint | Passed | Full project gate. |
+| Automated tests | Passed | 20 files / 214 tests. Phase One’s historical baseline was 12 files / 148 tests. |
+| Production build | Passed | Next.js 16.2.11 production build; route table contains one dynamic case-study owner with three generated slugs. |
+| Prisma format/validation | Passed | Value-free synthetic datasource configuration; no shared/live migration. |
+| Route ownership | Passed | Public/admin shell, case-study URLs/static params/metadata/404/sitemap, and Next.js route-export contracts have focused tests. |
+| Design system | Passed | Token integrity, variants, compatibility tracking, contrast-sensitive states, and public/admin reference surfaces are covered. |
+| Server presentation | Passed | Nine migrated components are statically checked for accidental client/motion imports; representative output/native disclosure/reduced motion are covered. |
+| Admin loading/pagination | Passed | Authorization, initial server reads, bounded sizes, stable cursors, narrow selections, count accuracy, invalid cursors, and detail transcript access are covered. |
+| Contact/chat | Passed | Contact state/idempotency/contracts and chat HTTP/orchestration/provider/persistence/concurrency/lead decisions are covered without external services. |
+| Dependency boundaries | Passed | TypeScript-AST tests reject reverse imports, client reachability of protected modules, unsafe barrels, missing protection, and framework coupling in transport-neutral core. |
+| Client-bundle leakage inspection | Passed for inspected build | No Prisma, database implementation, provider integration, authentication internals, notification implementation, or private configuration identifier was found in inspected browser chunks. |
 
-The repository secret scan covers tracked/untracked non-ignored source, reachable historical blobs, and generated browser assets without printing candidates. Client assets contained no recognized server-only environment name, credential signature, or source map. Application logs are limited to request IDs, stable codes, categories, statuses, durations, retryability, and redacted seed error type.
+The Phase Two migration `20260722160000_add_conversation_message_count` was reviewed and statically characterized. It adds/backfills `messageCount`, constrains it to JSON-array length, and adds the `(createdAt DESC, id DESC)` index. It was not applied to a production or shared database.
 
-## 8. Dependency disposition
+## 10. Current technical debt and risk levels
 
-The direct Anthropic SDK advisory was resolved by the narrow 0.90.0 → 0.91.1 patch. Remaining categories are:
+### Architecture debt
 
-| Category | Installed path/surface | Current disposition |
+| Priority | Risk | Debt |
 | --- | --- | --- |
-| Effect | Prisma CLI/config transitive dependency | Open; application runtime does not import the reported RPC/context path, but the affected package remains installed. Requires an upstream-compatible Prisma change or formal acceptance. |
-| PostCSS | Next.js nested production build dependency | Open; no visitor-controlled CSS input exists, but the affected component remains installed. Do not apply the audit-suggested unsafe Next downgrade. |
-| sharp | Optional Next.js image dependency | Open; no image upload or visitor-controlled image source exists, but the affected component remains installed. Await/verify aligned upstream resolution. |
-| Babel, ajv, brace-expansion, flatted, js-yaml, minimatch | Development/build/lint tooling | Open tooling risks; ordinary inputs are repository-controlled. Resolve through compatible owning-tool upgrades or formal disposition. |
+| 1 | Medium | Resolve M-05 personalisation/recommendation ownership before relying on the dynamic service-ordering path. |
+| 2 | Medium | Expand design-system adoption during the visual redesign and retire aliases only after affected surfaces pass visual/accessibility checks. |
+| 3 | Low | Remove the eight verified dead presentation experiments. |
+| 4 | Low | Establish one final Framer Motion import/facade policy for the intentional client islands and delete obsolete motion code. |
+| 5 | Low to Medium | Consolidate repeated service-detail composition after characterization; URLs/content must remain registry-backed. |
 
-No open item has an accepted named owner with an expiry/review date. [DEP-01](CLEAN.md#dep-01--dependency-disposition) therefore remains a production-launch gate.
+### Security, operations, and launch debt
 
-## 9. Verified behavior versus pending production verification
+| Priority | Risk | Debt |
+| --- | --- | --- |
+| 1 | **Launch blocker** | DEP-01 dependency disposition. |
+| 2 | **Launch blocker** | PRIV-001 policy approval and enforceable data lifecycle. |
+| 3 | **Launch blocker** | RATE-IDENTITY-01 distributed Redis and trusted proxy verification. |
+| 4 | High before production | Individual admin identity, secure sessions, MFA/RBAC, attribution, and auth throttling. |
+| 5 | Medium | Notification outbox/retry, cross-instance paid-call reservation, grounded-output evaluation, and operational health/metrics/alerts. |
+| 6 | Medium | Broader accessibility, performance, SEO/social metadata, sitemap-date, CSP/HSTS, backup/rollback, and live release evidence. |
+
+The three launch blockers are governed by [CLEAN.md](CLEAN.md). Phase Two completion does not lower their release impact.
+
+## 11. Dependency disposition
+
+The Phase One dependency snapshot reported 6 production entries (5 High, 1 Moderate) and 12 full-graph entries (9 High, 2 Moderate, 1 Low), with 0 Critical. The direct Anthropic SDK advisory was resolved by the 0.90.0 to 0.91.1 patch.
+
+Remaining categories at that snapshot were Prisma CLI/config transitive Effect, Next.js nested PostCSS/sharp, and development/build tooling including Babel, ajv, brace-expansion, flatted, js-yaml, and minimatch. Reachability was reduced by repository-controlled inputs, but affected packages remained installed and no item had formal owner/expiry acceptance. A fresh dependency check and disposition is required to close DEP-01; this document does not claim the historical counts are a live registry audit.
+
+## 12. Verified behavior versus pending production verification
 
 | Verified locally/in isolation | Pending production verification or approval |
 | --- | --- |
-| Admin point-of-use authorization and fail-closed behavior | HTTPS/HSTS at the actual termination layer and operational credential rotation |
-| Public schemas, limits, local quotas, safe errors, deadlines, and redaction | Distributed Redis availability, shared-instance behavior, and proxy-overwritten trusted identity |
-| Exact migration on synthetic temporary-schema data | Authorized persistent migration, production backup/roll-forward, and application rollback |
-| Durable contact without webhook | Actual notification provider delivery/monitoring if enabled |
-| Exactly one real configured Anthropic success | Production hosting/network/provider behavior, load, cost, and availability |
-| Factual privacy/terms/capture notices render | Legal/business approval, final controller/processors/transfers/retention, and enforceable lifecycle operations |
-| Local/CI-defined quality gates | CI execution from the exact production release revision and redacted post-deploy smoke checks |
+| Separate public/admin shells and one main per surface | Actual hosted navigation/shell smoke checks on the release revision |
+| Admin point-of-use authorization, bounded server reads, and fail-closed behavior | HTTPS/HSTS and operational credential rotation; individual identity remains future work |
+| Public schemas, limits, local quotas, safe errors, deadlines, and redaction | Distributed Redis, shared-instance behavior, and proxy-overwritten identity |
+| Reviewed migrations, including message-count SQL and static tests | Authorized persistent migration, backup/roll-forward, and application rollback |
+| Durable contact without webhook | Notification provider delivery/monitoring if enabled |
+| Exactly one historical configured Anthropic success | Production hosting/network/provider behavior, load, cost, availability, and cross-instance reservation |
+| Factual privacy/terms/capture notices render | Legal/business approval and enforceable lifecycle operations |
+| Local quality gates and inspected build chunks | CI from the exact production release revision and redacted post-deploy smoke checks |
 
-## 10. Conclusion
+## 13. Conclusion
 
-**Phase One engineering is COMPLETE. Production readiness remains BLOCKED.**
+**Phase One engineering is COMPLETE. Phase Two architecture refinement is COMPLETE. The repository is READY for UI/UX redesign. Production readiness remains BLOCKED.**
 
-The engineering foundation has verified authorization, public request protection, truthful durable lead behavior, server-authoritative chat, isolated migration safety, one configured provider success, regression coverage, static quality, build, Prisma, secret, and browser evidence. The remaining production launch gates are exclusively maintained in [CLEAN.md](CLEAN.md).
+The current architecture has separate shells, canonical route/data ownership, a CSS-first design foundation, server-first presentation/admin rendering, bounded collection reads, durable conversation summaries, feature-owned contact/chat workflows, and explicit server/client dependency protection. The remaining architecture work is limited to personalisation ownership, dead/legacy presentation cleanup, and gradual design-system/motion consolidation.
 
-Phase Two may begin without waiting for those business/release gates, but no revision may be represented as production-ready or deployed until all launch gates close and the approved release checklist is executed.
+Production launch remains exclusively subject to the unresolved gates and release checklist in [CLEAN.md](CLEAN.md).

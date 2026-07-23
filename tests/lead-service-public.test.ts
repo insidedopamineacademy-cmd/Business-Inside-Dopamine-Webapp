@@ -9,8 +9,8 @@ import {
   createLead,
   validateContactFormEnvelope,
 } from "../src/lib/lead-service";
-import { submitContactForm } from "../src/app/contact/actions";
-import { initialContactFormState } from "../src/app/contact/form-state";
+import { initialContactFormState } from "../src/features/contact/contract";
+import { submitContactForm } from "../src/features/contact/server/action";
 
 const IDEMPOTENCY_KEY = "11111111-1111-4111-8111-111111111111";
 const TRACE_ID = "22222222-2222-4222-8222-222222222222";

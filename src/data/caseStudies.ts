@@ -1,7 +1,7 @@
-export type CaseStudySlug =
-  | "ai-knowledge-copilot"
-  | "executive-sales-dashboard"
-  | "operations-data-platform";
+import { caseStudySlugs, type CaseStudySlug } from "@/data/portfolio";
+
+export { caseStudySlugs };
+export type { CaseStudySlug };
 
 export type CaseStudy = {
   slug: CaseStudySlug;
@@ -53,12 +53,6 @@ export type CaseStudy = {
     tag: string;
   };
 };
-
-export const caseStudySlugs: CaseStudySlug[] = [
-  "ai-knowledge-copilot",
-  "executive-sales-dashboard",
-  "operations-data-platform",
-];
 
 export const caseStudies: Record<CaseStudySlug, CaseStudy> = {
   "ai-knowledge-copilot": {

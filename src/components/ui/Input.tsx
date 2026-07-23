@@ -1,8 +1,7 @@
 import type { HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 
-function cx(...args: (string | false | null | undefined)[]) {
-  return args.filter(Boolean).join(" ");
-}
+import { formControlBase, formControlDefault, formControlError } from "./formControlStyles";
+import { cx } from "./utils";
 
 // ── Label ──────────────────────────────────────────────────────────────────
 export type LabelProps = LabelHTMLAttributes<HTMLLabelElement> & {
@@ -54,29 +53,15 @@ export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   className?: string;
 };
 
-const base = [
-  "w-full rounded-xl border bg-white px-4 py-3",
-  "text-[17px] text-[var(--color-text-primary)]",
-  "placeholder:text-[var(--color-text-tertiary)]",
-  "outline-none",
-  "transition-[border-color,box-shadow] duration-[200ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
-  "disabled:cursor-not-allowed disabled:bg-[var(--color-surface)] disabled:text-[var(--color-text-secondary)]",
-  "disabled:placeholder:text-[var(--color-text-secondary)]",
-].join(" ");
-
-const stateDefault =
-  "border-[var(--color-border)] " +
-  "focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20";
-
-const stateError =
-  "border-[var(--color-error)] ring-2 ring-[var(--color-error)]/20 " +
-  "focus:border-[var(--color-error)] focus:ring-[var(--color-error)]/20";
-
 export default function Input({ error = false, className, ...props }: InputProps) {
   return (
     <input
       aria-invalid={error || undefined}
-      className={cx(base, error ? stateError : stateDefault, className)}
+      className={cx(
+        formControlBase,
+        error ? formControlError : formControlDefault,
+        className,
+      )}
       {...props}
     />
   );

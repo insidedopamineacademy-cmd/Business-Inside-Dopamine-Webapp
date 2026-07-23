@@ -1,6 +1,8 @@
 import { Buffer } from "node:buffer";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
 
 import { parseBasicAuthorization, verifyAdminAuthorization } from "../src/lib/admin-auth-core";
 

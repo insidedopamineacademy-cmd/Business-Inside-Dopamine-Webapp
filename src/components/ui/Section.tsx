@@ -1,8 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-function cx(...args: (string | false | null | undefined)[]) {
-  return args.filter(Boolean).join(" ");
-}
+import Container from "./Container";
+import { cx } from "./utils";
 
 export type SectionBackground = "white" | "surface";
 export type SectionSize = "sm" | "md" | "lg";
@@ -15,14 +14,14 @@ export type SectionProps = HTMLAttributes<HTMLElement> & {
 };
 
 const backgrounds: Record<SectionBackground, string> = {
-  white:   "bg-white",
+  white:   "bg-[var(--color-background)]",
   surface: "bg-[var(--color-surface)]",
 };
 
 const sizes: Record<SectionSize, string> = {
-  sm: "py-16",
-  md: "py-24",
-  lg: "py-32",
+  sm: "py-[var(--spacing-section-sm)]",
+  md: "py-[var(--spacing-section-md)]",
+  lg: "py-[var(--spacing-section-lg)]",
 };
 
 export default function Section({
@@ -37,7 +36,7 @@ export default function Section({
       className={cx(backgrounds[background], sizes[size], className)}
       {...rest}
     >
-      <div className="mx-auto max-w-6xl px-6">{children}</div>
+      <Container variant="wide">{children}</Container>
     </section>
   );
 }

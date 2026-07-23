@@ -8,9 +8,9 @@ const mocks = vi.hoisted(() => ({
   faqCreate: vi.fn(),
   faqUpdate: vi.fn(),
   faqDelete: vi.fn(),
-  conversationFindMany: vi.fn(),
 }));
 
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/admin-auth", () => ({ requireAdmin: mocks.requireAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@/lib/prisma", () => ({
@@ -22,7 +22,6 @@ vi.mock("@/lib/prisma", () => ({
       update: mocks.faqUpdate,
       delete: mocks.faqDelete,
     },
-    conversation: { findMany: mocks.conversationFindMany },
   },
 }));
 
@@ -37,7 +36,6 @@ import {
   getFAQs,
   updateFAQ,
 } from "../src/app/admin/faqs/actions";
-import { getConversations } from "../src/app/admin/conversations/actions";
 
 function leadForm(overrides: Record<string, string> = {}) {
   const formData = new FormData();
@@ -60,7 +58,6 @@ const prismaSpies = [
   mocks.faqCreate,
   mocks.faqUpdate,
   mocks.faqDelete,
-  mocks.conversationFindMany,
 ];
 
 beforeEach(() => {
@@ -68,10 +65,23 @@ beforeEach(() => {
   mocks.requireAdmin.mockResolvedValue(undefined);
   mocks.leadUpdate.mockResolvedValue({ id: "lead_123" });
   mocks.faqFindMany.mockResolvedValue([]);
-  mocks.faqCreate.mockResolvedValue({ id: "faq_123" });
-  mocks.faqUpdate.mockResolvedValue({ id: "faq_123" });
+  mocks.faqCreate.mockResolvedValue({
+    id: "faq_123",
+    question: "What do you build?",
+    answer: "Business applications.",
+    category: "Services",
+    isActive: true,
+    order: 2,
+  });
+  mocks.faqUpdate.mockResolvedValue({
+    id: "faq_123",
+    question: "What do you build?",
+    answer: "Business applications.",
+    category: "Services",
+    isActive: false,
+    order: 2,
+  });
   mocks.faqDelete.mockResolvedValue({ id: "faq_123" });
-  mocks.conversationFindMany.mockResolvedValue([]);
 });
 
 describe("admin Server Action authorization", () => {
@@ -83,7 +93,6 @@ describe("admin Server Action authorization", () => {
     ["createFAQ", () => createFAQ(undefined)],
     ["updateFAQ", () => updateFAQ(undefined, undefined)],
     ["deleteFAQ", () => deleteFAQ(undefined)],
-    ["getConversations", () => getConversations()],
   ];
 
   it.each(actions)("rejects direct unauthorized invocation of %s before Prisma", async (_name, invoke) => {
@@ -123,7 +132,7 @@ describe("authorized admin actions", () => {
   });
 
   it("normalizes and bounds FAQ creation data", async () => {
-    await createFAQ({
+    const result = await createFAQ({
       question: "  What do you build? ",
       answer: " Business applications. ",
       category: "Services",
@@ -137,67 +146,50 @@ describe("authorized admin actions", () => {
         category: "Services",
         order: 2,
       },
-      select: { id: true },
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+        category: true,
+        isActive: true,
+        order: true,
+      },
     });
+    expect(result).toEqual({
+      id: "faq_123",
+      question: "What do you build?",
+      answer: "Business applications.",
+      category: "Services",
+      isActive: true,
+      order: 2,
+    });
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/admin/faqs");
   });
 
-  it("updates and deletes FAQs with minimal return selections", async () => {
-    await updateFAQ(" faq_123 ", { isActive: false });
+  it("returns updated FAQ data and revalidates after update and delete", async () => {
+    const updated = await updateFAQ(" faq_123 ", { isActive: false });
     await deleteFAQ(" faq_123 ");
 
+    expect(updated).toMatchObject({ id: "faq_123", isActive: false, order: 2 });
     expect(mocks.faqUpdate).toHaveBeenCalledWith({
       where: { id: "faq_123" },
       data: { isActive: false },
-      select: { id: true },
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+        category: true,
+        isActive: true,
+        order: true,
+      },
     });
     expect(mocks.faqDelete).toHaveBeenCalledWith({
       where: { id: "faq_123" },
       select: { id: true },
     });
-  });
-
-  it("returns conversation summaries without transcript or session data", async () => {
-    const createdAt = new Date("2026-07-22T10:00:00.000Z");
-    mocks.conversationFindMany.mockResolvedValue([
-      {
-        id: "conversation_123",
-        createdAt,
-        leadName: "Ada",
-        leadEmail: "ada@example.test",
-        bookedCall: false,
-        lead: { id: "lead_123" },
-        messages: [{ role: "user", content: "Private transcript" }],
-        sessionId: "must-not-cross-the-boundary",
-      },
-    ]);
-
-    const result = await getConversations();
-
-    expect(result).toEqual([
-      {
-        id: "conversation_123",
-        createdAt,
-        leadName: "Ada",
-        leadEmail: "ada@example.test",
-        bookedCall: false,
-        leadCaptured: true,
-        messageCount: 1,
-      },
-    ]);
-    expect(result[0]).not.toHaveProperty("messages");
-    expect(result[0]).not.toHaveProperty("sessionId");
-    expect(mocks.conversationFindMany).toHaveBeenCalledWith({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        createdAt: true,
-        leadName: true,
-        leadEmail: true,
-        bookedCall: true,
-        messages: true,
-        lead: { select: { id: true } },
-      },
-    });
+    expect(mocks.revalidatePath).toHaveBeenCalledTimes(2);
+    expect(mocks.revalidatePath).toHaveBeenNthCalledWith(1, "/admin/faqs");
+    expect(mocks.revalidatePath).toHaveBeenNthCalledWith(2, "/admin/faqs");
   });
 
   it("validates and applies an authorized lead update before revalidation", async () => {
