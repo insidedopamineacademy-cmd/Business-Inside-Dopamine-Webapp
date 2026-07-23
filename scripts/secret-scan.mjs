@@ -4,9 +4,10 @@ import {
   existsSync,
   lstatSync,
   readFileSync,
-  readdirSync,
 } from "node:fs";
 import { join, relative } from "node:path";
+
+import { browserFacingBuildArtifacts } from "./client-bundle-secret-scan.mjs";
 
 const ROOT = process.cwd();
 const MAX_FILE_BYTES = 5 * 1_024 * 1_024;
@@ -144,27 +145,15 @@ function scanHistory() {
   }
 }
 
-function walk(directory) {
-  if (!existsSync(directory)) return;
-  for (const name of readdirSync(directory)) {
-    const absolutePath = join(directory, name);
-    const metadata = lstatSync(absolutePath);
-    if (metadata.isSymbolicLink()) continue;
-    if (metadata.isDirectory()) {
-      walk(absolutePath);
-    } else if (metadata.isFile()) {
-      scanBuffer(
-        readFileSync(absolutePath),
-        "generated-client",
-        relative(ROOT, absolutePath),
-      );
-    }
-  }
-}
-
 scanWorkingTree();
 scanHistory();
-walk(join(ROOT, ".next", "static"));
+for (const absolutePath of browserFacingBuildArtifacts(ROOT)) {
+  scanBuffer(
+    readFileSync(absolutePath),
+    "generated-browser",
+    relative(ROOT, absolutePath),
+  );
+}
 
 if (findings.size > 0) {
   console.error(`Secret scan found ${findings.size} potential credential exposure(s).`);

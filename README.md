@@ -9,7 +9,7 @@ Inside Dopamine is a Next.js App Router portfolio platform with public service a
 - **UI/UX redesign readiness:** READY
 - **Release status:** Engineering Complete — Production Launch Pending
 - **Production readiness:** BLOCKED by the three launch gates in [CLEAN.md](CLEAN.md)
-- **Current verified quality baseline:** 20 test files / 214 tests, plus passing TypeScript, ESLint, Prisma validation, and production build
+- **Current verified quality baseline:** 21 test files / 220 tests, plus passing TypeScript, ESLint, Prisma validation, and production build
 
 Phase Two did not redesign the application or close production-only business, privacy, dependency, or hosting gates. The current implementation record is in [AUDIT.md](AUDIT.md), and the remaining launch requirements are maintained in [CLEAN.md](CLEAN.md).
 
@@ -88,6 +88,7 @@ src/
 prisma/
   schema.prisma
   migrations/
+prisma.config.ts                       # Prisma CLI schema/migration/seed ownership
 tests/
 ```
 
@@ -239,8 +240,8 @@ The scripts in `package.json` are authoritative:
 | `npm run typecheck` | Strict TypeScript validation. |
 | `npm run lint` | Full ESLint gate. |
 | `npm test` | Run all Vitest tests once. |
-| `npm run build` | Create the production Next.js build. |
-| `npm run secret:scan` | Scan source, reachable history, and generated browser assets for credential signatures. |
+| `npm run build` | Create the production Next.js build; `postbuild` checks browser-facing artifacts for the synthetic secret marker. |
+| `npm run secret:scan` | Scan source, reachable history, public files, browser artifacts, manifests, and source maps for credential signatures. |
 | `npm run prisma:generate` | Regenerate Prisma Client. |
 | `npm run prisma:migrate` | Apply pending migrations to the configured target; approved release use only. |
 | `npm run start` | Start an already-built production server. |

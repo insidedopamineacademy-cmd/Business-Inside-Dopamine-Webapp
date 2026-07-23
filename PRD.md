@@ -117,7 +117,7 @@ Phase One established the engineering safety foundation without production acces
 
 **Formal Phase One status: Engineering Complete — Production Launch Pending.**
 
-The historical 148-test Phase One baseline remains evidence for that phase. It is not the current suite count; Phase Two increased the repository baseline to 214 tests across 20 files.
+The historical 148-test Phase One baseline remains evidence for that phase. Phase Two closed with 214 tests across 20 files; the subsequent production-warning/secret-boundary cleanup increased the current repository baseline to 220 tests across 21 files.
 
 ## 5. Phase Two final state
 

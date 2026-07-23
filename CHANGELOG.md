@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### 2026-07-23 — Production warning and client-secret cleanup
+
+- Moved the unchanged Prisma seed command, canonical schema path, and migrations path from deprecated `package.json#prisma` ownership into the Prisma 6 `defineConfig` API in `prisma.config.ts`.
+- Removed the unnecessary Edge runtime declaration from `/api/segment`; the route now uses the default Node.js runtime, remains dynamically rendered/no-store, and no longer disables a static-generation build pass.
+- Expanded the redacted secret scan from source/history/static chunks to public files, browser-facing build artifacts, manifests, RSC/HTML payloads, and source maps.
+- Added a `postbuild` synthetic-marker check without changing existing `npm run build` argument forwarding.
+- Added focused regression coverage for Prisma CLI ownership, Edge declarations, sensitive `NEXT_PUBLIC_` names, provider/config server boundaries, safe public error serialization, and synthetic client-bundle leak detection.
+- Verified 21 test files / 220 tests, TypeScript, ESLint, Prisma validation/generation/config resolution, a production Webpack build, Git-history/source/browser-artifact secret scans, and absence of the synthetic marker across 259 browser-facing artifacts.
+- No repository, tracked-history, client-bundle, RSC/HTML, manifest, or source-map credential exposure was confirmed; no credential rotation is indicated by repository evidence.
+
 ### 2026-07-23 — Phase Two architecture refinement complete
 
 #### Architecture

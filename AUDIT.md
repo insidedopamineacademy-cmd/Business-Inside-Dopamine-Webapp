@@ -163,7 +163,7 @@ Phase Two made no external provider or notification call.
 | --- | --- | --- |
 | TypeScript | Passed | Strict project `npm run typecheck`. |
 | ESLint | Passed | Full project gate. |
-| Automated tests | Passed | 20 files / 214 tests. Phase One’s historical baseline was 12 files / 148 tests. |
+| Automated tests | Passed | Current suite: 21 files / 220 tests. Phase Two closed at 20 files / 214 tests; Phase One’s historical baseline was 12 files / 148 tests. |
 | Production build | Passed | Next.js 16.2.11 production build; route table contains one dynamic case-study owner with three generated slugs. |
 | Prisma format/validation | Passed | Value-free synthetic datasource configuration; no shared/live migration. |
 | Route ownership | Passed | Public/admin shell, case-study URLs/static params/metadata/404/sitemap, and Next.js route-export contracts have focused tests. |

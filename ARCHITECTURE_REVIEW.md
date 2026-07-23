@@ -129,7 +129,7 @@ The following should continue to be preserved:
 - **Durable conversation summary.** `messageCount` is maintained with transcript writes and constrained at the database layer.
 - **CSS-first design foundation.** Tokens, widths, primitives, and compatibility tracking are testable and Tailwind-native.
 - **Executable architecture rules.** Static tests validate the dependency graph rather than relying only on documentation.
-- **Strong regression baseline.** The suite is now 20 files / 214 tests, up from the Phase One baseline of 12 files / 148 tests.
+- **Strong regression baseline.** The suite is now 21 files / 220 tests, up from the Phase One baseline of 12 files / 148 tests.
 
 ## 4. Findings grouped by original severity
 

@@ -279,6 +279,26 @@ describe("server/client module boundaries", () => {
     expect(violations).toEqual([]);
   });
 
+  it("keeps private configuration and provider SDKs behind server-only modules", () => {
+    const environment = resolve(srcRoot, "lib/env.ts");
+    const provider = resolve(srcRoot, "lib/ai.ts");
+    const providerImports = files.filter((file) =>
+      dependencies(file).some(
+        (dependency) =>
+          dependency.specifier.startsWith("@anthropic-ai/") ||
+          dependency.specifier.startsWith("@upstash/") ||
+          dependency.specifier === "@prisma/client",
+      ),
+    );
+
+    expect(importsServerOnly(environment)).toBe(true);
+    expect(importsServerOnly(provider)).toBe(true);
+    expect(
+      dependencies(provider).map((dependency) => dependency.specifier),
+    ).toContain("@anthropic-ai/sdk");
+    expect(providerImports.filter((file) => !isProtectedServerModule(file))).toEqual([]);
+  });
+
   it("keeps browser contracts independent from server and framework internals", async () => {
     const clientSafeContracts = [
       resolve(srcRoot, "data/portfolio.ts"),
