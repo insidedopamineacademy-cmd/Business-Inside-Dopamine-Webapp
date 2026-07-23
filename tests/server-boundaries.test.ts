@@ -134,11 +134,13 @@ function importsServerOnly(file: string) {
 }
 
 function isProtectedServerModule(file: string) {
+  const normalized = file.replaceAll("\\", "/");
   return (
     importsServerOnly(file) ||
     hasDirective(file, "use server") ||
-    file.includes(`${join("src", "features")}${process.platform === "win32" ? "\\" : "/"}chat${process.platform === "win32" ? "\\" : "/"}server`) ||
-    file.includes(`${process.platform === "win32" ? "\\" : "/"}server${process.platform === "win32" ? "\\" : "/"}`)
+    normalized.includes("/src/generated/prisma/") ||
+    normalized.includes("/src/features/chat/server/") ||
+    normalized.includes("/server/")
   );
 }
 
@@ -189,7 +191,9 @@ describe("server/client module boundaries", () => {
           (item) => !item.typeOnly,
         )) {
           if (
-            dependency.specifier === "@prisma/client" ||
+            dependency.specifier.startsWith("@prisma/client") ||
+            dependency.specifier.startsWith("@prisma/adapter-") ||
+            dependency.specifier === "pg" ||
             dependency.specifier.startsWith("@anthropic-ai/") ||
             dependency.specifier.startsWith("node:") ||
             dependency.specifier === "next/headers" ||
@@ -287,7 +291,9 @@ describe("server/client module boundaries", () => {
         (dependency) =>
           dependency.specifier.startsWith("@anthropic-ai/") ||
           dependency.specifier.startsWith("@upstash/") ||
-          dependency.specifier === "@prisma/client",
+          dependency.specifier.startsWith("@prisma/client") ||
+          dependency.specifier.startsWith("@prisma/adapter-") ||
+          dependency.specifier === "pg",
       ),
     );
 

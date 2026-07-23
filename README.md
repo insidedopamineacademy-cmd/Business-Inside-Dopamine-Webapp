@@ -9,7 +9,7 @@ Inside Dopamine is a Next.js App Router portfolio platform with public service a
 - **UI/UX redesign readiness:** READY
 - **Release status:** Engineering Complete — Production Launch Pending
 - **Production readiness:** BLOCKED by the three launch gates in [CLEAN.md](CLEAN.md)
-- **Current verified quality baseline:** 21 test files / 220 tests, plus passing TypeScript, ESLint, Prisma validation, and production build
+- **Current verified quality baseline:** 21 test files / 221 tests, plus passing TypeScript, ESLint, Prisma 7 validation/generation, and the explicit Webpack production build
 
 Phase Two did not redesign the application or close production-only business, privacy, dependency, or hosting gates. The current implementation record is in [AUDIT.md](AUDIT.md), and the remaining launch requirements are maintained in [CLEAN.md](CLEAN.md).
 
@@ -84,11 +84,12 @@ src/
     admin-pagination.ts
     ai.ts env.ts lead-service.ts
     prisma.ts rate-limit.ts
+  generated/prisma/                   # ignored Prisma 7 client; postinstall output
   styles/globals.css                 # authoritative Tailwind v4 CSS-first system
 prisma/
   schema.prisma
   migrations/
-prisma.config.ts                       # Prisma CLI schema/migration/seed ownership
+prisma.config.ts                       # Prisma 7 CLI datasource/migration/seed ownership
 tests/
 ```
 
@@ -171,7 +172,7 @@ Static presentation reveal behavior is CSS-driven with a visible fallback and a 
 
 Requirements:
 
-- Node.js 22
+- Node.js 20.19.0 or newer (Node.js 22 is the CI/deployment recommendation)
 - npm
 - PostgreSQL for database-backed features
 
@@ -181,7 +182,7 @@ Install the locked dependency graph:
 npm ci
 ```
 
-`postinstall` generates Prisma Client automatically. Regenerate it explicitly with `npm run prisma:generate` when the schema changes.
+`postinstall` generates the Prisma 7 client into ignored `src/generated/prisma`. Regenerate it explicitly with `npm run prisma:generate` when the schema or Prisma version changes. Runtime queries use `@prisma/adapter-pg` with the pooled `DATABASE_URL`; Prisma CLI migration commands use the direct `DIRECT_URL`.
 
 ## Environment setup
 
@@ -207,7 +208,7 @@ Never commit, print, or reuse production credentials for local work.
 | `NEXT_PUBLIC_SITE_URL` | Public canonical origin. Local HTTP is accepted only outside production; production requires HTTPS. |
 | `FAQ_SEED_PRODUCTION_ACKNOWLEDGEMENT` | Empty by default; destructive FAQ replacement requires the exact guarded value below. |
 
-Prisma CLI does not automatically load `.env.local`; provide required database variables to the command environment without printing them.
+`prisma.config.ts` loads ignored `.env.local` first and `.env` second without overriding variables already supplied by the shell or deployment platform. It never copies database URLs into the schema or browser configuration.
 
 ## Development workflow
 
@@ -241,6 +242,7 @@ The scripts in `package.json` are authoritative:
 | `npm run lint` | Full ESLint gate. |
 | `npm test` | Run all Vitest tests once. |
 | `npm run build` | Create the production Next.js build; `postbuild` checks browser-facing artifacts for the synthetic secret marker. |
+| `npm run build -- --webpack` | Exercise the explicit Webpack production path used for offline local validation. |
 | `npm run secret:scan` | Scan source, reachable history, public files, browser artifacts, manifests, and source maps for credential signatures. |
 | `npm run prisma:generate` | Regenerate Prisma Client. |
 | `npm run prisma:migrate` | Apply pending migrations to the configured target; approved release use only. |
@@ -253,6 +255,7 @@ npm run typecheck
 npm run lint
 npm test
 npx prisma validate
+npx prisma generate
 npm run build
 git diff --check
 ```
@@ -315,3 +318,13 @@ Route-shell separation, case-study consolidation, typed portfolio ownership, des
 ## Deployment boundary
 
 Production deployment remains prohibited until every gate in [CLEAN.md](CLEAN.md) is closed and recorded. Do not use `prisma db push`, `prisma migrate reset`, an unreviewed seed, or production credentials as a substitute for the approved release process.
+
+For an authorized future release:
+
+1. Use the changed `package-lock.json` with `npm ci` on Node.js 22 (minimum supported: 20.19.0). `postinstall` runs `prisma generate` automatically.
+2. Keep every existing environment-variable name. This dependency migration adds none; confirm `DATABASE_URL` remains pooled and `DIRECT_URL` remains the non-pooled connection to the same target.
+3. This Prisma 7 migration changes no data model and creates no migration. Run `npx prisma migrate deploy` only when repository migrations are actually pending; because the application already expects the Phase 2.3C schema, apply any pending reviewed migrations before deploying the application revision.
+4. Deploy the exact tested revision only after dependency, privacy/lifecycle, rate-identity, backup, and rollback gates close.
+5. Immediately verify public routes, the admin challenge and authorized reads, contact/chat safe success and dependency-failure paths, personalisation/recommendation/segment APIs, database connectivity, browser console/hydration, logs, quotas, and the synthetic client-bundle scan.
+
+Rollback this dependency-only change by redeploying the preceding lockfile/application revision so its own postinstall regenerates the Prisma 6 client. Do not reverse an already applied repository migration as part of that application rollback; use the reviewed roll-forward plan for database changes.

@@ -6,6 +6,8 @@
 
 **Phase Two architecture synchronization:** 2026-07-23
 
+**Production dependency modernization:** 2026-07-24
+
 **Phase One:** COMPLETE
 
 **Phase Two:** COMPLETE
@@ -26,7 +28,7 @@ The historical 4.7/10 security score and 33-finding baseline remain retired. The
 
 ## 2. Current architecture
 
-Inside Dopamine is a Next.js 16 App Router application using React 19, strict TypeScript, Tailwind CSS 4, Prisma/PostgreSQL, Anthropic, Upstash-compatible Redis, and an optional notification webhook.
+Inside Dopamine is a Next.js 16.2.11 App Router application using React 19.2.8, strict TypeScript, Tailwind CSS 4, Prisma 7.9.0 with the PostgreSQL driver adapter, Anthropic, Upstash-compatible Redis, and an optional notification webhook.
 
 ```mermaid
 flowchart TD
@@ -70,7 +72,7 @@ Current ownership:
 
 | Area | Current verified condition | Remaining boundary |
 | --- | --- | --- |
-| Framework | Next.js and matching lint configuration are 16.2.11; the original audited proxy-bypass advisories are absent. | Current transitive dependency disposition remains DEP-01. |
+| Framework and ORM | Next.js/eslint-config-next remain 16.2.11; React/React DOM are 19.2.8; Prisma CLI, Client, and PostgreSQL adapter are 7.9.0. Prisma generation/configuration and the Webpack production build pass. | The latest stable graph still reports six High production audit advisories, and the default Turbopack build remains blocked by the documented offline Google-font fixture before application compilation. DEP-01 remains open. |
 | Admin | Proxy Basic challenge plus timing-safe, fail-closed authorization on protected reads and exported actions. Initial reads are server-first and collection reads are bounded. | Shared identity still lacks per-user attribution, selective revocation, MFA, RBAC, and durable auth-attempt throttling. HTTPS/HSTS must be verified before launch. |
 | Public endpoints | Strict methods/content types, actual byte ceilings, bounded schemas/identifiers, quotas, deadlines, zero provider retries, safe typed errors, request IDs, and `no-store`. | Distributed Redis and deployed proxy trust remain unverified. |
 | Lead truth | Contact/chat share one database-first idempotent service. Notification outcome is separate and duplicate-safe. | Scheduled notification retry/outbox remains open. |
@@ -163,9 +165,9 @@ Phase Two made no external provider or notification call.
 | --- | --- | --- |
 | TypeScript | Passed | Strict project `npm run typecheck`. |
 | ESLint | Passed | Full project gate. |
-| Automated tests | Passed | Current suite: 21 files / 220 tests. Phase Two closed at 20 files / 214 tests; Phase One’s historical baseline was 12 files / 148 tests. |
-| Production build | Passed | Next.js 16.2.11 production build; route table contains one dynamic case-study owner with three generated slugs. |
-| Prisma format/validation | Passed | Value-free synthetic datasource configuration; no shared/live migration. |
+| Automated tests | Passed | Current suite: 21 files / 221 tests. Phase Two closed at 20 files / 214 tests; Phase One’s historical baseline was 12 files / 148 tests. |
+| Production build | Partially passed | Next.js 16.2.11 Webpack production build and postbuild secret scan passed; the default Turbopack path reproduced only the pre-existing offline Google-font fixture resolution failure before application compilation. |
+| Prisma validation/generation | Passed | Prisma 7.9.0 config and schema resolve against synthetic unreachable URLs; the generated client and seed help resolve without migration or seed execution. |
 | Route ownership | Passed | Public/admin shell, case-study URLs/static params/metadata/404/sitemap, and Next.js route-export contracts have focused tests. |
 | Design system | Passed | Token integrity, variants, compatibility tracking, contrast-sensitive states, and public/admin reference surfaces are covered. |
 | Server presentation | Passed | Nine migrated components are statically checked for accidental client/motion imports; representative output/native disclosure/reduced motion are covered. |
@@ -203,9 +205,9 @@ The three launch blockers are governed by [CLEAN.md](CLEAN.md). Phase Two comple
 
 ## 11. Dependency disposition
 
-The Phase One dependency snapshot reported 6 production entries (5 High, 1 Moderate) and 12 full-graph entries (9 High, 2 Moderate, 1 Low), with 0 Critical. The direct Anthropic SDK advisory was resolved by the 0.90.0 to 0.91.1 patch.
+The 2026-07-24 clean-install audit of the exact latest stable target graph reports six High production entries and 12 full-graph entries (10 High, 1 Moderate, 1 Low), with 0 Critical. Production entries are in latest-stable Prisma CLI tooling (`@prisma/dev` → `find-my-way`) and Next.js-bundled PostCSS/sharp. npm offers only `--force` downgrade/breaking remedies; none were applied.
 
-Remaining categories at that snapshot were Prisma CLI/config transitive Effect, Next.js nested PostCSS/sharp, and development/build tooling including Babel, ajv, brace-expansion, flatted, js-yaml, and minimatch. Reachability was reduced by repository-controlled inputs, but affected packages remained installed and no item had formal owner/expiry acceptance. A fresh dependency check and disposition is required to close DEP-01; this document does not claim the historical counts are a live registry audit.
+The direct Anthropic SDK advisory remains resolved at 0.91.1. Unrelated major upgrades (Anthropic SDK, ESLint, TypeScript, and Node type packages) and behavior-sensitive Tailwind, Framer Motion, and Upstash updates were deliberately deferred. DEP-01 therefore remains a launch blocker pending upstream stable fixes or explicit time-bounded risk disposition.
 
 ## 12. Verified behavior versus pending production verification
 

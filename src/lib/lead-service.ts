@@ -2,7 +2,11 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 
-import type { LeadNotificationStatus, LeadSource, PrismaClient } from "@prisma/client";
+import type {
+  LeadNotificationStatus,
+  LeadSource,
+  PrismaClient,
+} from "@/generated/prisma/client";
 
 import {
   contactEnquiryValues,

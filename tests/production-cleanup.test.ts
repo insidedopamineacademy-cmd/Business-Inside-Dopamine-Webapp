@@ -11,7 +11,6 @@ import { join, relative, resolve } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import prismaConfig from "../prisma.config";
 import {
   findSyntheticSecretExposure,
   SYNTHETIC_SECRET_SENTINEL,
@@ -35,16 +34,65 @@ afterEach(() => {
 });
 
 describe("Prisma CLI configuration", () => {
-  it("uses the supported config API without changing schema, migrations, or seed ownership", () => {
+  it("uses the Prisma 7 config, generator, and PostgreSQL adapter contract", () => {
     const packageJson = JSON.parse(
       readFileSync(resolve(root, "package.json"), "utf8"),
-    ) as Record<string, unknown>;
+    ) as {
+      dependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
+      engines: Record<string, string>;
+      prisma?: unknown;
+    };
+    const config = readFileSync(resolve(root, "prisma.config.ts"), "utf8");
+    const schema = readFileSync(resolve(root, "prisma/schema.prisma"), "utf8");
+    const runtime = readFileSync(resolve(root, "src/lib/prisma.ts"), "utf8");
+    const seed = readFileSync(resolve(root, "prisma/seed.ts"), "utf8");
 
     expect(packageJson).not.toHaveProperty("prisma");
-    expect(prismaConfig.schema).toBe("prisma/schema.prisma");
-    expect(prismaConfig.migrations).toEqual({
-      path: "prisma/migrations",
-      seed: 'ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts',
+    expect(packageJson.engines.node).toBe(">=20.19.0");
+    expect(packageJson.dependencies).toMatchObject({
+      "@prisma/adapter-pg": "7.9.0",
+      "@prisma/client": "7.9.0",
+      pg: "8.22.0",
+    });
+    expect(packageJson.devDependencies.prisma).toBe("7.9.0");
+    expect(config).toContain('schema: "prisma/schema.prisma"');
+    expect(config).toContain('path: "prisma/migrations"');
+    expect(config).toContain(
+      'seed: \'ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts\'',
+    );
+    expect(config).toContain('url: env("DIRECT_URL")');
+    expect(schema).toMatch(/provider\s*=\s*"prisma-client"/);
+    expect(schema).toMatch(/output\s*=\s*"\.\.\/src\/generated\/prisma"/);
+    expect(schema).toMatch(/moduleFormat\s*=\s*"cjs"/);
+    expect(schema.match(/\bdirectUrl\s*=/g) ?? []).toHaveLength(0);
+    expect(schema.match(/\burl\s*=/g) ?? []).toHaveLength(0);
+    expect(runtime).toContain('from "@prisma/adapter-pg"');
+    expect(runtime).toContain('from "@/generated/prisma/client"');
+    expect(runtime).toContain("let prismaClient = global.__prisma");
+    expect(runtime).toContain("if (prismaClient) return prismaClient");
+    expect(runtime).toContain("new Proxy");
+    expect(seed).toContain('from "@prisma/adapter-pg"');
+    expect(seed).toContain('from "../src/generated/prisma/client"');
+  });
+
+  it("pins the stable Next.js and React companion versions exactly", () => {
+    const packageJson = JSON.parse(
+      readFileSync(resolve(root, "package.json"), "utf8"),
+    ) as {
+      dependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+
+    expect(packageJson.dependencies).toMatchObject({
+      next: "16.2.11",
+      react: "19.2.8",
+      "react-dom": "19.2.8",
+    });
+    expect(packageJson.devDependencies).toMatchObject({
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3",
+      "eslint-config-next": "16.2.11",
     });
   });
 });

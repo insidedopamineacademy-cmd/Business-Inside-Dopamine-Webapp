@@ -1,11 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+import { PrismaClient } from "../src/generated/prisma/client";
 
 import {
   assertFaqSeedAllowed,
   replaceFaqsAtomically,
 } from "./seed-policy";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required to run the FAQ seed.");
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString: databaseUrl,
+    connectionTimeoutMillis: 5_000,
+  }),
+});
 
 const faqs = [
   // Services

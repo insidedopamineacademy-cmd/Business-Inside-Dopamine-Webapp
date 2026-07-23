@@ -10,6 +10,8 @@
 
 **Release status:** Engineering Complete — Production Launch Pending
 
+**Current dependency baseline:** Next.js 16.2.11, React/React DOM 19.2.8, Prisma ORM/Client/PostgreSQL adapter 7.9.0
+
 **Production readiness:** BLOCKED by [CLEAN.md](CLEAN.md)
 
 ## 1. Product purpose
@@ -117,7 +119,7 @@ Phase One established the engineering safety foundation without production acces
 
 **Formal Phase One status: Engineering Complete — Production Launch Pending.**
 
-The historical 148-test Phase One baseline remains evidence for that phase. Phase Two closed with 214 tests across 20 files; the subsequent production-warning/secret-boundary cleanup increased the current repository baseline to 220 tests across 21 files.
+The historical 148-test Phase One baseline remains evidence for that phase. Phase Two closed with 214 tests across 20 files; the subsequent production cleanup and dependency modernization increased the current repository baseline to 221 tests across 21 files.
 
 ## 5. Phase Two final state
 
@@ -238,6 +240,12 @@ Contact owns a client-safe contract, server composition, narrow client form, and
 ### AD-012 — Explicit server-only dependency boundaries
 
 Database, private environment, provider, authentication, request, notification, persistence, quota, and rate-limit modules declare `server-only` or a Server Action directive. Client-safe contracts contain no Prisma, Node, request API, provider, private configuration, or server implementation dependency. Static tests enforce the graph.
+
+### AD-013 — Prisma 7 generated-client and connection ownership
+
+Prisma CLI and Client remain on the same exact stable release. The `prisma-client` generator writes an ignored CommonJS-compatible TypeScript client to `src/generated/prisma`, allowing the existing guarded `ts-node` seed command to remain unchanged while Next.js bundles server imports. `postinstall` regenerates the client.
+
+`prisma.config.ts` owns the direct migration connection through `DIRECT_URL`; `src/lib/prisma.ts` owns a lazy server-only `@prisma/adapter-pg` client using pooled `DATABASE_URL`. This dependency migration changes no model, table, index, constraint, migration history, seed policy, or runtime repository contract.
 
 ## 8. Server/client and performance strategy
 

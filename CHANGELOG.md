@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### 2026-07-24 — Stable Next.js/Prisma production dependency modernization
+
+- Confirmed Next.js and `eslint-config-next` 16.2.11 remain the latest stable production release; updated React and React DOM from 19.2.3 to 19.2.8 with matching exact React type packages.
+- Upgraded Prisma CLI and Client from 6.17.1 to exact 7.9.0 and added exact `@prisma/adapter-pg` 7.9.0, `pg` 8.22.0, and `dotenv` 17.4.2 companions.
+- Raised the declared Node.js minimum to 20.19.0, with Node.js 22 retained in CI and recommended for deployment.
+- Replaced the legacy generator with `prisma-client`, generated ignored TypeScript into `src/generated/prisma`, and selected Prisma’s supported CommonJS output so the exact guarded seed command remains unchanged.
+- Moved migration datasource ownership to `prisma.config.ts`: `.env.local`/`.env` load without overriding platform variables, `DIRECT_URL` serves CLI migration work, and pooled `DATABASE_URL` remains runtime-only.
+- Added the required PostgreSQL adapter behind the existing server-only Prisma singleton, retained a bounded five-second connection attempt, and made adapter initialization lazy so imports and injected repository tests remain side-effect free.
+- Updated all application and seed imports to the generated client without changing models, mappings, migrations, queries, transactions, idempotency, optimistic concurrency, or serialization behavior.
+- Added regression assertions for exact companion versions, Node minimum, generator/output/module format, direct/runtime URL ownership, adapter/seed imports, lazy initialization, and client reachability of Prisma adapter/driver modules.
+- Clean `npm ci` and postinstall generation passed. TypeScript, ESLint, 21 test files / 221 tests, Prisma validation/generation/seed-help resolution, dependency-tree integrity, Webpack production build, 24-page generation, route table, secret scan, client-marker scan, and desktop/mobile public smoke checks passed.
+- The default Turbopack build still fails before application compilation only because its internal Google-font resolver does not consume the repository’s offline Webpack fixture; no application/dependency regression was identified in the passing Webpack build.
+- The current npm production audit reports six High advisories in latest-stable Next.js/Prisma transitive packages with only force/downgrade remedies. No force fix, unrelated major upgrade, schema migration, seed, deployment, commit, or push was performed.
+
 ### 2026-07-23 — Production warning and client-secret cleanup
 
 - Moved the unchanged Prisma seed command, canonical schema path, and migrations path from deprecated `package.json#prisma` ownership into the Prisma 6 `defineConfig` API in `prisma.config.ts`.
